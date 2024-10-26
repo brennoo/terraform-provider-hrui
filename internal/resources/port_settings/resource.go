@@ -3,13 +3,9 @@ package port_settings
 import (
 	"context"
 	"fmt"
-	"net/http"
-	"net/url"
 	"strconv"
-	"strings"
 
-	"github.com/PuerkitoBio/goquery"
-	"github.com/brennoo/terraform-provider-hrui/internal/client"
+	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -24,7 +20,7 @@ var (
 
 // portSettingResource is the resource implementation.
 type portSettingResource struct {
-	client *client.Client
+	client *sdk.HRUIClient
 }
 
 // NewResourcePortSetting is a helper function to simplify the provider implementation.
@@ -38,11 +34,11 @@ func (r *portSettingResource) Configure(ctx context.Context, req resource.Config
 		return
 	}
 
-	client, ok := req.ProviderData.(*client.Client)
+	client, ok := req.ProviderData.(*sdk.HRUIClient)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *client.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *sdk.HRUIClient, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
@@ -56,44 +52,32 @@ func (r *portSettingResource) Metadata(ctx context.Context, req resource.Metadat
 }
 
 func (r *portSettingResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data portSettingModel
-
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	var plan portSettingModel
+	diags := req.Plan.Get(ctx, &plan)
+	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	form := url.Values{}
-	form.Set("cmd", "port")
-
-	form.Set("portid", strconv.FormatInt(data.PortID.ValueInt64(), 10))
-	if data.Enabled.ValueBool() {
-		form.Set("state", "1")
-	} else {
-		form.Set("state", "0")
+	// Get port ID and state
+	portID := int(plan.PortID.ValueInt64())
+	state := 0
+	if plan.Enabled.ValueBool() {
+		state = 1
 	}
-	form.Set(speedDuplexField, data.Speed.Config.ValueString())
-	form.Set(flowControlField, data.FlowControl.Config.ValueString())
 
-	// Make POST request to ip.cgi
-	url := fmt.Sprintf("%s/port.cgi", r.client.URL)
-	httpReq, err := http.NewRequest(http.MethodPost, url, strings.NewReader(form.Encode()))
+	// Prepare API request
+	port := &sdk.Port{
+		ID:          portID,
+		State:       state,
+		SpeedDuplex: plan.Speed.Config.ValueString(),
+		FlowControl: plan.FlowControl.Config.ValueString(),
+	}
+
+	// Make API request to create the VLAN
+	err := r.client.UpdatePortSettings(port)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create HRUI port settings, got error: %s", err))
-		return
-	}
-
-	httpReq.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	httpResp, err := r.client.HttpClient.Do(httpReq)
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create HRUI port settings, got error: %s", err))
-		return
-	}
-
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode != http.StatusOK {
-		resp.Diagnostics.AddError("Unexpected HTTP Status Code", fmt.Sprintf("Unable to create HRUI port settings, got HTTP status code: %d", httpResp.StatusCode))
 		return
 	}
 
@@ -106,10 +90,10 @@ func (r *portSettingResource) Create(ctx context.Context, req resource.CreateReq
 	}
 
 	// Set the ID
-	id := strconv.FormatInt(data.PortID.ValueInt64(), 10)
-	data.ID = types.StringValue(id)
+	plan.ID = types.StringValue(strconv.FormatInt(plan.PortID.ValueInt64(), 10))
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	// Set the state with the ID included
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
@@ -123,50 +107,21 @@ func (r *portSettingResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	portID := state.PortID.ValueInt64()
+	portID := int(state.PortID.ValueInt64())
 
-	url := fmt.Sprintf("%s/port.cgi", r.client.URL)
-	httpResp, err := r.client.MakeRequest(url)
+	port, err := r.client.GetPort(portID)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read HRUI port settings, got error: %s", err))
 		return
 	}
 
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode != http.StatusOK {
-		resp.Diagnostics.AddError("Unexpected HTTP Status Code", fmt.Sprintf("Unable to read HRUI port settings, got HTTP status code: %d", httpResp.StatusCode))
-		return
-	}
-
-	// Parse HTML with goquery
-	doc, err := goquery.NewDocumentFromReader(httpResp.Body)
-	if err != nil {
-		resp.Diagnostics.AddError("HTML Parsing Error", fmt.Sprintf("Unable to parse HRUI port settings HTML response, got error: %s", err))
-		return
-	}
-
-	// Find the row for the given port ID
-	portRow := doc.Find("table:last-of-type tbody tr").FilterFunction(func(i int, s *goquery.Selection) bool {
-		return s.Find("td:nth-child(1)").Text() == fmt.Sprintf("Port %d", portID+1) // Exact match
-	})
-
-	// Extract values
-	enabled := portRow.Find("td:nth-child(2)").Text() == "Enable"
-	speedDuplex := portRow.Find("td:nth-child(3)").Text()
-	actualSpeedDuplex := portRow.Find("td:nth-child(4)").Text()
-	flowControl := portRow.Find("td:nth-child(5)").Text()
-	actualFlowControl := portRow.Find("td:nth-child(6)").Text()
-
-	state.ID = types.StringValue(strconv.FormatInt(portID, 10))
+	// Update the model with the fresh data fetched from the server
+	// model.PortID = types.Int64Value(int64(port.ID))
+	state.Enabled = types.BoolValue(port.State == 1)
+	state.Speed.Config = types.StringValue(port.SpeedDuplex)
+	state.FlowControl.Config = types.StringValue(port.FlowControl)
 
 	// Set state
-	state.Enabled = types.BoolValue(enabled)
-	state.Speed.Config = types.StringValue(speedDuplex)
-	state.Speed.Actual = types.StringValue(actualSpeedDuplex)
-	state.FlowControl.Config = types.StringValue(flowControl)
-	state.FlowControl.Actual = types.StringValue(actualFlowControl)
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -174,44 +129,31 @@ func (r *portSettingResource) Read(ctx context.Context, req resource.ReadRequest
 }
 
 func (r *portSettingResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data portSettingModel
+	var plan portSettingModel
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	form := url.Values{}
-	form.Set("cmd", "port")
-
-	form.Set("portid", strconv.FormatInt(data.PortID.ValueInt64(), 10))
-	if data.Enabled.ValueBool() {
-		form.Set("state", "1")
-	} else {
-		form.Set("state", "0")
+	// Prepare API request
+	portID := int(plan.PortID.ValueInt64())
+	state := 0
+	if plan.Enabled.ValueBool() {
+		state = 1
 	}
-	form.Set(speedDuplexField, data.Speed.Config.ValueString())
-	form.Set(flowControlField, data.FlowControl.Config.ValueString())
 
-	// Make POST request to ip.cgi
-	url := fmt.Sprintf("%s/port.cgi", r.client.URL)
-	httpReq, err := http.NewRequest(http.MethodPost, url, strings.NewReader(form.Encode()))
+	port := &sdk.Port{
+		ID:          portID,
+		State:       state,
+		SpeedDuplex: plan.Speed.Config.ValueString(),
+		FlowControl: plan.FlowControl.Config.ValueString(),
+	}
+
+	// Make API request to create the VLAN
+	err := r.client.UpdatePortSettings(port)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update HRUI port settings, got error: %s", err))
-		return
-	}
-
-	httpReq.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	httpResp, err := r.client.HttpClient.Do(httpReq)
-	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update HRUI port settings, got error: %s", err))
-		return
-	}
-
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode != http.StatusOK {
-		resp.Diagnostics.AddError("Unexpected HTTP Status Code", fmt.Sprintf("Unable to update HRUI port settings, got HTTP status code: %d", httpResp.StatusCode))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create HRUI port settings, got error: %s", err))
 		return
 	}
 
@@ -223,7 +165,7 @@ func (r *portSettingResource) Update(ctx context.Context, req resource.UpdateReq
 		}
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}

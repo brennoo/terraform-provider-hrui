@@ -3,11 +3,9 @@ package port_settings
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"strconv"
 
-	"github.com/PuerkitoBio/goquery"
-	"github.com/brennoo/terraform-provider-hrui/internal/client"
+	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -18,39 +16,41 @@ var (
 	_ datasource.DataSourceWithConfigure = &portSettingDataSource{}
 )
 
-// portSettingDataSource is the data source implementation.
+// portSettingDataSource is the data source implementation that now uses *sdk.HRUIClient.
 type portSettingDataSource struct {
-	client *client.Client
+	client *sdk.HRUIClient
 }
 
-// NewDataSourcePortSetting is a helper function to simplify the provider implementation.
+// NewDataSourcePortSetting is a helper function to instantiate the data source.
 func NewDataSourcePortSetting() datasource.DataSource {
 	return &portSettingDataSource{}
 }
 
-// Configure adds the provider configured client to the data source.
+// Configure assigns the provider-configured client to the data source.
 func (d *portSettingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
 
-	client, ok := req.ProviderData.(*client.Client)
-	if !ok {
+	client, ok := req.ProviderData.(*sdk.HRUIClient)
+	if !ok || client == nil {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *client.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *sdk.HRUIClient, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
-
 		return
 	}
 
+	// Assign the client to the data source
 	d.client = client
 }
 
+// Metadata defines the schema type name.
 func (d *portSettingDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_port_settings"
 }
 
+// Read reads the current port settings from the HRUI system.
 func (d *portSettingDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data portSettingModel
 
@@ -59,54 +59,31 @@ func (d *portSettingDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	url := fmt.Sprintf("%s/port.cgi", d.client.URL)
-	httpResp, err := d.client.MakeRequest(url)
+	// Make sure the client is set up before making any request
+	if d.client == nil {
+		resp.Diagnostics.AddError("Client Not Configured", "The HRUI client was not properly configured. Ensure the provider is set up correctly.")
+		return
+	}
+
+	port, err := d.client.GetPort(int(data.PortID.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read HRUI port settings, got error: %s", err))
 		return
 	}
 
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode != http.StatusOK {
-		resp.Diagnostics.AddError("Unexpected HTTP Status Code", fmt.Sprintf("Unable to read HRUI port settings, got HTTP status code: %d", httpResp.StatusCode))
-		return
+	// Assign the state
+	data.Enabled = types.BoolValue(port.State == 1)
+	data.Speed = &portSettingSpeed{
+		Config: types.StringValue(port.SpeedDuplex),
+		Actual: types.StringValue(port.SpeedDuplex),
 	}
-
-	// Parse HTML with goquery
-	doc, err := goquery.NewDocumentFromReader(httpResp.Body)
-	if err != nil {
-		resp.Diagnostics.AddError("HTML Parsing Error", fmt.Sprintf("Unable to parse HRUI port settings HTML response, got error: %s", err))
-		return
+	data.FlowControl = &portSettingFlowControl{
+		Config: types.StringValue(port.FlowControl),
+		Actual: types.StringValue(port.FlowControl),
 	}
-
-	// Find the row for the given port ID
-	portRow := doc.Find("table:last-of-type tbody tr").FilterFunction(func(i int, s *goquery.Selection) bool {
-		return s.Find("td:nth-child(1)").Text() == fmt.Sprintf("Port %d", data.PortID.ValueInt64()+1) // Exact match
-	})
-
-	// Extract values
-	enabled := portRow.Find("td:nth-child(2)").Text() == "Enable"
-	speedDuplex := portRow.Find("td:nth-child(3)").Text()
-	actualSpeedDuplex := portRow.Find("td:nth-child(4)").Text()
-	flowControl := portRow.Find("td:nth-child(5)").Text()
-	actualFlowControl := portRow.Find("td:nth-child(6)").Text()
-
-	// Set state
-	// Set state
-	data.Enabled = types.BoolValue(enabled)
-	data.Speed = &portSettingSpeed{ // Assign to a pointer to the struct
-		Config: types.StringValue(speedDuplex),
-		Actual: types.StringValue(actualSpeedDuplex),
-	}
-	data.FlowControl = &portSettingFlowControl{ // Assign to a pointer to the struct
-		Config: types.StringValue(flowControl),
-		Actual: types.StringValue(actualFlowControl),
-	}
-
 	data.ID = types.StringValue(strconv.FormatInt(data.PortID.ValueInt64(), 10))
 
-	// Set state
+	// Save the state back to Terraform state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
 		return
