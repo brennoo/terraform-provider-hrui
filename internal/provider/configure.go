@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/brennoo/terraform-provider-hrui/internal/client"
+	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 )
 
@@ -26,7 +26,7 @@ func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 	password, passwordOk := os.LookupEnv("HRUI_PASSWORD")
 	autosaveEnv, autosaveEnvOk := os.LookupEnv("HRUI_AUTOSAVE")
 
-	// Check config and environment variables for URL
+	// Check if URL is set via config or environment variable
 	if !config.URL.IsNull() {
 		url = config.URL.ValueString()
 	} else if !urlOk {
@@ -36,7 +36,7 @@ func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		)
 	}
 
-	// Check config and environment variables for Username
+	// Check if Username is set via config or environment variable
 	if !config.Username.IsNull() {
 		username = config.Username.ValueString()
 	} else if !usernameOk {
@@ -46,7 +46,7 @@ func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		)
 	}
 
-	// Check config and environment variables for Password
+	// Check if Password is set via config or environment variable
 	if !config.Password.IsNull() {
 		password = config.Password.ValueString()
 	} else if !passwordOk {
@@ -56,7 +56,7 @@ func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		)
 	}
 
-	// Check config and environment variable for Autosave
+	// Check if Autosave is set via config or environment variable
 	autosave := true
 	if !config.Autosave.IsNull() {
 		autosave = config.Autosave.ValueBool()
@@ -72,22 +72,24 @@ func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		}
 	}
 
+	// Exit if we encountered any configuration errors
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Create a new client
-	c, err := client.NewClient(url, username, password, autosave)
+	// Create a new client using the SDK
+	// Replace `sdk.NewClient` with the correct method from your SDK package
+	hruiClient, err := sdk.NewClient(url, username, password, autosave)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Creation Error",
-			fmt.Sprintf("Failed to create client: %s", err.Error()),
+			fmt.Sprintf("Failed to create SDK client: %s", err.Error()),
 		)
 		return
 	}
 
 	// Make a sample request to validate the API connection
-	_, err = c.MakeRequest(c.URL)
+	_, err = hruiClient.MakeRequest(hruiClient.URL)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Connection Error",
@@ -96,7 +98,8 @@ func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		return
 	}
 
-	// Make the client available in the provider data
-	resp.DataSourceData = c // Removed '&' since NewClient returns a pointer
-	resp.ResourceData = c   // Removed '&' since NewClient returns a pointer
+	// Assign the newly created client instance to DataSourceData and ResourceData
+	// Make sure you're passing the pointer `hruiClient` as needed by the SDK
+	resp.DataSourceData = hruiClient
+	resp.ResourceData = hruiClient
 }

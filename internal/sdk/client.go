@@ -1,4 +1,4 @@
-package client
+package sdk
 
 import (
 	"crypto/md5"
@@ -12,8 +12,8 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-// Simple client for interacting with the HRUI web UI
-type Client struct {
+// Client handles communication with the HRUI device, managing VLANs and other networking functionality.
+type HRUIClient struct {
 	URL        string
 	Username   string
 	Password   string
@@ -21,14 +21,15 @@ type Client struct {
 	HttpClient *http.Client
 }
 
-// NewClient creates a new authenticated client.
-func NewClient(url, username, password string, autosave bool) (*Client, error) {
+// NewClient initializes and authenticates a new HRUIClient.
+func NewClient(url, username, password string, autosave bool) (*HRUIClient, error) {
 	jar, err := cookiejar.New(nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create cookie jar: %w", err)
 	}
 
-	c := &Client{
+	// Initialize the client
+	client := &HRUIClient{
 		URL:      url,
 		Username: username,
 		Password: password,
@@ -38,17 +39,18 @@ func NewClient(url, username, password string, autosave bool) (*Client, error) {
 		},
 	}
 
-	err = c.Authenticate()
+	// Authenticate the client
+	err = client.Authenticate()
 	if err != nil {
-		return nil, fmt.Errorf("failed to authenticate client: %w", err)
+		return nil, fmt.Errorf("failed to authenticate HRUIClient: %w", err)
 	}
 
-	return c, nil
+	return client, nil
 }
 
-// Authenticate authenticates the client by setting the authentication cookie
-func (c *Client) Authenticate() error {
-	// Generate MD5 hash of username+password
+// Authenticate sets the authentication cookie for the HRUI system.
+func (c *HRUIClient) Authenticate() error {
+	// Generate MD5 hash of the username + password (as per HRUI spec).
 	hash := md5.Sum([]byte(c.Username + c.Password))
 	cookieValue := hex.EncodeToString(hash[:])
 
@@ -59,20 +61,20 @@ func (c *Client) Authenticate() error {
 		Path:  "/",
 	}
 
-	// Set the cookie directly using the URL
+	// Set the cookie directly using the parsed URL
 	u, err := url.Parse(c.URL)
 	if err != nil {
 		return fmt.Errorf("error parsing URL: %w", err)
 	}
 	c.HttpClient.Jar.SetCookies(u, []*http.Cookie{authCookie})
 
-	// Validate the authentication by making a request to index.cgi or /
+	// Validate the authentication
 	return c.validateAuth()
 }
 
-// validateAuth uses MakeRequest to check if the authentication was successful
-func (c *Client) validateAuth() error {
-	authURL := c.URL + "/index.cgi" // You can change this to just "/" if needed
+// validateAuth checks whether the authentication was successful.
+func (c *HRUIClient) validateAuth() error {
+	authURL := fmt.Sprintf("%s/index.cgi", c.URL)
 
 	resp, err := c.MakeRequest(authURL)
 	if err != nil {
@@ -80,21 +82,19 @@ func (c *Client) validateAuth() error {
 	}
 	defer resp.Body.Close()
 
-	// Check for HTTP 200 but potential redirection to login
+	// Check if a redirection to the login page (indicating failed authentication) occurs
 	if resp.StatusCode == http.StatusOK {
-		// Use goquery to parse the response body
 		doc, err := goquery.NewDocumentFromReader(resp.Body)
 		if err != nil {
 			return fmt.Errorf("error parsing response body with goquery: %w", err)
 		}
 
-		// Look for a script tag that contains the redirection to login page
+		// Check for any sign of being redirected to a login page via a script tag
 		scriptContent := ""
 		doc.Find("script").Each(func(i int, s *goquery.Selection) {
 			scriptContent = s.Text()
 		})
 
-		// Check if the script tag contains a redirection to login
 		if strings.Contains(scriptContent, `window.top.location.replace("/login.cgi")`) {
 			return fmt.Errorf("authentication failed: redirected to login page")
 		}
@@ -107,39 +107,39 @@ func (c *Client) validateAuth() error {
 	return nil
 }
 
-// MakeRequest sends a GET request and returns the response
-func (c *Client) MakeRequest(url string) (*http.Response, error) {
+// MakeRequest performs a simple GET request and returns the response.
+func (c *HRUIClient) MakeRequest(url string) (*http.Response, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return nil, fmt.Errorf("error creating request: %w", err)
+		return nil, fmt.Errorf("error creating GET request: %w", err)
 	}
 
+	// Perform the GET request
 	resp, err := c.HttpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("error making request: %w", err)
+		return nil, fmt.Errorf("error making GET request: %w", err)
 	}
 
 	return resp, nil
 }
 
-// SaveConfiguration makes a POST request to /save.cgi to save the configuration
-func (c *Client) SaveConfiguration() error {
+// SaveConfiguration saves the configuration by making a POST request to `/save.cgi`.
+func (c *HRUIClient) SaveConfiguration() error {
 	url := fmt.Sprintf("%s/save.cgi", c.URL)
 	httpReq, err := http.NewRequest(http.MethodPost, url, strings.NewReader("cmd=save"))
 	if err != nil {
-		return fmt.Errorf("unable to create save request: %w", err)
+		return fmt.Errorf("error creating save request: %w", err)
 	}
 
 	httpReq.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	httpResp, err := c.HttpClient.Do(httpReq)
 	if err != nil {
-		return fmt.Errorf("unable to save HRUI configuration, got error: %w", err)
+		return fmt.Errorf("failed to save HRUI configuration: %w", err)
 	}
-
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unable to save HRUI configuration, got HTTP status code: %d", httpResp.StatusCode)
+		return fmt.Errorf("failed to save HRUI configuration, status code: %d", httpResp.StatusCode)
 	}
 
 	return nil
