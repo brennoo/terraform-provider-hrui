@@ -7,6 +7,7 @@ import (
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_settings"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/system_info"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/vlan_8021q"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/vlan_vid"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -36,9 +37,10 @@ func New(version string) func() provider.Provider {
 // can be queried.
 func (p *hruiProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		system_info.NewDataSourceSystemInfo,
-		port_settings.NewDataSourcePortSetting,
-		vlan_8021q.Newvlan8021qDataSource,
+		system_info.NewDataSource,
+		port_settings.NewDataSource,
+		vlan_8021q.NewDataSource,
+		vlan_vid.NewDataSource,
 	}
 }
 
@@ -46,8 +48,9 @@ func (p *hruiProvider) DataSources(ctx context.Context) []func() datasource.Data
 // be created, updated, and deleted.
 func (p *hruiProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		ip_address_settings.NewResourceIPAddressSettings,
-		port_settings.NewResourcePortSetting,
-		vlan_8021q.Newvlan8021qResource,
+		ip_address_settings.NewResource,
+		port_settings.NewResource,
+		vlan_8021q.NewResource,
+		vlan_vid.NewResource,
 	}
 }

@@ -1,11 +1,13 @@
 package sdk_test
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -97,4 +99,81 @@ func TestDeleteVLAN(t *testing.T) {
 	// Test that deleting the VLAN sends the correct form submission
 	err := client.DeleteVLAN(10)
 	require.NoError(t, err)
+}
+
+func TestGetAllPortVLANConfigs(t *testing.T) {
+	htmlResponse := `
+        <html><head></head>
+        <body>
+            <table border="1">
+                <tbody>
+                    <tr>
+                        <th width="90">Port</th>
+                        <th width="90">PVID</th>
+                        <th width="160">Accepted Frame Type</th>
+                    </tr>
+                    <tr>
+                        <td align="center">Port 1</td>
+                        <td align="center">1</td>
+                        <td align="center" style="width:180px;">All</td>
+                    </tr>
+                    <tr>
+                        <td align="center">Port 2</td>
+                        <td align="center">1</td>
+                        <td align="center" style="width:180px;">All</td>
+                    </tr>
+                    <tr>
+                        <td align="center">Port 3</td>
+                        <td align="center">1</td>
+                        <td align="center" style="width:180px;">All</td>
+                    </tr>
+                    <tr>
+                        <td align="center">Port 4</td>
+                        <td align="center">1</td>
+                        <td align="center" style="width:180px;">All</td>
+                    </tr>
+                    <tr>
+                        <td align="center">Port 5</td>
+                        <td align="center">1</td>
+                        <td align="center" style="width:180px;">All</td>
+                    </tr>
+                    <tr>
+                        <td align="center">Port 6</td>
+                        <td align="center">10</td>
+                        <td align="center" style="width:180px;">All</td>
+                    </tr>
+                </tbody>
+            </table>
+        </body>
+        </html>
+    `
+
+	server := mockServer(htmlResponse, http.StatusOK)
+	defer server.Close()
+
+	client, _ := sdk.NewClient(server.URL, "testuser", "testpass", false)
+
+	configs, err := client.GetAllPortVLANConfigs()
+	assert.NoError(t, err)
+
+	// Print the number of configs found
+	fmt.Printf("Number of configs found: %d\n", len(configs))
+
+	// Print the extracted configs
+	for _, config := range configs {
+		fmt.Printf("Config: %+v\n", config)
+	}
+
+	assert.Equal(t, 6, len(configs))
+
+	// Assert the values for each port
+	expectedConfigs := []*sdk.PortVLANConfig{
+		{Port: 1, PVID: 1, AcceptFrameType: "All"},
+		{Port: 2, PVID: 1, AcceptFrameType: "All"},
+		{Port: 3, PVID: 1, AcceptFrameType: "All"},
+		{Port: 4, PVID: 1, AcceptFrameType: "All"},
+		{Port: 5, PVID: 1, AcceptFrameType: "All"},
+		{Port: 6, PVID: 10, AcceptFrameType: "All"},
+	}
+	assert.Equal(t, expectedConfigs, configs)
 }

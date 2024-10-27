@@ -2,10 +2,8 @@ package sdk
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -67,20 +65,9 @@ func (c *HRUIClient) UpdateIPAddressSettings(settings *IPAddressSettings) error 
 	form.Set("gateway", settings.Gateway)
 
 	ipSettingsURL := fmt.Sprintf("%s/ip.cgi", c.URL)
-	httpReq, err := http.NewRequest(http.MethodPost, ipSettingsURL, strings.NewReader(form.Encode()))
+	_, err := c.PostForm(ipSettingsURL, form)
 	if err != nil {
-		return fmt.Errorf("failed to create IP Settings update request: %w", err)
-	}
-	httpReq.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-
-	httpResp, err := c.HttpClient.Do(httpReq)
-	if err != nil {
-		return fmt.Errorf("failed to submit IP Settings form: %w", err)
-	}
-	defer httpResp.Body.Close()
-
-	if httpResp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to update IP Setting, received status code: %d", httpResp.StatusCode)
+		return fmt.Errorf("failed to update IP Settings: %w", err)
 	}
 
 	if c.Autosave {

@@ -19,8 +19,8 @@ type vlan8021qResource struct {
 // Ensure that vlan8021qResource implements the resource.Resource interface
 var _ resource.Resource = &vlan8021qResource{}
 
-// Newvlan8021qResource creates a new VLAN resource instance
-func Newvlan8021qResource() resource.Resource {
+// NewResource creates a new VLAN resource instance
+func NewResource() resource.Resource {
 	return &vlan8021qResource{}
 }
 
