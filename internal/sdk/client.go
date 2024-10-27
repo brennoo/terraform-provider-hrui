@@ -123,6 +123,27 @@ func (c *HRUIClient) MakeRequest(url string) (*http.Response, error) {
 	return resp, nil
 }
 
+// PostForm submits a form to the specified URL with the given form data.
+func (c *HRUIClient) PostForm(url string, form url.Values) (*http.Response, error) {
+	httpReq, err := http.NewRequest(http.MethodPost, url, strings.NewReader(form.Encode()))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create POST request: %w", err)
+	}
+	httpReq.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	httpResp, err := c.HttpClient.Do(httpReq)
+	if err != nil {
+		return nil, fmt.Errorf("failed to submit form: %w", err)
+	}
+
+	// Check for successful submission (optional)
+	if httpResp.StatusCode != http.StatusOK {
+		return httpResp, fmt.Errorf("form submission failed, received status code: %d", httpResp.StatusCode)
+	}
+
+	return httpResp, nil
+}
+
 // SaveConfiguration saves the configuration by making a POST request to `/save.cgi`.
 func (c *HRUIClient) SaveConfiguration() error {
 	url := fmt.Sprintf("%s/save.cgi", c.URL)

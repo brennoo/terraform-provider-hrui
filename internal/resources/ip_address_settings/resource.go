@@ -21,8 +21,8 @@ type ipAddressResource struct {
 	client *sdk.HRUIClient
 }
 
-// NewResourceIPAddressSettings is a helper function to simplify the provider implementation
-func NewResourceIPAddressSettings() resource.Resource {
+// NewResource is a helper function to simplify the provider implementation
+func NewResource() resource.Resource {
 	return &ipAddressResource{}
 }
 

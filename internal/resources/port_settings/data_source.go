@@ -16,13 +16,13 @@ var (
 	_ datasource.DataSourceWithConfigure = &portSettingDataSource{}
 )
 
-// portSettingDataSource is the data source implementation that now uses *sdk.HRUIClient.
+// portSettingDataSource is the data source implementation
 type portSettingDataSource struct {
 	client *sdk.HRUIClient
 }
 
-// NewDataSourcePortSetting is a helper function to instantiate the data source.
-func NewDataSourcePortSetting() datasource.DataSource {
+// NewDataSource is a helper function to instantiate the data source.
+func NewDataSource() datasource.DataSource {
 	return &portSettingDataSource{}
 }
 

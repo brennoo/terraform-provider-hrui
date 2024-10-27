@@ -23,8 +23,8 @@ type portSettingResource struct {
 	client *sdk.HRUIClient
 }
 
-// NewResourcePortSetting is a helper function to simplify the provider implementation.
-func NewResourcePortSetting() resource.Resource {
+// NewResource is a helper function to simplify the provider implementation.
+func NewResource() resource.Resource {
 	return &portSettingResource{}
 }
 

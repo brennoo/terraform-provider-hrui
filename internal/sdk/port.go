@@ -3,7 +3,6 @@ package sdk
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -107,24 +106,11 @@ func (c *HRUIClient) UpdatePortSettings(port *Port) error {
 	form.Set("speed_duplex", port.SpeedDuplex)
 	form.Set("flow", port.FlowControl)
 
-	// Create the URL
+	// submit the form
 	portsURL := fmt.Sprintf("%s/port.cgi", c.URL)
-	httpReq, err := http.NewRequest(http.MethodPost, portsURL, strings.NewReader(form.Encode()))
+	_, err := c.PostForm(portsURL, form)
 	if err != nil {
-		return fmt.Errorf("failed to update settings request: %w", err)
-	}
-
-	// Set the appropriate content type
-	httpReq.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	httpResp, err := c.HttpClient.Do(httpReq)
-	if err != nil {
-		return fmt.Errorf("failed to update settings: %w", err)
-	}
-	defer httpResp.Body.Close()
-
-	// Check for the correct status code
-	if httpResp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to update settings, status code: %d", httpResp.StatusCode)
+		return fmt.Errorf("failed to update port settings: %w", err)
 	}
 
 	if c.Autosave {

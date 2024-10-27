@@ -16,13 +16,13 @@ var (
 	_ datasource.DataSourceWithConfigure = &systemInfoDataSource{}
 )
 
-// systemInfoDataSource is the data source implementation that now uses *sdk.HRUIClient.
+// systemInfoDataSource is the data source implementation
 type systemInfoDataSource struct {
 	client *sdk.HRUIClient
 }
 
-// NewDataSourceSystemInfo is a helper function to simplify the provider implementation.
-func NewDataSourceSystemInfo() datasource.DataSource {
+// NewDataSource is a helper function to simplify the provider implementation.
+func NewDataSource() datasource.DataSource {
 	return &systemInfoDataSource{}
 }
 

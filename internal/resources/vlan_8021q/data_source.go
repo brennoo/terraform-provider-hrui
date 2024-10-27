@@ -19,8 +19,8 @@ type vlan8021qDataSource struct {
 // Ensure that vlan8021qDataSource implements the datasource.DataSource interface.
 var _ datasource.DataSource = &vlan8021qDataSource{}
 
-// Newvlan8021qDataSource creates a new instance of the VLAN data source.
-func Newvlan8021qDataSource() datasource.DataSource {
+// NewDataSource creates a new instance of the VLAN data source.
+func NewDataSource() datasource.DataSource {
 	return &vlan8021qDataSource{}
 }
 
