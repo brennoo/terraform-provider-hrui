@@ -73,27 +73,29 @@ func (d *vlan8021qDataSource) Configure(ctx context.Context, req datasource.Conf
 		)
 		return
 	}
-	// Assign the client to the data source struct for further use.
+
+	// Set the client in the data source.
 	d.client = client
 }
 
+// Read fetches the VLAN information and sets it in the Terraform state.
 func (d *vlan8021qDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var model vlan8021qModel
 
-	// Retrieve the VLAN ID from the user request.
+	// Retrieve the VLAN ID from the user input.
 	diags := req.Config.Get(ctx, &model)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Ensure that the HRUIClient has been initialized
+	// Ensure the client is initialized.
 	if d.client == nil {
 		resp.Diagnostics.AddError("Missing HRUI Client", "The HRUI client has not been properly initialized in the Configure method.")
 		return
 	}
 
-	// Fetch VLAN data
+	// Fetch the VLAN data
 	vlanID := model.VlanID.ValueInt64()
 	vlan, err := d.client.GetVLAN(int(vlanID))
 	if err != nil {
@@ -101,14 +103,32 @@ func (d *vlan8021qDataSource) Read(ctx context.Context, req datasource.ReadReque
 		return
 	}
 
-	// Update the model with sanitized data returned from the SDK
+	// Map the fetched data from the SDK to the Terraform model.
 	model.VlanID = types.Int64Value(int64(vlan.VlanID))
 	model.Name = types.StringValue(vlan.Name)
-	model.UntaggedPorts = sdk.FlattenInt64List(vlan.UntaggedPorts)
-	model.TaggedPorts = sdk.FlattenInt64List(vlan.TaggedPorts)
-	model.MemberPorts = sdk.FlattenInt64List(vlan.MemberPorts)
 
-	// Set the updated model back into the Terraform state
+	// Convert untagged_ports and tagged_ports to types.List.
+	model.UntaggedPorts, diags = types.ListValueFrom(ctx, types.Int64Type, vlan.UntaggedPorts)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	model.TaggedPorts, diags = types.ListValueFrom(ctx, types.Int64Type, vlan.TaggedPorts)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Concatenate tagged_ports and untagged_ports directly to form member_ports.
+	allPorts := append(vlan.TaggedPorts, vlan.UntaggedPorts...)
+	model.MemberPorts, diags = types.ListValueFrom(ctx, types.Int64Type, allPorts)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Finally, set the updated values back into the state.
 	diags = resp.State.Set(ctx, &model)
 	resp.Diagnostics.Append(diags...)
 }

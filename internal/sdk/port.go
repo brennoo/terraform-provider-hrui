@@ -119,3 +119,11 @@ func (c *HRUIClient) UpdatePortSettings(port *Port) error {
 
 	return nil
 }
+
+func (c *HRUIClient) GetTotalPorts() (int, error) {
+	ports, err := c.GetAllPorts()
+	if err != nil {
+		return 0, fmt.Errorf("failed to get total ports: %w", err)
+	}
+	return len(ports), nil
+}

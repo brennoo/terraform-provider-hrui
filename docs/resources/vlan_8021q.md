@@ -17,13 +17,10 @@ description: |-
 
 ### Required
 
-- `vlan_id` (Number) VLAN ID (1-4094). The unique identifier for the VLAN to be created or managed.
-
-### Optional
-
 - `name` (String) The VLAN name assigned to the given VLAN ID.
 - `tagged_ports` (List of Number) The list of tagged ports assigned to the VLAN.
 - `untagged_ports` (List of Number) The list of untagged ports assigned to the VLAN.
+- `vlan_id` (Number) VLAN ID (1-4094). The unique identifier for the VLAN to be created or managed.
 
 ### Read-Only
 

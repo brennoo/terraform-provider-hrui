@@ -25,27 +25,20 @@ type PortVLANConfig struct {
 
 // Create VLAN creates or updates a VLAN on the switch, computing NotMemberPorts if needed.
 func (c *HRUIClient) CreateVLAN(vlan *Vlan, totalPorts int) error {
-	// Compute NotMemberPorts: ports that are neither tagged nor untagged
-	allAssignablePorts := generatePortRange(1, totalPorts)
-	notMemberPorts := computeNotMemberPorts(vlan.UntaggedPorts, vlan.TaggedPorts, allAssignablePorts)
-
 	// Build the form data
 	form := url.Values{}
 	form.Set("vid", fmt.Sprintf("%d", vlan.VlanID))
 	form.Set("name", vlan.Name)
 
-	// Set untagged and tagged ports
-	for _, port := range vlan.UntaggedPorts {
-		form.Set(fmt.Sprintf("vlanPort_%d", port), "0")
-	}
-
-	for _, port := range vlan.TaggedPorts {
-		form.Set(fmt.Sprintf("vlanPort_%d", port), "1")
-	}
-
-	// Add NotMemberPorts (members explicitly marked as not part of the VLAN)
-	for _, port := range notMemberPorts {
-		form.Set(fmt.Sprintf("vlanPort_%d", port), "2")
+	// Set untagged, tagged, and not member ports
+	for port := 1; port <= totalPorts; port++ {
+		formValue := "2" // Default: Not Member
+		if contains(vlan.UntaggedPorts, port) {
+			formValue = "0" // Untagged
+		} else if contains(vlan.TaggedPorts, port) {
+			formValue = "1" // Tagged
+		}
+		form.Set(fmt.Sprintf("vlanPort_%d", port-1), formValue)
 	}
 
 	vlanURL := fmt.Sprintf("%s/vlan.cgi?page=static", c.URL)
@@ -62,35 +55,14 @@ func (c *HRUIClient) CreateVLAN(vlan *Vlan, totalPorts int) error {
 	return nil
 }
 
-// Helper function to compute not member ports based on total ports available on the switch
-func computeNotMemberPorts(untagged, tagged, allPorts []int) []int {
-	// Create a map to track all ports that are tagged or untagged
-	memberPortsMap := make(map[int]struct{})
-	for _, port := range untagged {
-		memberPortsMap[port] = struct{}{}
-	}
-	for _, port := range tagged {
-		memberPortsMap[port] = struct{}{}
-	}
-
-	// Find ports that are not tagged or untagged
-	var notMemberPorts []int
-	for _, port := range allPorts {
-		if _, ok := memberPortsMap[port]; !ok {
-			notMemberPorts = append(notMemberPorts, port)
+// Helper function to check if a slice contains an integer
+func contains(slice []int, value int) bool {
+	for _, v := range slice {
+		if v == value {
+			return true
 		}
 	}
-
-	return notMemberPorts
-}
-
-// Helper function to generate a range of port numbers (1 - totalports)
-func generatePortRange(start, end int) []int {
-	var ports []int
-	for i := start; i <= end; i++ {
-		ports = append(ports, i)
-	}
-	return ports
+	return false
 }
 
 // GetVLAN fetches a single VLAN by its VLAN ID by filtering results from GetAllVLANs.
@@ -127,28 +99,34 @@ func (c *HRUIClient) GetAllVLANs() ([]*Vlan, error) {
 	}
 
 	var vlans []*Vlan
-	doc.Find("form[name=formVlanStatus] table tr").Each(func(i int, s *goquery.Selection) {
+
+	// Select the table within the form with name "formVlanStatus"
+	doc.Find("form[name='formVlanStatus'] table tr").Each(func(i int, s *goquery.Selection) {
 		if i == 0 {
 			// Skip header row
 			return
 		}
 
 		vlan := &Vlan{}
-		s.Find("td").Each(func(j int, td *goquery.Selection) {
-			text := strings.TrimSpace(td.Text())
-			switch j {
-			case 0:
-				fmt.Sscanf(text, "%d", &vlan.VlanID)
-			case 1:
-				vlan.Name = text
-			case 2:
-				vlan.MemberPorts = parsePortRangeSafe(text)
-			case 3:
-				vlan.TaggedPorts = parsePortRangeSafe(text)
-			case 4:
-				vlan.UntaggedPorts = parsePortRangeSafe(text)
-			}
-		})
+
+		// Extract VLAN ID
+		vlanIDText := strings.TrimSpace(s.Find("td:nth-child(1)").Text())
+		vlanID, err := strconv.Atoi(vlanIDText)
+		if err != nil {
+			// Handle error, e.g., log a warning or skip the row
+			fmt.Printf("Error parsing VLAN ID: %v\n", err)
+			return
+		}
+		vlan.VlanID = vlanID
+
+		// Extract VLAN name
+		vlan.Name = strings.TrimSpace(s.Find("td:nth-child(2)").Text())
+
+		// Extract port ranges
+		vlan.MemberPorts = parsePortRangeSafe(strings.TrimSpace(s.Find("td:nth-child(3)").Text()))
+		vlan.TaggedPorts = parsePortRangeSafe(strings.TrimSpace(s.Find("td:nth-child(4)").Text()))
+		vlan.UntaggedPorts = parsePortRangeSafe(strings.TrimSpace(s.Find("td:nth-child(5)").Text()))
+
 		vlans = append(vlans, vlan)
 	})
 
@@ -265,24 +243,23 @@ func (c *HRUIClient) SetPortVLANConfig(config *PortVLANConfig) error {
 
 // parsePortRangeSafe ensures that empty or invalid ports are handled, returning an empty slice if no ports exist
 func parsePortRangeSafe(portRange string) []int {
-	// Handle empty `tagged_ports` or invalid entries
 	if portRange == "-" || portRange == "" {
 		return []int{}
 	}
 
-	// Otherwise, parse the port range into a list of ints
-	parts := strings.Split(portRange, "-")
-	if len(parts) == 2 {
-		start, _ := strconv.Atoi(parts[0])
-		end, _ := strconv.Atoi(parts[1])
-		var result []int
-		for i := start; i <= end; i++ {
-			result = append(result, i)
+	var result []int
+	for _, part := range strings.Split(portRange, ",") { // Split by comma
+		subParts := strings.Split(part, "-")
+		if len(subParts) == 2 {
+			start, _ := strconv.Atoi(subParts[0])
+			end, _ := strconv.Atoi(subParts[1])
+			for i := start; i <= end; i++ {
+				result = append(result, i)
+			}
+		} else if len(subParts) == 1 {
+			port, _ := strconv.Atoi(subParts[0])
+			result = append(result, port)
 		}
-		return result
-	} else if len(parts) == 1 {
-		port, _ := strconv.Atoi(parts[0])
-		return []int{port}
 	}
-	return []int{}
+	return result
 }
