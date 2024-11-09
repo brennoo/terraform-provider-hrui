@@ -5,6 +5,7 @@ import (
 
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/ip_address_settings"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_settings"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/qos_port_queue"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/system_info"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/vlan_8021q"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/vlan_vid"
@@ -41,6 +42,7 @@ func (p *hruiProvider) DataSources(ctx context.Context) []func() datasource.Data
 		port_settings.NewDataSource,
 		vlan_8021q.NewDataSource,
 		vlan_vid.NewDataSource,
+		qos_port_queue.NewDataSource,
 	}
 }
 
@@ -52,5 +54,6 @@ func (p *hruiProvider) Resources(ctx context.Context) []func() resource.Resource
 		port_settings.NewResource,
 		vlan_8021q.NewResource,
 		vlan_vid.NewResource,
+		qos_port_queue.NewResource,
 	}
 }
