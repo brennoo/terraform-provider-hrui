@@ -10,9 +10,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 )
 
-// Configure prepares the provider for use.
+// Configure sets up the client and prepares the provider with credentials, URLs, and optional configuration overrides.
 func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-	// Retrieve provider data from configuration
+	// Retrieve provider configuration from the request into the hruiProviderModel struct.
 	var config hruiProviderModel
 	diags := req.Config.Get(ctx, &config)
 	resp.Diagnostics.Append(diags...)
@@ -20,43 +20,46 @@ func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		return
 	}
 
-	// Get values from environment variables
+	// Load environment variables for overrides if present.
 	url, urlOk := os.LookupEnv("HRUI_URL")
 	username, usernameOk := os.LookupEnv("HRUI_USERNAME")
 	password, passwordOk := os.LookupEnv("HRUI_PASSWORD")
 	autosaveEnv, autosaveEnvOk := os.LookupEnv("HRUI_AUTOSAVE")
 
-	// Check if URL is set via config or environment variable
+	// Determine the correct URL, either from the config or environment variable.
 	if !config.URL.IsNull() {
 		url = config.URL.ValueString()
 	} else if !urlOk {
 		resp.Diagnostics.AddError(
 			"Missing URL Configuration",
-			"The provider cannot connect to the HRUI API without a valid 'url' being provided.",
+			"'url' must be provided either in the configuration or via the 'HRUI_URL' environment variable.",
 		)
+		return
 	}
 
-	// Check if Username is set via config or environment variable
+	// Determine the correct username, either from the config or environment variable.
 	if !config.Username.IsNull() {
 		username = config.Username.ValueString()
 	} else if !usernameOk {
 		resp.Diagnostics.AddError(
 			"Missing Username Configuration",
-			"The provider cannot connect to the HRUI API without a valid 'username' being provided.",
+			"'username' must be provided either in the configuration or via the 'HRUI_USERNAME' environment variable.",
 		)
+		return
 	}
 
-	// Check if Password is set via config or environment variable
+	// Determine the correct password, either from the config or environment variable.
 	if !config.Password.IsNull() {
 		password = config.Password.ValueString()
 	} else if !passwordOk {
 		resp.Diagnostics.AddError(
 			"Missing Password Configuration",
-			"The provider cannot connect to the HRUI API without a valid 'password' being provided.",
+			"'password' must be provided either in the configuration or via the 'HRUI_PASSWORD' environment variable.",
 		)
+		return
 	}
 
-	// Check if Autosave is set via config or environment variable
+	// Handle Autosave: default to true, support environment variable override.
 	autosave := true
 	if !config.Autosave.IsNull() {
 		autosave = config.Autosave.ValueBool()
@@ -66,40 +69,34 @@ func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		if err != nil {
 			resp.Diagnostics.AddError(
 				"Invalid HRUI_AUTOSAVE Environment Variable",
-				fmt.Sprintf("The HRUI_AUTOSAVE environment variable must be a boolean value, got: %s", autosaveEnv),
+				fmt.Sprintf("HRUI_AUTOSAVE must be set to a valid boolean, got: %s", autosaveEnv),
 			)
 			return
 		}
 	}
 
-	// Exit if we encountered any configuration errors
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	// Create a new client using the SDK
-	// Replace `sdk.NewClient` with the correct method from your SDK package
+	// Create a new HRUI client using the resolved configuration and credentials.
 	hruiClient, err := sdk.NewClient(url, username, password, autosave)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Creation Error",
-			fmt.Sprintf("Failed to create SDK client: %s", err.Error()),
+			fmt.Sprintf("Failed to create the HRUI client: %s", err.Error()),
 		)
 		return
 	}
 
-	// Make a sample request to validate the API connection
+	// Test connectivity with a basic request to validate the client setup.
+	// Adjust `MakeRequest` to the appropriate method for validation if needed.
 	_, err = hruiClient.MakeRequest(hruiClient.URL)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Connection Error",
-			"The provider cannot connect to the HRUI API: "+err.Error(),
+			"Unable to connect to the HRUI API: "+err.Error(),
 		)
 		return
 	}
 
-	// Assign the newly created client instance to DataSourceData and ResourceData
-	// Make sure you're passing the pointer `hruiClient` as needed by the SDK
+	// Provide the HRUI client to the data sources and resources.
 	resp.DataSourceData = hruiClient
 	resp.ResourceData = hruiClient
 }

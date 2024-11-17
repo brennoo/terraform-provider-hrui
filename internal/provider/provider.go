@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/ip_address_settings"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/loop_protocol"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_settings"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/qos_port_queue"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/qos_queue_weight"
@@ -58,5 +59,6 @@ func (p *hruiProvider) Resources(ctx context.Context) []func() resource.Resource
 		vlan_vid.NewResource,
 		qos_port_queue.NewResource,
 		qos_queue_weight.NewResource,
+		loop_protocol.NewResource,
 	}
 }
