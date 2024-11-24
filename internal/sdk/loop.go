@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -19,23 +20,23 @@ var LoopFunctionType = map[string]int{
 	"Spanning Tree":   3,
 }
 
-// LoopProtocol holds loop protocol settings.
+// LoopProtocol represents loop protocol settings.
 type LoopProtocol struct {
 	LoopFunction string       // "Off", "Loop Detection", "Loop Prevention", "Spanning Tree"
-	IntervalTime int          // Interval time (only relevant for Loop Detection/Prevention)
-	RecoverTime  int          // Recover time (only relevant for Loop Detection/Prevention)
+	IntervalTime int          // Interval time (relevant for Loop Prevention)
+	RecoverTime  int          // Recovery time (relevant for Loop Prevention)
 	PortStatuses []PortStatus // Per-port Loop Prevention statuses
 }
 
 // PortStatus represents the status of a port under Loop Protocol control.
 type PortStatus struct {
-	Port       int    // Port number (e.g., 1, 2, 3...)
+	Port       int    // Port number
 	Enable     bool   // Whether Loop Prevention is enabled on this port
 	LoopState  string // Loop state ("Enable", "Disable")
-	LoopStatus string // Loop status ("Forwarding", "Blocked", etc.)
+	LoopStatus string // Loop operation status ("Forwarding", "Blocked", etc.)
 }
 
-// STPGlobalSettings holds the parsed Spanning Tree Protocol (STP) global settings.
+// STPGlobalSettings holds the STP global settings.
 type STPGlobalSettings struct {
 	STPStatus        string // Overall STP status ("Enable", "Disable")
 	ForceVersion     string // STP version ("STP", "RSTP")
@@ -65,57 +66,6 @@ type STPPort struct {
 	EdgeActual string // Actual edge port operational status (e.g., "True", "False")
 }
 
-// UpdateLoopProtocol updates the loop function and associated port settings.
-func (client *HRUIClient) UpdateLoopProtocol(loopFunction string, intervalTime, recoverTime int, portStatuses []PortStatus) error {
-	funcType, valid := LoopFunctionType[loopFunction]
-	if !valid {
-		return fmt.Errorf("invalid loop_function: %s", loopFunction)
-	}
-
-	// Prepare form data to update the main loop settings.
-	data := url.Values{}
-	data.Set("cmd", "loop")
-	data.Set("func_type", strconv.Itoa(funcType))
-
-	// Only apply interval/recovery times if using Loop Prevention.
-	if funcType == 2 { // Loop Prevention
-		data.Set("interval_time", strconv.Itoa(intervalTime))
-		data.Set("recover_time", strconv.Itoa(recoverTime))
-	}
-
-	// Send the main loop protocol update.
-	loopURL := client.URL + "/loop.cgi"
-	resp, err := client.HttpClient.PostForm(loopURL, data)
-	if err != nil {
-		return fmt.Errorf("failed to update loop protocol: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
-
-	// Update port-specific loop settings.
-	for _, port := range portStatuses {
-		portData := url.Values{}
-		portData.Set("cmd", "rlp")
-		portData.Set("portid", strconv.Itoa(port.Port))
-		portData.Set("portEnable", strconv.Itoa(boolToInt(port.Enable)))
-
-		resp, err := client.HttpClient.PostForm(client.URL+"/loop_port.cgi", portData)
-		if err != nil {
-			return fmt.Errorf("failed to update port loop prevention: %w", err)
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			return fmt.Errorf("failed to update port loop prevention: unexpected status %d", resp.StatusCode)
-		}
-	}
-
-	return nil
-}
-
 // GetLoopProtocol fetches the loop protocol settings.
 func (client *HRUIClient) GetLoopProtocol() (*LoopProtocol, error) {
 	loopURL := client.URL + "/loop.cgi"
@@ -136,60 +86,97 @@ func (client *HRUIClient) GetLoopProtocol() (*LoopProtocol, error) {
 
 	protocol := &LoopProtocol{}
 
-	// Extract loop function setting.
+	// Extract loop function type
 	doc.Find(`select[name="func_type"] option[selected]`).Each(func(i int, s *goquery.Selection) {
 		protocol.LoopFunction = strings.TrimSpace(s.Text())
 	})
 
-	// Parse interval and recovery times if Loop Prevention is enabled.
+	// Parse interval and recovery time if "Loop Prevention" is enabled
 	if protocol.LoopFunction == "Loop Prevention" {
-		doc.Find(`input[name="interval_time"]`).Each(func(i int, s *goquery.Selection) {
-			protocol.IntervalTime = atoiSafe(s.AttrOr("value", "0"))
-		})
-
-		doc.Find(`input[name="recover_time"]`).Each(func(i int, s *goquery.Selection) {
-			protocol.RecoverTime = atoiSafe(s.AttrOr("value", "0"))
-		})
-
-		// Parse port statuses.
-		protocol.PortStatuses = parsePortStatuses(doc)
+		protocol.IntervalTime, _ = extractIntAttribute(doc, `input[name="interval_time"]`, "value")
+		protocol.RecoverTime, _ = extractIntAttribute(doc, `input[name="recover_time"]`, "value")
 	}
+
+	// Parse port statuses
+	protocol.PortStatuses = parsePortStatuses(doc)
 
 	return protocol, nil
 }
 
-// parsePortStatuses parses the port table and returns a list of port statuses.
-func parsePortStatuses(doc *goquery.Document) []PortStatus {
-	var portStatuses []PortStatus
+// UpdateLoopProtocol updates the loop function and associated settings.
+func (client *HRUIClient) UpdateLoopProtocol(loopFunction string, intervalTime, recoverTime int, portStatuses []PortStatus) error {
+	funcType, valid := LoopFunctionType[loopFunction]
+	if !valid {
+		return fmt.Errorf("invalid loop function type: %s", loopFunction)
+	}
 
-	// Assuming the first table contains the port data.
-	doc.Find("table").First().Find("tr").Each(func(i int, tr *goquery.Selection) {
-		if i == 0 { // Skip header
-			return
-		}
+	// Prepare form data for POST request
+	data := url.Values{
+		"cmd":           {"loop"},
+		"func_type":     {strconv.Itoa(funcType)},
+		"interval_time": {strconv.Itoa(intervalTime)},
+		"recover_time":  {strconv.Itoa(recoverTime)},
+	}
 
-		tds := tr.Find("td")
-		if tds.Length() < 3 {
-			return
-		}
+	// Send update to backend
+	resp, err := client.HttpClient.PostForm(client.URL+"/loop.cgi", data)
+	if err != nil {
+		return fmt.Errorf("failed to update loop protocol: %w", err)
+	}
+	defer resp.Body.Close()
 
-		port := atoiSafe(strings.TrimSpace(tds.Eq(0).Text()))
-		loopState := strings.TrimSpace(tds.Eq(1).Text())
-		loopStatus := strings.TrimSpace(tds.Eq(2).Text())
-		enable := loopState == "Enable"
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
 
-		portStatuses = append(portStatuses, PortStatus{
-			Port:       port,
-			Enable:     enable,
-			LoopState:  loopState,
-			LoopStatus: loopStatus,
-		})
-	})
-
-	return portStatuses
+	return nil
 }
 
-// GetSTPPortSettings fetches and parses STP port settings.
+// GetSTPSettings fetches and parses the STP Global Settings page.
+func (client *HRUIClient) GetSTPSettings() (*STPGlobalSettings, error) {
+	stpURL := client.URL + "/loop.cgi?page=stp_global"
+	resp, err := client.HttpClient.Get(stpURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch STP Global Settings page: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected HTTP status code: %d", resp.StatusCode)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse STP Global Settings HTML: %w", err)
+	}
+
+	return parseSTPGlobalSettings(doc)
+}
+
+// UpdateSTPSettings updates the STP global settings.
+func (client *HRUIClient) UpdateSTPSettings(stp *STPGlobalSettings) error {
+	data := url.Values{
+		"cmd":      {"stp"},
+		"version":  {stp.ForceVersion},
+		"priority": {strconv.Itoa(stp.Priority)},
+		"maxage":   {strconv.Itoa(stp.MaxAge)},
+		"hello":    {strconv.Itoa(stp.HelloTime)},
+		"delay":    {strconv.Itoa(stp.ForwardDelay)},
+	}
+
+	resp, err := client.HttpClient.PostForm(client.URL+"/loop.cgi?page=stp_global", data)
+	if err != nil {
+		return fmt.Errorf("failed to update STP global settings: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	return nil
+}
+
 func (client *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 	stpURL := client.URL + "/loop.cgi?page=stp_port"
 	resp, err := client.HttpClient.Get(stpURL)
@@ -207,13 +194,7 @@ func (client *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 		return nil, fmt.Errorf("failed to parse HTML: %w", err)
 	}
 
-	return parseSTPPorts(doc), nil
-}
-
-// parseSTPPorts parses STP port settings from the document.
-func parseSTPPorts(doc *goquery.Document) []STPPort {
 	var stpPorts []STPPort
-
 	doc.Find("table").First().Find("tr").Each(func(i int, tr *goquery.Selection) {
 		if i <= 1 { // Skip header rows
 			return
@@ -224,11 +205,11 @@ func parseSTPPorts(doc *goquery.Document) []STPPort {
 			return
 		}
 
-		port := atoiSafe(strings.Split(strings.TrimSpace(tds.Eq(0).Text()), " ")[1])
+		port := parseInt(strings.Split(strings.TrimSpace(tds.Eq(0).Text()), " ")[1])
 		state := strings.TrimSpace(tds.Eq(1).Text())
 		role := strings.TrimSpace(tds.Eq(2).Text())
-		pathCost := atoiSafe(strings.TrimSpace(tds.Eq(4).Text()))
-		priority := atoiSafe(strings.TrimSpace(tds.Eq(5).Text()))
+		pathCost := parseInt(strings.TrimSpace(tds.Eq(4).Text()))
+		priority := parseInt(strings.TrimSpace(tds.Eq(5).Text()))
 		p2pConfig := strings.TrimSpace(tds.Eq(6).Text())
 		p2pActual := strings.TrimSpace(tds.Eq(7).Text())
 		edgeConfig := strings.TrimSpace(tds.Eq(8).Text())
@@ -247,7 +228,7 @@ func parseSTPPorts(doc *goquery.Document) []STPPort {
 		})
 	})
 
-	return stpPorts
+	return stpPorts, nil
 }
 
 // UpdateSTPPortSettings updates the STP settings for a specific port.
@@ -274,139 +255,145 @@ func (client *HRUIClient) UpdateSTPPortSettings(portID, pathCost, priority int, 
 	return nil
 }
 
-// GetSTPSettings fetches and parses the STP Global Settings page.
-func (client *HRUIClient) GetSTPSettings() (*STPGlobalSettings, error) {
-	stpURL := client.URL + "/loop.cgi?page=stp_global"
-	resp, err := client.HttpClient.Get(stpURL)
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch STP Global Settings page: %w", err)
-	}
-	defer resp.Body.Close()
+// parsePortStatuses parses the port table and returns a list of port statuses.
+func parsePortStatuses(doc *goquery.Document) []PortStatus {
+	var portStatuses []PortStatus
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
+	doc.Find("table").First().Find("tr").Each(func(i int, tr *goquery.Selection) {
+		if i == 0 { // Skip the header
+			return
+		}
 
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse STP Global Settings HTML: %w", err)
-	}
+		tds := tr.Find("td")
+		if tds.Length() < 3 {
+			return
+		}
 
-	return parseSTPGlobalSettings(doc), nil
+		port := parseInt(strings.TrimSpace(tds.Eq(0).Text()))
+		loopState := strings.TrimSpace(tds.Eq(1).Text())
+		loopStatus := strings.TrimSpace(tds.Eq(2).Text())
+		enable := loopState == "Enable"
+
+		portStatuses = append(portStatuses, PortStatus{
+			Port:       port,
+			Enable:     enable,
+			LoopState:  loopState,
+			LoopStatus: loopStatus,
+		})
+	})
+
+	return portStatuses
 }
 
-// parseSTPGlobalSettings converts the document into an STPGlobalSettings structure.
-func parseSTPGlobalSettings(doc *goquery.Document) *STPGlobalSettings {
-	stpSettings := &STPGlobalSettings{}
-
-	doc.Find("th:contains('Spanning Tree Status')").Next().Each(func(i int, s *goquery.Selection) {
-		stpSettings.STPStatus = strings.TrimSpace(s.Text())
-	})
-
-	doc.Find("select[name='version'] option[selected]").Each(func(i int, s *goquery.Selection) {
-		stpSettings.ForceVersion = strings.TrimSpace(s.Text())
-	})
-
-	doc.Find("select[name='priority'] option[selected]").Each(func(i int, s *goquery.Selection) {
-		stpSettings.Priority = atoiSafe(strings.TrimSpace(s.Text()))
-	})
-
-	doc.Find("input[name='maxage']").Each(func(i int, s *goquery.Selection) {
-		stpSettings.MaxAge = atoiSafe(s.AttrOr("value", "0"))
-	})
-
-	doc.Find("input[name='hello']").Each(func(i int, s *goquery.Selection) {
-		stpSettings.HelloTime = atoiSafe(s.AttrOr("value", "0"))
-	})
-
-	doc.Find("input[name='delay']").Each(func(i int, s *goquery.Selection) {
-		stpSettings.ForwardDelay = atoiSafe(s.AttrOr("value", "0"))
-	})
-
-	doc.Find("th:contains('Root Priority')").Next().Each(func(i int, s *goquery.Selection) {
-		stpSettings.RootPriority = atoiSafe(strings.TrimSpace(s.Text()))
-	})
-
-	doc.Find("th:contains('Root MAC Address')").Next().Each(func(i int, s *goquery.Selection) {
-		stpSettings.RootMAC = strings.TrimSpace(s.Text())
-	})
-
-	doc.Find("th:contains('Root Path Cost')").Next().Each(func(i int, s *goquery.Selection) {
-		stpSettings.RootPathCost = atoiSafe(strings.TrimSpace(s.Text()))
-	})
-
-	doc.Find("th:contains('Root Port')").Next().Each(func(i int, s *goquery.Selection) {
-		stpSettings.RootPort = strings.TrimSpace(s.Text())
-	})
-
-	doc.Find("th:contains('Root Maximum Age')").Next().Each(func(i int, s *goquery.Selection) {
-		stpSettings.RootMaxAge = atoiSafe(strings.Split(strings.TrimSpace(s.Text()), " ")[0])
-	})
-
-	doc.Find("th:contains('Root Hello Time')").Next().Each(func(i int, s *goquery.Selection) {
-		stpSettings.RootHelloTime = atoiSafe(strings.Split(strings.TrimSpace(s.Text()), " ")[0])
-	})
-
-	doc.Find("th:contains('Root Forward Delay')").Next().Each(func(i int, s *goquery.Selection) {
-		stpSettings.RootForwardDelay = atoiSafe(strings.Split(strings.TrimSpace(s.Text()), " ")[0])
-	})
-
-	return stpSettings
+// Extracts text from the given CSS selector, returning an empty string on failure.
+func extractText(doc *goquery.Document, selector string) (string, error) {
+	selection := strings.TrimSpace(doc.Find(selector).Text())
+	if selection == "" {
+		return "", fmt.Errorf("missing value for selector: %s", selector)
+	}
+	return selection, nil
 }
 
-// UpdateSTPSettings sends a POST request to update the STP Global Settings.
-func (client *HRUIClient) UpdateSTPSettings(stp *STPGlobalSettings) error {
-	stpURL := client.URL + "/loop.cgi?page=stp_global"
+// parseSTPGlobalSettings extracts STP configuration data from the HTML using goquery.
+func parseSTPGlobalSettings(doc *goquery.Document) (*STPGlobalSettings, error) {
+	settings := &STPGlobalSettings{}
+	var err error
 
-	data := url.Values{}
-	data.Set("version", stp.GetVersionValue())
-	data.Set("priority", strconv.Itoa(stp.Priority))
-	data.Set("maxage", strconv.Itoa(stp.MaxAge))
-	data.Set("hello", strconv.Itoa(stp.HelloTime))
-	data.Set("delay", strconv.Itoa(stp.ForwardDelay))
-	data.Set("cmd", "stp")
-
-	req, err := http.NewRequest("POST", stpURL, strings.NewReader(data.Encode()))
-	if err != nil {
-		return fmt.Errorf("failed to create POST request: %w", err)
-	}
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-	resp, err := client.HttpClient.Do(req)
-	if err != nil {
-		return fmt.Errorf("failed to send POST request: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("error updating STP Global Settings, status code: %d", resp.StatusCode)
+	// Parse STP status
+	if settings.STPStatus, err = extractText(doc, "th:contains('Spanning Tree Status') + td"); err != nil {
+		return nil, err
 	}
 
-	return nil
+	// Parse ForceVersion
+	if settings.ForceVersion, err = extractText(doc, "select[name='version'] option[selected]"); err != nil {
+		return nil, err
+	}
+
+	// Parse Priority (uses attribute value)
+	if settings.Priority, err = extractIntAttribute(doc, "select[name='priority'] option[selected]", "value"); err != nil {
+		return nil, err
+	}
+
+	// Parse MaxAge, HelloTime, ForwardDelay (uses attribute value)
+	if settings.MaxAge, err = extractIntAttribute(doc, "input[name='maxage']", "value"); err != nil {
+		return nil, err
+	}
+	if settings.HelloTime, err = extractIntAttribute(doc, "input[name='hello']", "value"); err != nil {
+		return nil, err
+	}
+	if settings.ForwardDelay, err = extractIntAttribute(doc, "input[name='delay']", "value"); err != nil {
+		return nil, err
+	}
+
+	// Parse Root Priority
+	if settings.RootPriority, err = extractInt(doc, "th:contains('Root Priority') + td"); err != nil {
+		return nil, err
+	}
+
+	// Parse Root MAC Address
+	if settings.RootMAC, err = extractText(doc, "th:contains('Root MAC Address') + td"); err != nil {
+		return nil, err
+	}
+
+	// Parse Root Path Cost
+	if settings.RootPathCost, err = extractInt(doc, "th:contains('Root Path Cost') + td"); err != nil {
+		return nil, err
+	}
+
+	// Parse Root Port
+	if settings.RootPort, err = extractText(doc, "th:contains('Root Port') + td"); err != nil {
+		return nil, err
+	}
+
+	// Parse RootMaxAge, removing units like "Sec"
+	if maxAgeRaw, err := extractText(doc, "th:contains('Root Maximum Age') + td"); err != nil {
+		return nil, err
+	} else {
+		settings.RootMaxAge = parseInt(strings.Fields(maxAgeRaw)[0]) // Split on space and take the first part
+	}
+
+	// Parse RootHelloTime, removing units like "Sec"
+	if helloTimeRaw, err := extractText(doc, "th:contains('Root Hello Time') + td"); err != nil {
+		return nil, err
+	} else {
+		settings.RootHelloTime = parseInt(strings.Fields(helloTimeRaw)[0])
+	}
+
+	// Parse RootForwardDelay, removing units like "Sec"
+	if forwardDelayRaw, err := extractText(doc, "th:contains('Root Forward Delay') + td"); err != nil {
+		return nil, err
+	} else {
+		settings.RootForwardDelay = parseInt(strings.Fields(forwardDelayRaw)[0])
+	}
+
+	log.Printf("[DEBUG] Parsed STPGlobalSettings: %+v", settings)
+	return settings, nil
 }
 
-// GetVersionValue returns a numeric value for the version (STP/RSTP).
-func (stp *STPGlobalSettings) GetVersionValue() string {
-	switch stp.ForceVersion {
-	case "STP":
-		return "0"
-	case "RSTP":
-		return "1"
-	default:
-		return "0"
-	}
-}
-
-// Helper to safely convert a string to an int.
-func atoiSafe(s string) int {
-	i, _ := strconv.Atoi(s)
-	return i
-}
-
-// Helper to convert a boolean to an integer (like a ternary operator).
-func boolToInt(condition bool) int {
-	if condition {
-		return 1
+func parseInt(value string) int {
+	if i, err := strconv.Atoi(strings.TrimSpace(value)); err == nil {
+		return i
 	}
 	return 0
+}
+
+// parseBool interprets "enabled" or "true" as true, and anything else as false.
+func parseBool(value string) bool {
+	trimmedValue := strings.TrimSpace(strings.ToLower(value))
+	return trimmedValue == "enabled" || trimmedValue == "true"
+}
+
+// extractInt extracts an integer from the text content of a given selector.
+func extractInt(doc *goquery.Document, selector string) (int, error) {
+	text, err := extractText(doc, selector)
+	if err != nil {
+		return 0, err
+	}
+	return strconv.Atoi(strings.TrimSpace(text))
+}
+
+// extractIntAttribute extracts an integer from the value of an attribute (e.g., `value`).
+func extractIntAttribute(doc *goquery.Document, selector, attr string) (int, error) {
+	value := doc.Find(selector).AttrOr(attr, "")
+	return strconv.Atoi(strings.TrimSpace(value))
 }
