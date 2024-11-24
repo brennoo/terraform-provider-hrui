@@ -8,6 +8,7 @@ import (
 	"net/http/cookiejar"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -35,7 +36,8 @@ func NewClient(url, username, password string, autosave bool) (*HRUIClient, erro
 		Password: password,
 		Autosave: autosave,
 		HttpClient: &http.Client{
-			Jar: jar,
+			Jar:     jar,
+			Timeout: 30 * time.Second,
 		},
 	}
 
