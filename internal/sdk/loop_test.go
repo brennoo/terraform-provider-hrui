@@ -86,39 +86,82 @@ func TestUpdateLoopProtocol(t *testing.T) {
 func TestGetSTPPortSettings(t *testing.T) {
 	htmlResponse := `
 	<html>
+		<head>
+			<title>Spanning Tree Port Setting</title>
+		</head>
 		<body>
-			<!-- Mocked STP Port Settings HTML -->
-			<table border="1">
-				<tr>
-					<th rowspan="2">Port</th>
-					<th rowspan="2">State</th>
-					<th rowspan="2">Role</th>
-					<th colspan="2">Path Cost</th>
-					<th rowspan="2">Priority</th>
-					<th colspan="2">P2P</th>
-					<th colspan="2">Edge</th>
-				</tr>
-				<tr>
-					<th>Config</th>
-					<th>Actual</th>
-					<th>Config</th>
-					<th>Actual</th>
-					<th>Config</th>
-					<th>Actual</th>
-				</tr>
-				<tr>
-					<td>Port 1</td>
-					<td align="center">Forwarding</td>
-					<td align="center">Disabled</td>
-					<td align="center">Auto</td>
-					<td align="center">2000000</td>
-					<td align="center">128</td>
-					<td align="center">Auto</td>
-					<td align="center">Auto</td>
-					<td align="center">False</td>
-					<td align="center">False</td>
-				</tr>
-			</table>
+			<center>
+				<fieldset>
+					<legend>Spanning Tree Port Setting</legend>
+					<table border="1">
+						<tr>
+							<th rowspan="2" width="115">Port</th>
+							<th rowspan="2" width="165">State</th>
+							<th rowspan="2" width="165">Role</th>
+							<th colspan="2" width="165">Path Cost</th>
+							<th rowspan="2" width="90">Priority</th>
+							<th colspan="2" width="90">P2P</th>
+							<th colspan="2" width="90">Edge</th>
+						</tr>
+						<tr>
+							<th>Config</th>
+							<th>Actual</th>
+							<th>Config</th>
+							<th>Actual</th>
+							<th>Config</th>
+							<th>Actual</th>
+						</tr>
+						<tr>
+							<td>Port 1</td>
+							<td align="center">Forwarding</td>
+							<td align="center">Designated</td>
+							<td align="center">234</td>
+							<td align="center">234</td>
+							<td align="center">128</td>
+							<td align="center">Auto</td>
+							<td align="center">TRUE</td>
+							<td align="center">False</td>
+							<td align="center">True</td>
+						</tr>
+						<tr>
+							<td>Port 2</td>
+							<td align="center">Disabled</td>
+							<td align="center">-</td>
+							<td align="center">201</td>
+							<td align="center">-</td>
+							<td align="center">128</td>
+							<td align="center">Auto</td>
+							<td align="center">-</td>
+							<td align="center">False</td>
+							<td align="center">-</td>
+						</tr>
+						<tr>
+							<td>Port 3</td>
+							<td align="center">Disabled</td>
+							<td align="center">-</td>
+							<td align="center">20000</td>
+							<td align="center">-</td>
+							<td align="center">128</td>
+							<td align="center">Auto</td>
+							<td align="center">-</td>
+							<td align="center">False</td>
+							<td align="center">-</td>
+						</tr>
+						<tr>
+							<td>Port 4</td>
+							<td align="center">Disabled</td>
+							<td align="center">-</td>
+							<td align="center">Auto</td>
+							<td align="center">-</td>
+							<td align="center">128</td>
+							<td align="center">True</td>
+							<td align="center">-</td>
+							<td align="center">False</td>
+							<td align="center">-</td>
+						</tr>
+					</table>
+				</fieldset>
+			</center>
 		</body>
 	</html>`
 
@@ -132,22 +175,59 @@ func TestGetSTPPortSettings(t *testing.T) {
 		HttpClient: &http.Client{},
 	}
 
-	// Call GetSTPPortSettings and validate results
+	// Call GetSTPPortSettings
 	stpPorts, err := client.GetSTPPortSettings()
 	assert.NoError(t, err)
 
 	// Expected result based on the mock HTML structure
 	expected := []sdk.STPPort{
 		{
-			Port:       1,
-			State:      "Forwarding",
-			Role:       "Disabled",
-			PathCost:   2000000,
-			Priority:   128,
-			P2P:        "Auto",
-			P2PActual:  "Auto",
-			Edge:       "False",
-			EdgeActual: "False",
+			Port:           0,
+			State:          "Forwarding",
+			Role:           "Designated",
+			PathCostConfig: 234,
+			PathCostActual: 234,
+			Priority:       128,
+			P2PConfig:      "Auto",
+			P2PActual:      "True",
+			EdgeConfig:     "False",
+			EdgeActual:     "True",
+		},
+		{
+			Port:           1,
+			State:          "Disabled",
+			Role:           "-",
+			PathCostConfig: 201,
+			PathCostActual: 0,
+			Priority:       128,
+			P2PConfig:      "Auto",
+			P2PActual:      "-",
+			EdgeConfig:     "False",
+			EdgeActual:     "-",
+		},
+		{
+			Port:           2,
+			State:          "Disabled",
+			Role:           "-",
+			PathCostConfig: 20000,
+			PathCostActual: 0,
+			Priority:       128,
+			P2PConfig:      "Auto",
+			P2PActual:      "-",
+			EdgeConfig:     "False",
+			EdgeActual:     "-",
+		},
+		{
+			Port:           3,
+			State:          "Disabled",
+			Role:           "-",
+			PathCostConfig: 0,
+			PathCostActual: 0,
+			Priority:       128,
+			P2PConfig:      "True",
+			P2PActual:      "-",
+			EdgeConfig:     "False",
+			EdgeActual:     "-",
 		},
 	}
 

@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -55,15 +56,16 @@ type STPGlobalSettings struct {
 
 // STPPort represents a switch port's STP settings.
 type STPPort struct {
-	Port       int    // Port number (e.g., "Port 1")
-	State      string // Current state (e.g., "Forwarding", "Blocked", "Listening")
-	Role       string // Port role (e.g., "Designated", "Root", "Disabled")
-	PathCost   int    // Path cost value for the port
-	Priority   int    // Port priority
-	P2P        string // Point-to-point link status configuration (e.g., "Auto", "True", "False")
-	P2PActual  string // Actual P2P operational status (e.g., "Auto", "True", "False")
-	Edge       string // Edge port configuration (e.g., "True", "False")
-	EdgeActual string // Actual edge port operational status (e.g., "True", "False")
+	Port           int    // Port ID
+	State          string // Port operational state (e.g., Disabled, Forwarding)
+	Role           string // Port role in STP (e.g., Designated, Alternate)
+	PathCostConfig int    // Configured Path Cost
+	PathCostActual int    // Actual Path Cost
+	Priority       int    // Port Priority
+	P2PConfig      string // Configured P2P setting (True, False, Auto)
+	P2PActual      string // Actual P2P state
+	EdgeConfig     string // Configured Edge setting (True, False)
+	EdgeActual     string // Actual Edge state
 }
 
 // GetLoopProtocol fetches the loop protocol settings.
@@ -157,7 +159,7 @@ func (client *HRUIClient) GetSTPSettings() (*STPGlobalSettings, error) {
 func (client *HRUIClient) UpdateSTPSettings(stp *STPGlobalSettings) error {
 	data := url.Values{
 		"cmd":      {"stp"},
-		"version":  {stp.ForceVersion},
+		"version":  {stp.GetVersionValue()},
 		"priority": {strconv.Itoa(stp.Priority)},
 		"maxage":   {strconv.Itoa(stp.MaxAge)},
 		"hello":    {strconv.Itoa(stp.HelloTime)},
@@ -172,6 +174,41 @@ func (client *HRUIClient) UpdateSTPSettings(stp *STPGlobalSettings) error {
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
+	return nil
+}
+
+// UpdateSTPSettingsAsync performs a fire-and-forget POST request to update the STP Global Settings.
+// needed due to a bug in the cgi for updating stp global settings that never returns.
+func (client *HRUIClient) UpdateSTPSettingsAsync(stp *STPGlobalSettings) error {
+	stpURL := client.URL + "/loop.cgi?page=stp_global"
+	data := url.Values{}
+	data.Set("version", stp.GetVersionValue())
+	data.Set("priority", strconv.Itoa(stp.Priority))
+	data.Set("maxage", strconv.Itoa(stp.MaxAge))
+	data.Set("hello", strconv.Itoa(stp.HelloTime))
+	data.Set("delay", strconv.Itoa(stp.ForwardDelay))
+	data.Set("cmd", "stp")
+
+	req, err := http.NewRequest("POST", stpURL, strings.NewReader(data.Encode()))
+	if err != nil {
+		return fmt.Errorf("failed to create POST request: %w", err)
+	}
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	// Perform the POST request with a short timeout
+	client.HttpClient.Timeout = 2 * time.Second
+	resp, err := client.HttpClient.Do(req)
+	if err != nil {
+		log.Printf("[WARN] POST request timed out or failed: %v", err)
+		return nil
+	}
+	defer resp.Body.Close()
+
+	// Log unexpected status codes but ignore them (fire-and-forget behavior)
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("[WARN] Received unexpected status code (%d) during UpdateSTPSettings", resp.StatusCode)
 	}
 
 	return nil
@@ -194,39 +231,46 @@ func (client *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 		return nil, fmt.Errorf("failed to parse HTML: %w", err)
 	}
 
+	// Target the last table (STP settings table)
+	table := doc.Find("table").Last()
+
+	// Parse rows within the table
+	rows := table.Find("tr")
 	var stpPorts []STPPort
-	doc.Find("table").First().Find("tr").Each(func(i int, tr *goquery.Selection) {
-		if i <= 1 { // Skip header rows
+	rows.Each(func(i int, row *goquery.Selection) {
+		// Skip the header rows (first two rows)
+		if i < 2 {
 			return
 		}
 
-		tds := tr.Find("td")
-		if tds.Length() < 10 {
+		// Extract all <td> columns
+		tds := row.Find("td")
+		if tds.Length() != 10 {
+			log.Printf("[DEBUG] Skipping row %d: column count = %d", i, tds.Length())
 			return
 		}
 
-		port := parseInt(strings.Split(strings.TrimSpace(tds.Eq(0).Text()), " ")[1])
-		state := strings.TrimSpace(tds.Eq(1).Text())
-		role := strings.TrimSpace(tds.Eq(2).Text())
-		pathCost := parseInt(strings.TrimSpace(tds.Eq(4).Text()))
-		priority := parseInt(strings.TrimSpace(tds.Eq(5).Text()))
-		p2pConfig := strings.TrimSpace(tds.Eq(6).Text())
-		p2pActual := strings.TrimSpace(tds.Eq(7).Text())
-		edgeConfig := strings.TrimSpace(tds.Eq(8).Text())
-		edgeActual := strings.TrimSpace(tds.Eq(9).Text())
-
-		stpPorts = append(stpPorts, STPPort{
-			Port:       port,
-			State:      state,
-			Role:       role,
-			PathCost:   pathCost,
-			Priority:   priority,
-			P2P:        p2pConfig,
-			P2PActual:  p2pActual,
-			Edge:       edgeConfig,
-			EdgeActual: edgeActual,
-		})
+		// Parse the STP Port entry
+		portText := tds.Eq(0).Text()
+		port := parsePortNumber(portText) // parse "Port X" -> X - 1
+		stpPort := STPPort{
+			Port:           port,
+			State:          strings.TrimSpace(tds.Eq(1).Text()),
+			Role:           strings.TrimSpace(tds.Eq(2).Text()),
+			PathCostConfig: parseSTPInt(tds.Eq(3).Text()),
+			PathCostActual: parseSTPInt(tds.Eq(4).Text()),
+			Priority:       parseSTPInt(tds.Eq(5).Text()),
+			P2PConfig:      normalizeBoolString(tds.Eq(6).Text()),
+			P2PActual:      normalizeBoolString(tds.Eq(7).Text()),
+			EdgeConfig:     normalizeBoolString(tds.Eq(8).Text()),
+			EdgeActual:     normalizeBoolString(tds.Eq(9).Text()),
+		}
+		stpPorts = append(stpPorts, stpPort)
 	})
+
+	if len(stpPorts) == 0 {
+		return nil, fmt.Errorf("no STP ports found in settings table")
+	}
 
 	return stpPorts, nil
 }
@@ -238,8 +282,9 @@ func (client *HRUIClient) UpdateSTPPortSettings(portID, pathCost, priority int, 
 	postData.Set("portid", strconv.Itoa(portID))
 	postData.Set("cost", strconv.Itoa(pathCost))
 	postData.Set("priority", strconv.Itoa(priority))
-	postData.Set("p2p", p2p)
-	postData.Set("edge", edge)
+	postData.Set("p2p", strings.ToLower(p2p))
+	postData.Set("edge", strings.ToLower(edge))
+	postData.Set("submit", "+++Apply+++")
 
 	stpURL := client.URL + "/loop.cgi?page=stp_port"
 	resp, err := client.HttpClient.PostForm(stpURL, postData)
@@ -253,6 +298,22 @@ func (client *HRUIClient) UpdateSTPPortSettings(portID, pathCost, priority int, 
 	}
 
 	return nil
+}
+
+// GetSTPPort fetches a single STP port by its ID from the backend.
+func (client *HRUIClient) GetSTPPort(portID int) (*STPPort, error) {
+	ports, err := client.GetSTPPortSettings()
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch STP port settings: %w", err)
+	}
+
+	for _, port := range ports {
+		if port.Port == portID {
+			return &port, nil
+		}
+	}
+
+	return nil, fmt.Errorf("port with ID %d not found", portID)
 }
 
 // parsePortStatuses parses the port table and returns a list of port statuses.
@@ -396,4 +457,52 @@ func extractInt(doc *goquery.Document, selector string) (int, error) {
 func extractIntAttribute(doc *goquery.Document, selector, attr string) (int, error) {
 	value := doc.Find(selector).AttrOr(attr, "")
 	return strconv.Atoi(strings.TrimSpace(value))
+}
+
+func parsePortNumber(portText string) int {
+	portText = strings.TrimPrefix(portText, "Port ")
+	port, err := strconv.Atoi(portText)
+	if err != nil {
+		log.Printf("[DEBUG] Failed to parse port number: %s", portText)
+		return -1
+	}
+	return port - 1
+}
+
+func parseSTPInt(value string) int {
+	value = strings.TrimSpace(value)
+	if value == "Auto" || value == "-" {
+		return 0
+	}
+	num, err := strconv.Atoi(value)
+	if err != nil {
+		log.Printf("[DEBUG] Failed to parse int: %s", value)
+		return 0
+	}
+	return num
+}
+
+func normalizeBoolString(value string) string {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "true":
+		return "True"
+	case "false":
+		return "False"
+	case "auto":
+		return "Auto"
+	default:
+		return value
+	}
+}
+
+// GetVersionValue returns a numeric value for the version (STP/RSTP).
+func (stp *STPGlobalSettings) GetVersionValue() string {
+	switch stp.ForceVersion {
+	case "STP":
+		return "0"
+	case "RSTP":
+		return "1"
+	default:
+		return "0"
+	}
 }
