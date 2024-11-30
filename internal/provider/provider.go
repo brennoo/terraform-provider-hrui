@@ -9,6 +9,7 @@ import (
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/qos_port_queue"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/qos_queue_weight"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/stp_global"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/stp_port"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/system_info"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/vlan_8021q"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/vlan_vid"
@@ -62,5 +63,6 @@ func (p *hruiProvider) Resources(ctx context.Context) []func() resource.Resource
 		qos_queue_weight.NewResource,
 		loop_protocol.NewResource,
 		stp_global.NewResource,
+		stp_port.NewResource,
 	}
 }
