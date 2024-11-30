@@ -5,6 +5,7 @@ import (
 
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/ip_address_settings"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/loop_protocol"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/mac_table"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_settings"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/qos_port_queue"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/qos_queue_weight"
@@ -48,6 +49,7 @@ func (p *hruiProvider) DataSources(ctx context.Context) []func() datasource.Data
 		vlan_vid.NewDataSource,
 		qos_port_queue.NewDataSource,
 		qos_queue_weight.NewDataSource,
+		mac_table.NewDataSource,
 	}
 }
 

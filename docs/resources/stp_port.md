@@ -28,6 +28,6 @@ Manages STP Port configuration
 
 - **Valid values:** 'Auto', 'True', 'False'.
 - When set to 'Auto', the system automatically determines the P2P configuration based on the port's operation.
-- **Note:** Due to a known limitation in firmware version 1.9.1, changes to this attribute do not take effect. This will be resolved in a future firmware update.
+- **Note:** Due to a known limitation in firmware version 1.9, changes to this attribute do not take effect.
 - `role` (String) Current role of the port in the STP topology (e.g., 'Designated', 'Root').
 - `state` (String) Reflects the current spanning-tree protocol (STP) state of the port (e.g., 'Forwarding', 'Blocked').
