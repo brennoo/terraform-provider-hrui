@@ -2,7 +2,6 @@ package sdk_test
 
 import (
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,7 +10,7 @@ import (
 )
 
 func TestGetMACAddressTable(t *testing.T) {
-	// Mock HTML response with anonymized MAC addresses
+	// Mock HTML response
 	htmlResponse := `
 	<html>
 	<body>
@@ -55,16 +54,13 @@ func TestGetMACAddressTable(t *testing.T) {
 	</body>
 	</html>`
 
-	// Set up mock server
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(htmlResponse))
-	}))
-	defer server.Close()
+	mock := mockServerMock(htmlResponse, http.StatusOK)
 
-	// Create client and call GetMACAddressTable
+	defer mock.Close()
+
+	// Create an HRUIClient pointing to the mock server
 	client := &sdk.HRUIClient{
-		URL:        server.URL,
+		URL:        mock.URL,
 		HttpClient: &http.Client{},
 	}
 
@@ -79,4 +75,92 @@ func TestGetMACAddressTable(t *testing.T) {
 		{ID: 4, MAC: "00:11:22:33:44:55", VLANID: 1, Type: "static", Port: 6},
 	}
 	assert.Equal(t, expected, macTable)
+}
+
+func TestGetStaticMACAddressTable(t *testing.T) {
+	// Mock server HTML response
+	htmlResponse := `
+	<html>
+		<head><title>Static MAC Addresses</title></head>
+		<body>
+			<form action="/mac.cgi?page=staticdel">
+				<table>
+					<tr>
+						<th>No.</th>
+						<th>MAC Address</th>
+						<th>VLAN ID</th>
+						<th>Port</th>
+						<th>Select</th>
+					</tr>
+					<tr>
+						<td>1</td>
+						<td>A8:80:55:59:E9:72</td>
+						<td>1</td>
+						<td>6</td>
+						<td><input type="checkbox" name="del" value="A8:80:55:59:E9:72_1"></td>
+					</tr>
+				</table>
+			</form>
+		</body>
+	</html>`
+
+	mock := mockServerMock(htmlResponse, http.StatusOK)
+	defer mock.Close()
+
+	// Create client pointing to the mock server
+	client := &sdk.HRUIClient{
+		URL:        mock.URL,
+		HttpClient: &http.Client{},
+	}
+
+	// Test the `GetStaticMACAddressTable` method
+	entries, err := client.GetStaticMACAddressTable()
+	assert.NoError(t, err)
+	assert.Len(t, entries, 1)
+
+	// Validate the parsed entry
+	expectedEntry := sdk.StaticMACEntry{
+		ID:         1,
+		MACAddress: "A8:80:55:59:E9:72",
+		VLANID:     1,
+		Port:       6,
+	}
+	assert.Equal(t, expectedEntry, entries[0])
+}
+
+func TestAddStaticMACAddress(t *testing.T) {
+	// Use the mock server to simulate POST response
+	mock := mockServerMock("OK", http.StatusOK)
+	defer mock.Close()
+
+	// Create client pointing to the mock server
+	client := &sdk.HRUIClient{
+		URL:        mock.URL,
+		HttpClient: &http.Client{},
+	}
+
+	// Test the `AddStaticMACAddress` method
+	err := client.AddStaticMACAddress("01:23:45:67:89:AB", 10, 1)
+	assert.NoError(t, err)
+}
+
+func TestDeleteStaticMACAddress(t *testing.T) {
+	// Use the mock server to simulate POST response
+	mock := mockServerMock("OK", http.StatusOK)
+	defer mock.Close()
+
+	// Create client pointing to the mock server
+	client := &sdk.HRUIClient{
+		URL:        mock.URL,
+		HttpClient: &http.Client{},
+	}
+
+	// Test `DeleteStaticMACAddress` with two entries
+	entries := []sdk.StaticMACEntry{
+		{MACAddress: "01:23:45:67:89:AB", VLANID: 10},
+		{MACAddress: "02:33:44:55:66:77", VLANID: 20},
+	}
+
+	err := client.DeleteStaticMACAddress(entries)
+	assert.NoError(t, err)
 }
