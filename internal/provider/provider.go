@@ -10,6 +10,7 @@ import (
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_settings"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/qos_port_queue"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/qos_queue_weight"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/storm_control"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/stp_global"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/stp_port"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/system_info"
@@ -69,5 +70,6 @@ func (p *hruiProvider) Resources(ctx context.Context) []func() resource.Resource
 		stp_global.NewResource,
 		stp_port.NewResource,
 		mac_static.NewResource,
+		storm_control.NewResource,
 	}
 }
