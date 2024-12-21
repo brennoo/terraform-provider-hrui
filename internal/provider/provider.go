@@ -8,6 +8,7 @@ import (
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/mac_static"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/mac_table"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_settings"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_statistics"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/qos_port_queue"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/qos_queue_weight"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/storm_control"
@@ -53,6 +54,7 @@ func (p *hruiProvider) DataSources(ctx context.Context) []func() datasource.Data
 		qos_queue_weight.NewDataSource,
 		mac_table.NewDataSource,
 		mac_static.NewDataSource,
+		port_statistics.NewDataSource,
 	}
 }
 
