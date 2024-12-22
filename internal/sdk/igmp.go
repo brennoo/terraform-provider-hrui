@@ -4,9 +4,13 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 )
+
+// Global lock to serialize IGMP port updates
+var igmpUpdateLock sync.Mutex
 
 // IGMPConfig represents the IGMP Snooping configuration.
 type IGMPConfig struct {
@@ -50,6 +54,10 @@ func (c *HRUIClient) DisableIGMPSnooping() error {
 
 // UpdatePortIGMPSnooping enables or disables IGMP snooping for a specific port.
 func (c *HRUIClient) UpdatePortIGMPSnooping(port int, enable bool) error {
+	// Lock the operation to prevent race conditions
+	igmpUpdateLock.Lock()
+	defer igmpUpdateLock.Unlock()
+
 	totalPorts, err := c.GetTotalPorts()
 	if err != nil {
 		return fmt.Errorf("failed to retrieve total number of ports: %w", err)
@@ -59,9 +67,22 @@ func (c *HRUIClient) UpdatePortIGMPSnooping(port int, enable bool) error {
 		return fmt.Errorf("port %d is out of range, valid ports are between 1 and %d", port, totalPorts)
 	}
 
+	// Fetch current configuration of all ports
+	config, err := c.GetIGMPConfig()
+	if err != nil {
+		return fmt.Errorf("failed to retrieve current IGMP configuration: %w", err)
+	}
+
+	// Update the specified port's state
+	portIndex := port - 1
+	config.Ports[portIndex] = enable
+
+	// Construct the complete payload for all ports
 	form := []string{"cmd=set"}
-	if enable {
-		form = append(form, fmt.Sprintf("lPort_%d=on", port-1))
+	for i, enabled := range config.Ports {
+		if enabled {
+			form = append(form, fmt.Sprintf("lPort_%d=on", i))
+		}
 	}
 
 	url := fmt.Sprintf("%s/igmp.cgi?page=igmp_static_router", c.URL)
