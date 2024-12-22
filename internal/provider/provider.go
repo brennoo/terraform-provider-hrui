@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/igmp_snooping"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/igmp_snooping_static"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/ip_address_settings"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/loop_protocol"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/mac_static"
@@ -75,5 +76,6 @@ func (p *hruiProvider) Resources(ctx context.Context) []func() resource.Resource
 		mac_static.NewResource,
 		storm_control.NewResource,
 		igmp_snooping.NewResource,
+		igmp_snooping_static.NewResource,
 	}
 }
