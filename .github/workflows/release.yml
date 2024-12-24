@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - '^v?(?:\d+\.)?(?:\d+\.)?(?:\d+)(?:-(?:[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
+      - 'v*'
 
 jobs:
   goreleaser:
