@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// Ensure the implementation satisfies expected interfaces
+// Ensure the implementation satisfies expected interfaces.
 var (
 	_ resource.Resource                = &qosQueueWeightResource{}
 	_ resource.ResourceWithConfigure   = &qosQueueWeightResource{}
@@ -32,7 +32,7 @@ func NewResource() resource.Resource {
 	return &qosQueueWeightResource{}
 }
 
-// Metadata sets the resource type name in Terraform
+// Metadata sets the resource type name in Terraform.
 func (r *qosQueueWeightResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_qos_queue_weight"
 }
@@ -60,7 +60,7 @@ func (r *qosQueueWeightResource) Schema(ctx context.Context, req resource.Schema
 	}
 }
 
-// Configure stores the provider's configured SDK client
+// Configure stores the provider's configured SDK client.
 func (r *qosQueueWeightResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
@@ -205,7 +205,7 @@ func (r *qosQueueWeightResource) Update(ctx context.Context, req resource.Update
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
-// Delete resets a queue to default weight
+// Delete resets a queue to default weight.
 func (r *qosQueueWeightResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state qosQueueWeightModel
 

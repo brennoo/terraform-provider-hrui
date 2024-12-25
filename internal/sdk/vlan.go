@@ -23,14 +23,18 @@ type PortVLANConfig struct {
 	AcceptFrameType string
 }
 
-// Create VLAN creates or updates a VLAN on the switch, computing NotMemberPorts if needed.
+// CreateVLAN creates or updates a VLAN on the switch, computing NotMemberPorts if needed.
 func (c *HRUIClient) CreateVLAN(vlan *Vlan, totalPorts int) error {
+	if c == nil {
+		return fmt.Errorf("HRUIClient is nil")
+	}
+
 	// Build the form data
 	form := url.Values{}
 	form.Set("vid", fmt.Sprintf("%d", vlan.VlanID))
 	form.Set("name", vlan.Name)
 
-	// Set untagged, tagged, and not member ports
+	// Set untagged, tagged
 	for port := 1; port <= totalPorts; port++ {
 		formValue := "2" // Default: Not Member
 		if contains(vlan.UntaggedPorts, port) {
@@ -42,8 +46,8 @@ func (c *HRUIClient) CreateVLAN(vlan *Vlan, totalPorts int) error {
 	}
 
 	vlanURL := fmt.Sprintf("%s/vlan.cgi?page=static", c.URL)
-	// Submit using PostForm method
-	_, err := c.PostForm(vlanURL, form)
+
+	_, err := c.ExecuteFormRequest(vlanURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to create/update VLAN: %w", err)
 	}
@@ -55,7 +59,7 @@ func (c *HRUIClient) CreateVLAN(vlan *Vlan, totalPorts int) error {
 	return nil
 }
 
-// Helper function to check if a slice contains an integer
+// Helper function to check if a slice contains an integer.
 func contains(slice []int, value int) bool {
 	for _, v := range slice {
 		if v == value {
@@ -84,16 +88,19 @@ func (c *HRUIClient) GetVLAN(vlanID int) (*Vlan, error) {
 
 // GetAllVLANs fetches the list of VLANs, setting member ports directly instead of notmemberports.
 func (c *HRUIClient) GetAllVLANs() ([]*Vlan, error) {
+	if c == nil {
+		return nil, fmt.Errorf("HRUIClient is nil")
+	}
+
 	// URL for VLAN page
 	vlanURL := fmt.Sprintf("%s/vlan.cgi?page=static", c.URL)
 
-	resp, err := c.MakeRequest(vlanURL)
+	respBody, err := c.ExecuteRequest("GET", vlanURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch VLAN configuration from HRUI: %w", err)
 	}
-	defer resp.Body.Close()
 
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse VLAN HTML output: %w", err)
 	}
@@ -135,13 +142,16 @@ func (c *HRUIClient) GetAllVLANs() ([]*Vlan, error) {
 
 // DeleteVLAN deletes a VLAN by its VLAN ID from the switch.
 func (c *HRUIClient) DeleteVLAN(vlanID int) error {
+	if c == nil {
+		return fmt.Errorf("HRUIClient is nil")
+	}
+
 	form := url.Values{}
 	form.Set(fmt.Sprintf("remove_%d", vlanID), "on")
 
-	// Create the delete URL
 	deleteURL := fmt.Sprintf("%s/vlan.cgi?page=getRmvVlanEntry", c.URL)
 
-	_, err := c.PostForm(deleteURL, form)
+	_, err := c.ExecuteFormRequest(deleteURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to delete VLAN: %w", err)
 	}
@@ -155,24 +165,28 @@ func (c *HRUIClient) DeleteVLAN(vlanID int) error {
 
 // GetAllPortVLANConfigs fetches the VLAN configuration for all ports on the switch.
 func (c *HRUIClient) GetAllPortVLANConfigs() ([]*PortVLANConfig, error) {
+	if c == nil {
+		return nil, fmt.Errorf("HRUIClient is nil")
+	}
+
+	if c.URL == "" {
+		return nil, fmt.Errorf("HRUIClient.URL is empty")
+	}
+
 	portVLANURL := fmt.Sprintf("%s/vlan.cgi?page=port_based", c.URL)
 
-	// Make the request to get the VLAN configuration page
-	resp, err := c.MakeRequest(portVLANURL)
+	respBody, err := c.ExecuteRequest("GET", portVLANURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch port VLAN configuration from HRUI: %w", err)
 	}
-	defer resp.Body.Close()
 
-	// Parse the HTML response
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse port VLAN HTML output: %w", err)
 	}
 
 	var configs []*PortVLANConfig
 
-	// Select the rows from the table, skipping the header row
 	rows := doc.Find("table").Last().Find("tr").Slice(1, goquery.ToEnd)
 
 	// Iterate over each row and extract the VLAN configuration
@@ -181,11 +195,23 @@ func (c *HRUIClient) GetAllPortVLANConfigs() ([]*PortVLANConfig, error) {
 
 		// Extract Port number
 		portText := strings.TrimSpace(s.Find("td:nth-child(1)").Text())
-		fmt.Sscanf(portText, "Port %d", &config.Port)
+		var port int
+		_, err := fmt.Sscanf(portText, "Port %d", &port)
+		if err != nil {
+			fmt.Println("Failed to parse port number:", err)
+			return
+		}
+		config.Port = port
 
 		// Extract PVID
 		pvidText := strings.TrimSpace(s.Find("td:nth-child(2)").Text())
-		fmt.Sscanf(pvidText, "%d", &config.PVID)
+		var pvid int
+		_, err = fmt.Sscanf(pvidText, "%d", &pvid)
+		if err != nil {
+			fmt.Println("Failed to parse PVID:", err)
+			return
+		}
+		config.PVID = pvid
 
 		// Extract Accepted Frame Type
 		config.AcceptFrameType = strings.TrimSpace(s.Find("td:nth-child(3)").Text())
@@ -229,7 +255,7 @@ func (c *HRUIClient) SetPortVLANConfig(config *PortVLANConfig) error {
 
 	// Submit the form
 	portVLANURL := fmt.Sprintf("%s/vlan.cgi?page=port_based", c.URL)
-	_, err := c.PostForm(portVLANURL, form)
+	_, err := c.ExecuteFormRequest(portVLANURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to set port VLAN config: %w", err)
 	}
@@ -241,7 +267,7 @@ func (c *HRUIClient) SetPortVLANConfig(config *PortVLANConfig) error {
 	return nil
 }
 
-// parsePortRangeSafe ensures that empty or invalid ports are handled, returning an empty slice if no ports exist
+// parsePortRangeSafe ensures that empty or invalid ports are handled, returning an empty slice if no ports exist.
 func parsePortRangeSafe(portRange string) []int {
 	if portRange == "-" || portRange == "" {
 		return []int{}

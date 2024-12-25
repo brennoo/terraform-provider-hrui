@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// Ensure the implementation satisfies the expected interfaces
+// Ensure the implementation satisfies the expected interfaces.
 var (
 	_ resource.Resource                = &ipAddressResource{}
 	_ resource.ResourceWithConfigure   = &ipAddressResource{}
@@ -21,7 +21,7 @@ type ipAddressResource struct {
 	client *sdk.HRUIClient
 }
 
-// NewResource is a helper function to simplify the provider implementation
+// NewResource is a helper function to simplify the provider implementation.
 func NewResource() resource.Resource {
 	return &ipAddressResource{}
 }
@@ -43,12 +43,12 @@ func (r *ipAddressResource) Configure(ctx context.Context, req resource.Configur
 	r.client = client
 }
 
-// Metadata defines the schema type name
+// Metadata defines the schema type name.
 func (r *ipAddressResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_ip_address_settings"
 }
 
-// Create operation for IP Address Settings
+// Create operation for IP Address Settings.
 func (r *ipAddressResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data ipAddressModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -85,7 +85,7 @@ func (r *ipAddressResource) Create(ctx context.Context, req resource.CreateReque
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// Read function for IP Address settings
+// Read function for IP Address settings.
 func (r *ipAddressResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	settings, err := r.client.GetIPAddressSettings()
 	if err != nil {
@@ -103,7 +103,7 @@ func (r *ipAddressResource) Read(ctx context.Context, req resource.ReadRequest, 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// Update function for IP Address settings
+// Update function for IP Address settings.
 func (r *ipAddressResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data ipAddressModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
@@ -142,7 +142,7 @@ func (r *ipAddressResource) Update(ctx context.Context, req resource.UpdateReque
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
-// Now implement the missing Delete method to ensure compliance with the Resource interface
+// Now implement the missing Delete method to ensure compliance with the Resource interface.
 func (r *ipAddressResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	// Handle the deletion logic if needed, or leave it empty if the resource cannot be deleted via API
 	// For demonstration purposes, we can leave it as a no-op if IP Address settings can't be deleted from the backend.

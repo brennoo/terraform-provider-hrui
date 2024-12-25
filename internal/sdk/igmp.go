@@ -1,15 +1,15 @@
 package sdk
 
 import (
-	"bytes"
 	"fmt"
+	"net/url"
 	"strings"
 	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
-// Global lock to serialize IGMP port updates
+// Global lock to serialize IGMP port updates.
 var igmpUpdateLock sync.Mutex
 
 // IGMPConfig represents the IGMP Snooping configuration.
@@ -20,20 +20,16 @@ type IGMPConfig struct {
 
 // UpdateIGMPSnooping updates the global IGMP snooping setting (enable or disable).
 func (c *HRUIClient) UpdateIGMPSnooping(enable bool) error {
-	form := "enable_igmp=on"
-	if !enable {
-		form = ""
+	formData := url.Values{}
+	if enable {
+		formData.Set("enable_igmp", "on")
 	}
 
 	url := fmt.Sprintf("%s/igmp.cgi?page=enable_igmp", c.URL)
-	resp, err := c.HttpClient.Post(url, "application/x-www-form-urlencoded", bytes.NewBufferString(form))
+
+	_, err := c.ExecuteFormRequest(url, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update global IGMP snooping: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("unexpected status code %d while updating global IGMP snooping", resp.StatusCode)
 	}
 
 	if c.Autosave {
@@ -78,22 +74,19 @@ func (c *HRUIClient) UpdatePortIGMPSnooping(port int, enable bool) error {
 	config.Ports[portIndex] = enable
 
 	// Construct the complete payload for all ports
-	form := []string{"cmd=set"}
+	formData := url.Values{}
+	formData.Set("cmd", "set")
 	for i, enabled := range config.Ports {
 		if enabled {
-			form = append(form, fmt.Sprintf("lPort_%d=on", i))
+			formData.Set(fmt.Sprintf("lPort_%d", i), "on")
 		}
 	}
 
 	url := fmt.Sprintf("%s/igmp.cgi?page=igmp_static_router", c.URL)
-	resp, err := c.HttpClient.Post(url, "application/x-www-form-urlencoded", bytes.NewBufferString(strings.Join(form, "&")))
+
+	_, err = c.ExecuteFormRequest(url, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update IGMP snooping for port %d: %w", port, err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("unexpected status code %d while updating IGMP snooping for port %d", resp.StatusCode, port)
 	}
 
 	if c.Autosave {
@@ -124,17 +117,15 @@ func (c *HRUIClient) GetPortIGMPSnooping(port int) (bool, error) {
 	}
 
 	url := fmt.Sprintf("%s/igmp.cgi?page=dump", c.URL)
-	resp, err := c.HttpClient.Get(url)
+
+	// Use ExecuteRequest to fetch the IGMP configuration
+	respBody, err := c.ExecuteRequest("GET", url, nil, nil)
 	if err != nil {
 		return false, fmt.Errorf("failed to fetch IGMP configuration for port %d: %w", port, err)
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		return false, fmt.Errorf("unexpected status code %d while fetching IGMP configuration", resp.StatusCode)
-	}
-
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	// Parse the HTML document using goquery
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return false, fmt.Errorf("failed to parse IGMP configuration HTML: %w", err)
 	}
@@ -158,22 +149,20 @@ func (c *HRUIClient) GetPortIGMPSnooping(port int) (bool, error) {
 // GetIGMPConfig retrieves the full IGMP snooping configuration for the device.
 func (c *HRUIClient) GetIGMPConfig() (*IGMPConfig, error) {
 	url := fmt.Sprintf("%s/igmp.cgi?page=dump", c.URL)
-	resp, err := c.HttpClient.Get(url)
+
+	// Use ExecuteRequest to fetch the IGMP configuration
+	respBody, err := c.ExecuteRequest("GET", url, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch IGMP configuration: %w", err)
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("unexpected status code %d while fetching IGMP configuration", resp.StatusCode)
-	}
-
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	// Parse the HTML document using goquery
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse IGMP configuration HTML: %w", err)
 	}
 
-	globalEnabled := false
+	var globalEnabled bool
 	doc.Find("input[name=enable_igmp]").Each(func(_ int, s *goquery.Selection) {
 		_, globalEnabled = s.Attr("checked")
 	})

@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// Ensure the implementation satisfies the expected interfaces
+// Ensure the implementation satisfies the expected interfaces.
 var (
 	_ resource.Resource                = &portSettingResource{}
 	_ resource.ResourceWithConfigure   = &portSettingResource{}

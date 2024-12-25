@@ -2,20 +2,21 @@ package sdk
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
+// GetSystemInfo retrieves system information from the HRUI server.
 func (c *HRUIClient) GetSystemInfo() (map[string]string, error) {
 	systemInfoURL := fmt.Sprintf("%s/info.cgi", c.URL)
 
-	resp, err := c.MakeRequest(systemInfoURL)
+	respBody, err := c.ExecuteRequest("GET", systemInfoURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch System Info from HRUI: %w", err)
 	}
-	defer resp.Body.Close()
 
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse System Info HTML output: %w", err)
 	}
@@ -24,7 +25,6 @@ func (c *HRUIClient) GetSystemInfo() (map[string]string, error) {
 	doc.Find("table tr").Each(func(i int, s *goquery.Selection) {
 		key := s.Find("th").Text()
 		value := s.Find("td").Text()
-
 		systemInfo[key] = value
 	})
 

@@ -3,7 +3,6 @@ package sdk_test
 import (
 	"fmt"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
@@ -11,15 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Mock server to simulate VLAN API responses
-func mockServer(response string, code int) *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(code)
-		_, _ = w.Write([]byte(response))
-	}))
-}
-
-// Test GetVLAN function
+// Test GetVLAN function.
 func TestGetVLAN(t *testing.T) {
 	htmlResponse := `
         <html>
@@ -80,10 +71,12 @@ func TestGetVLAN(t *testing.T) {
         </html>
 `
 
-	server := mockServer(htmlResponse, http.StatusOK)
+	server := mockServerMock(htmlResponse, http.StatusOK)
 	defer server.Close()
 
-	client, _ := sdk.NewClient(server.URL, "testuser", "testpass", false)
+	client, err := sdk.NewClient(server.URL, "testuser", "testpass", false)
+	require.NoError(t, err)
+	require.NotNil(t, client, "Client should not be nil")
 
 	// Test fetching an existing VLAN
 	vlan, err := client.GetVLAN(10)
@@ -100,10 +93,10 @@ func TestGetVLAN(t *testing.T) {
 	assert.Nil(t, vlan)
 }
 
-// Test CreateVLAN function - test NotMemberPorts calculation
+// Test CreateVLAN function - test NotMemberPorts calculation.
 func TestCreateVLAN_NotMemberPorts(t *testing.T) {
 	// Create a mock server to test VLAN creation
-	server := mockServer("", http.StatusOK)
+	server := mockServerMock("", http.StatusOK)
 	defer server.Close()
 
 	client, _ := sdk.NewClient(server.URL, "testuser", "testpass", false)
@@ -120,10 +113,10 @@ func TestCreateVLAN_NotMemberPorts(t *testing.T) {
 	require.NoError(t, err)
 }
 
-// Test DeleteVLAN is still unchanged
+// Test DeleteVLAN is still unchanged.
 func TestDeleteVLAN(t *testing.T) {
 	// Simulate deleting a VLAN
-	server := mockServer("", http.StatusOK)
+	server := mockServerMock("", http.StatusOK)
 	defer server.Close()
 
 	// Create an HRUIClient and point it to the mock server URL
@@ -194,7 +187,7 @@ func TestGetAllVLANs(t *testing.T) {
         </html>
 `
 
-	server := mockServer(htmlResponse, http.StatusOK)
+	server := mockServerMock(htmlResponse, http.StatusOK)
 	defer server.Close()
 
 	client, _ := sdk.NewClient(server.URL, "testuser", "testpass", false)
@@ -268,7 +261,7 @@ func TestGetAllPortVLANConfigs(t *testing.T) {
         </html>
     `
 
-	server := mockServer(htmlResponse, http.StatusOK)
+	server := mockServerMock(htmlResponse, http.StatusOK)
 	defer server.Close()
 
 	client, _ := sdk.NewClient(server.URL, "testuser", "testpass", false)

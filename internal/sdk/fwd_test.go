@@ -25,8 +25,11 @@ func TestGetStormControlStatus(t *testing.T) {
 		</table>`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(mockHTML))
+		if _, err := w.Write([]byte(mockHTML)); err != nil {
+			t.Fatalf("failed to write mock HTML response: %v", err)
+		}
 	}))
+
 	defer server.Close()
 
 	client := &HRUIClient{HttpClient: server.Client(), URL: server.URL}
@@ -72,8 +75,11 @@ func TestGetPortMaxRate(t *testing.T) {
 		</table>`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(mockHTML))
+		if _, err := w.Write([]byte(mockHTML)); err != nil {
+			t.Fatalf("failed to write mock HTML response: %v", err)
+		}
 	}))
+
 	defer server.Close()
 
 	client := &HRUIClient{HttpClient: server.Client(), URL: server.URL}
@@ -88,12 +94,12 @@ func TestGetPortMaxRate(t *testing.T) {
 	}
 }
 
-// Helper function to create int pointer
+// Helper function to create int pointer.
 func intPointer(v int) *int {
 	return &v
 }
 
-// Helper function to compare StormControlEntry
+// Helper function to compare StormControlEntry.
 func compareStormControlEntry(a, b StormControlEntry) bool {
 	return a.Port == b.Port &&
 		comparePointers(a.BroadcastRateKbps, b.BroadcastRateKbps) &&

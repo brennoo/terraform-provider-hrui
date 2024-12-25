@@ -16,7 +16,7 @@ var (
 	_ datasource.DataSourceWithConfigure = &systemInfoDataSource{}
 )
 
-// systemInfoDataSource is the data source implementation
+// systemInfoDataSource is the data source implementation.
 type systemInfoDataSource struct {
 	client *sdk.HRUIClient
 }
@@ -70,7 +70,7 @@ func (d *systemInfoDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	// Map the systemInfo data to your data model
+	// Map the systemInfo data to your data model.
 	data.DeviceModel = types.StringValue(systemInfo["Device Model"])
 	data.MACAddress = types.StringValue(systemInfo["MAC Address"])
 	data.IPAddress = types.StringValue(systemInfo["IP Address"])
@@ -80,11 +80,11 @@ func (d *systemInfoDataSource) Read(ctx context.Context, req datasource.ReadRequ
 	data.FirmwareDate = types.StringValue(systemInfo["Firmware Date"])
 	data.HardwareVersion = types.StringValue(systemInfo["Hardware Version"])
 
-	// Set the ID (using MAC address as the unique identifier)
+	// Set the ID (using MAC address as the unique identifier).
 	id := data.MACAddress.ValueString()
 	data.ID = types.StringValue(id)
 
-	// Store the parsed data into Terraform state
+	// Store the parsed data into Terraform state.
 	diags := resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {

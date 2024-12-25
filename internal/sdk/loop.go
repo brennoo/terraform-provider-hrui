@@ -3,7 +3,6 @@ package sdk
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -71,17 +70,13 @@ type STPPort struct {
 // GetLoopProtocol fetches the loop protocol settings.
 func (client *HRUIClient) GetLoopProtocol() (*LoopProtocol, error) {
 	loopURL := client.URL + "/loop.cgi"
-	resp, err := client.HttpClient.Get(loopURL)
+
+	respBody, err := client.ExecuteRequest("GET", loopURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch loop protocol page: %w", err)
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
-
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse loop protocol HTML: %w", err)
 	}
@@ -107,28 +102,23 @@ func (client *HRUIClient) GetLoopProtocol() (*LoopProtocol, error) {
 
 // UpdateLoopProtocol updates the loop function and associated settings.
 func (client *HRUIClient) UpdateLoopProtocol(loopFunction string, intervalTime, recoverTime int, portStatuses []PortStatus) error {
+	loopURL := client.URL + "/loop.cgi"
 	funcType, valid := LoopFunctionType[loopFunction]
 	if !valid {
 		return fmt.Errorf("invalid loop function type: %s", loopFunction)
 	}
 
 	// Prepare form data for POST request
-	data := url.Values{
+	formData := url.Values{
 		"cmd":           {"loop"},
 		"func_type":     {strconv.Itoa(funcType)},
 		"interval_time": {strconv.Itoa(intervalTime)},
 		"recover_time":  {strconv.Itoa(recoverTime)},
 	}
 
-	// Send update to backend
-	resp, err := client.HttpClient.PostForm(client.URL+"/loop.cgi", data)
+	_, err := client.ExecuteFormRequest(loopURL, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update loop protocol: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
 	return nil
@@ -137,17 +127,13 @@ func (client *HRUIClient) UpdateLoopProtocol(loopFunction string, intervalTime, 
 // GetSTPSettings fetches and parses the STP Global Settings page.
 func (client *HRUIClient) GetSTPSettings() (*STPGlobalSettings, error) {
 	stpURL := client.URL + "/loop.cgi?page=stp_global"
-	resp, err := client.HttpClient.Get(stpURL)
+
+	respBody, err := client.ExecuteRequest("GET", stpURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch STP Global Settings page: %w", err)
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected HTTP status code: %d", resp.StatusCode)
-	}
-
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse STP Global Settings HTML: %w", err)
 	}
@@ -157,7 +143,8 @@ func (client *HRUIClient) GetSTPSettings() (*STPGlobalSettings, error) {
 
 // UpdateSTPSettings updates the STP global settings.
 func (client *HRUIClient) UpdateSTPSettings(stp *STPGlobalSettings) error {
-	data := url.Values{
+	stpURL := client.URL + "/loop.cgi?page=stp_global"
+	formData := url.Values{
 		"cmd":      {"stp"},
 		"version":  {stp.GetVersionValue()},
 		"priority": {strconv.Itoa(stp.Priority)},
@@ -166,14 +153,9 @@ func (client *HRUIClient) UpdateSTPSettings(stp *STPGlobalSettings) error {
 		"delay":    {strconv.Itoa(stp.ForwardDelay)},
 	}
 
-	resp, err := client.HttpClient.PostForm(client.URL+"/loop.cgi?page=stp_global", data)
+	_, err := client.ExecuteFormRequest(stpURL, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update STP global settings: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
 	return nil
@@ -183,50 +165,37 @@ func (client *HRUIClient) UpdateSTPSettings(stp *STPGlobalSettings) error {
 // needed due to a bug in the cgi for updating stp global settings that never returns.
 func (client *HRUIClient) UpdateSTPSettingsAsync(stp *STPGlobalSettings) error {
 	stpURL := client.URL + "/loop.cgi?page=stp_global"
-	data := url.Values{}
-	data.Set("version", stp.GetVersionValue())
-	data.Set("priority", strconv.Itoa(stp.Priority))
-	data.Set("maxage", strconv.Itoa(stp.MaxAge))
-	data.Set("hello", strconv.Itoa(stp.HelloTime))
-	data.Set("delay", strconv.Itoa(stp.ForwardDelay))
-	data.Set("cmd", "stp")
 
-	req, err := http.NewRequest("POST", stpURL, strings.NewReader(data.Encode()))
-	if err != nil {
-		return fmt.Errorf("failed to create POST request: %w", err)
+	// Prepare form data for POST request
+	data := url.Values{
+		"version":  {stp.GetVersionValue()},
+		"priority": {strconv.Itoa(stp.Priority)},
+		"maxage":   {strconv.Itoa(stp.MaxAge)},
+		"hello":    {strconv.Itoa(stp.HelloTime)},
+		"delay":    {strconv.Itoa(stp.ForwardDelay)},
+		"cmd":      {"stp"},
 	}
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
-	// Perform the POST request with a short timeout
 	client.HttpClient.Timeout = 2 * time.Second
-	resp, err := client.HttpClient.Do(req)
+	_, err := client.ExecuteFormRequest(stpURL, data)
 	if err != nil {
 		log.Printf("[WARN] POST request timed out or failed: %v", err)
 		return nil
-	}
-	defer resp.Body.Close()
-
-	// Log unexpected status codes but ignore them (fire-and-forget behavior)
-	if resp.StatusCode != http.StatusOK {
-		log.Printf("[WARN] Received unexpected status code (%d) during UpdateSTPSettings", resp.StatusCode)
 	}
 
 	return nil
 }
 
+// GetSTPPortSettings fetches the STP port settings.
 func (client *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 	stpURL := client.URL + "/loop.cgi?page=stp_port"
-	resp, err := client.HttpClient.Get(stpURL)
+
+	respBody, err := client.ExecuteRequest("GET", stpURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch STP port settings page: %w", err)
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
-
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse HTML: %w", err)
 	}
@@ -277,24 +246,20 @@ func (client *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 
 // UpdateSTPPortSettings updates the STP settings for a specific port.
 func (client *HRUIClient) UpdateSTPPortSettings(portID, pathCost, priority int, p2p, edge string) error {
-	postData := url.Values{}
-	postData.Set("cmd", "stp_port")
-	postData.Set("portid", strconv.Itoa(portID))
-	postData.Set("cost", strconv.Itoa(pathCost))
-	postData.Set("priority", strconv.Itoa(priority))
-	postData.Set("p2p", strings.ToLower(p2p))
-	postData.Set("edge", strings.ToLower(edge))
-	postData.Set("submit", "+++Apply+++")
-
 	stpURL := client.URL + "/loop.cgi?page=stp_port"
-	resp, err := client.HttpClient.PostForm(stpURL, postData)
+	formData := url.Values{
+		"cmd":      {"stp_port"},
+		"portid":   {strconv.Itoa(portID)},
+		"cost":     {strconv.Itoa(pathCost)},
+		"priority": {strconv.Itoa(priority)},
+		"p2p":      {strings.ToLower(p2p)},
+		"edge":     {strings.ToLower(edge)},
+		"submit":   {"+++Apply+++"},
+	}
+
+	_, err := client.ExecuteFormRequest(stpURL, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update STP port settings: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to update STP port settings: unexpected status %d", resp.StatusCode)
 	}
 
 	return nil
@@ -438,12 +403,6 @@ func parseInt(value string) int {
 	return 0
 }
 
-// parseBool interprets "enabled" or "true" as true, and anything else as false.
-func parseBool(value string) bool {
-	trimmedValue := strings.TrimSpace(strings.ToLower(value))
-	return trimmedValue == "enabled" || trimmedValue == "true"
-}
-
 // extractInt extracts an integer from the text content of a given selector.
 func extractInt(doc *goquery.Document, selector string) (int, error) {
 	text, err := extractText(doc, selector)
@@ -454,7 +413,7 @@ func extractInt(doc *goquery.Document, selector string) (int, error) {
 }
 
 // extractIntAttribute extracts an integer from the value of an attribute (e.g., `value`).
-func extractIntAttribute(doc *goquery.Document, selector, attr string) (int, error) {
+func extractIntAttribute(doc *goquery.Document, selector, attr string) (int, error) { //nolint:unparam
 	value := doc.Find(selector).AttrOr(attr, "")
 	return strconv.Atoi(strings.TrimSpace(value))
 }

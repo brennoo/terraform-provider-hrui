@@ -16,7 +16,7 @@ var (
 	_ datasource.DataSourceWithConfigure = &portSettingDataSource{}
 )
 
-// portSettingDataSource is the data source implementation
+// portSettingDataSource is the data source implementation.
 type portSettingDataSource struct {
 	client *sdk.HRUIClient
 }

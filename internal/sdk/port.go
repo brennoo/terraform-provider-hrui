@@ -64,56 +64,83 @@ func (c *HRUIClient) GetPort(portID int) (*Port, error) {
 	return nil, fmt.Errorf("port with ID %d not found", portID)
 }
 
+// GetAllPorts retrieves information about all switch ports.
 func (c *HRUIClient) GetAllPorts() ([]*Port, error) {
 	portURL := fmt.Sprintf("%s/port.cgi?page=static", c.URL)
 
-	resp, err := c.MakeRequest(portURL)
+	respBody, err := c.ExecuteRequest("GET", portURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch Port settings from HRUI: %w", err)
 	}
-	defer resp.Body.Close()
 
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	// Parse the HTML response using goquery
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse HTML output: %w", err)
 	}
 
 	var ports []*Port
-	doc.Find("body center fieldset table").Each(func(i int, s *goquery.Selection) {
-		if i != 2 { // 3rd table
+	// Find the third table within "body center fieldset" (assuming consistent structure)
+	doc.Find("body center fieldset table").Eq(2).Find("tr").Each(func(i int, tr *goquery.Selection) {
+		if i < 2 { // Skip header rows
 			return
 		}
-		s.Find("tr").Each(func(j int, tr *goquery.Selection) {
-			if j < 2 {
-				return
-			}
-			port := &Port{}
-			tr.Find("td").Each(func(k int, td *goquery.Selection) {
-				text := strings.TrimSpace(td.Text())
-				switch k {
-				case 0:
-					text = strings.TrimPrefix(text, "Port ")
-					fmt.Sscanf(text, "%d", &port.ID)
-				case 1:
-					if text == "Enable" {
-						port.State = 1
-					} else {
-						port.State = 0
-					}
-				case 2:
-					port.SpeedDuplex = text
-				case 4:
-					port.FlowControl = text
-				}
-			})
 
-			ports = append(ports, port)
+		port := &Port{}
+		tr.Find("td").Each(func(k int, td *goquery.Selection) {
+			text := strings.TrimSpace(td.Text())
+			switch k {
+			case 0: // Port ID
+				text = strings.TrimPrefix(text, "Port ")
+				var portID int
+				_, err := fmt.Sscanf(text, "%d", &portID)
+				if err != nil {
+					fmt.Println("failed to parse port ID:", err)
+					return
+				}
+				port.ID = portID
+			case 1: // State
+				if text == "Enable" {
+					port.State = 1
+				} else {
+					port.State = 0
+				}
+			case 2: // SpeedDuplex
+				port.SpeedDuplex = text
+			case 4: // FlowControl
+				port.FlowControl = text
+			}
 		})
+		ports = append(ports, port)
 	})
+
 	return ports, nil
 }
 
 func (c *HRUIClient) UpdatePortSettings(port *Port) error {
+	// Validate `SpeedDuplex` and `FlowControl` values
+	validSpeedDuplex := false
+	for _, v := range speedDuplexMapping {
+		if v == port.SpeedDuplex {
+			validSpeedDuplex = true
+			break
+		}
+	}
+	if !validSpeedDuplex {
+		return fmt.Errorf("invalid SpeedDuplex value: %s", port.SpeedDuplex)
+	}
+
+	validFlowControl := false
+	for _, v := range flowControlMapping {
+		if v == port.FlowControl {
+			validFlowControl = true
+			break
+		}
+	}
+	if !validFlowControl {
+		return fmt.Errorf("invalid FlowControl value: %s", port.FlowControl)
+	}
+
 	form := url.Values{}
 	form.Set("cmd", "port")
 	form.Set("portid", strconv.Itoa(port.ID))
@@ -123,7 +150,7 @@ func (c *HRUIClient) UpdatePortSettings(port *Port) error {
 
 	// submit the form
 	portsURL := fmt.Sprintf("%s/port.cgi", c.URL)
-	_, err := c.PostForm(portsURL, form)
+	_, err := c.ExecuteFormRequest(portsURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to update port settings: %w", err)
 	}
@@ -143,20 +170,19 @@ func (c *HRUIClient) GetTotalPorts() (int, error) {
 	return len(ports), nil
 }
 
+// GetPortStatistics retrieves port statistics from the switch.
 func (c *HRUIClient) GetPortStatistics() ([]*PortStatistics, error) {
 	statsURL := fmt.Sprintf("%s/port.cgi?page=stats", c.URL)
 
-	// Send GET request to the port statistics page
-	resp, err := c.HttpClient.Get(statsURL)
+	respBody, err := c.ExecuteRequest("GET", statsURL, nil, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch port statistics page: %v", err)
+		return nil, fmt.Errorf("failed to fetch port statistics page: %w", err)
 	}
-	defer resp.Body.Close()
 
 	// Load the HTML into goquery
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse HTML document: %v", err)
+		return nil, fmt.Errorf("failed to parse HTML document: %w", err)
 	}
 
 	var stats []*PortStatistics

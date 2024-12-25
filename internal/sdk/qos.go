@@ -2,10 +2,10 @@ package sdk
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -24,13 +24,13 @@ type QoSQueueWeight struct {
 
 // GetAllQOSPortQueues fetches and parses QoS port queues from the HTML page.
 func (client *HRUIClient) GetAllQOSPortQueues() ([]QoSPortQueue, error) {
-	response, err := client.HttpClient.Get(client.URL + "/qos.cgi?page=port_pri")
+	respBody, err := client.ExecuteRequest("GET", client.URL+"/qos.cgi?page=port_pri", nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to request QoS Port Queues: %w", err)
 	}
-	defer response.Body.Close()
 
-	doc, err := goquery.NewDocumentFromReader(response.Body)
+	// Parse the HTML document using goquery
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse QoS Port Queues HTML: %w", err)
 	}
@@ -112,45 +112,30 @@ func (client *HRUIClient) UpdateQOSPortQueue(portID, queue int) error {
 	updateURL := client.URL + "/qos.cgi?page=port_pri"
 
 	// Send the POST request to update the QoS Port Queue
-	resp, err := client.HttpClient.PostForm(updateURL, data)
+	_, err := client.ExecuteFormRequest(updateURL, data)
 	if err != nil {
 		return fmt.Errorf("failed to update QoS Port Queue: %w", err)
 	}
-	defer resp.Body.Close()
 
-	// Check for non-OK responses and return meaningful errors
-	if resp.StatusCode != http.StatusOK {
-		switch resp.StatusCode {
-		case http.StatusNotFound:
-			return fmt.Errorf("QoS update failed: API endpoint not found")
-		case http.StatusInternalServerError:
-			return fmt.Errorf("QoS update failed: Internal server error")
-		default:
-			return fmt.Errorf("error: received unexpected status code %d from QoS update", resp.StatusCode)
-		}
-	}
-
-	// If there is no error, return nil (the operation was successful)
 	return nil
 }
 
 // GetAllQOSQueueWeights fetches the current queues and weights from the HTML page.
 func (client *HRUIClient) GetAllQOSQueueWeights() ([]QoSQueueWeight, error) {
-	resp, err := client.HttpClient.Get(client.URL + "/qos.cgi?page=pkt_sch")
+	// Use ExecuteRequest to fetch the HTML page with QoS queue weights
+	respBody, err := client.ExecuteRequest("GET", client.URL+"/qos.cgi?page=pkt_sch", nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to request queue weights page: %w", err)
 	}
-	defer resp.Body.Close()
 
 	// Parse the HTML document using goquery
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse HTML for queue weights: %w", err)
 	}
 
 	var queueWeights []QoSQueueWeight
 
-	// Iterate over table rows to extract queue and weight information
 	doc.Find("table").Last().Find("tr").Each(func(i int, row *goquery.Selection) {
 		queueText := row.Find("td:first-child").Text()
 		weightText := row.Find("td:nth-child(2)").Text()
@@ -184,16 +169,10 @@ func (client *HRUIClient) UpdateQOSQueueWeight(queue, weight int) error {
 
 	updateURL := client.URL + "/qos.cgi?page=que_weight"
 
-	// Sending POST request to update the queue weight
-	resp, err := client.HttpClient.PostForm(updateURL, data)
+	// Send the POST request to update the queue weight using ExecuteFormRequest
+	_, err := client.ExecuteFormRequest(updateURL, data)
 	if err != nil {
 		return fmt.Errorf("failed to update QoS Queue Weight: %w", err)
-	}
-	defer resp.Body.Close()
-
-	// Check for a successful response
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code %d when updating QoS Queue Weight", resp.StatusCode)
 	}
 
 	return nil

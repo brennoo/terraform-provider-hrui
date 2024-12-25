@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
+// IPAddressSettings represents the IP configuration.
 type IPAddressSettings struct {
 	DHCPEnabled bool
 	IPAddress   string
@@ -15,22 +17,25 @@ type IPAddressSettings struct {
 	Gateway     string
 }
 
+// GetIPAddressSettings retrieves the IP address settings from the HRUI server.
 func (c *HRUIClient) GetIPAddressSettings() (*IPAddressSettings, error) {
+	// Construct the IP settings URL
 	ipSettingsURL := fmt.Sprintf("%s/ip.cgi", c.URL)
 
-	resp, err := c.MakeRequest(ipSettingsURL)
+	// Execute GET request to fetch IP settings
+	respBody, err := c.ExecuteRequest("GET", ipSettingsURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch IP Settings configuration: %w", err)
 	}
-	defer resp.Body.Close()
 
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	// Parse the response body as HTML
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse IP Settings HTML output: %w", err)
 	}
 
+	// Extract IP settings from HTML
 	settings := &IPAddressSettings{}
-
 	settings.DHCPEnabled = false
 	doc.Find("select[name='dhcp_state'] option").Each(func(i int, s *goquery.Selection) {
 		if _, ok := s.Attr("selected"); ok {
@@ -54,6 +59,7 @@ func (c *HRUIClient) GetIPAddressSettings() (*IPAddressSettings, error) {
 	return settings, nil
 }
 
+// UpdateIPAddressSettings updates the IP address settings on the HRUI server.
 func (c *HRUIClient) UpdateIPAddressSettings(settings *IPAddressSettings) error {
 	form := url.Values{}
 	form.Set("dhcp_state", "0")
@@ -65,7 +71,7 @@ func (c *HRUIClient) UpdateIPAddressSettings(settings *IPAddressSettings) error 
 	form.Set("gateway", settings.Gateway)
 
 	ipSettingsURL := fmt.Sprintf("%s/ip.cgi", c.URL)
-	_, err := c.PostForm(ipSettingsURL, form)
+	_, err := c.ExecuteFormRequest(ipSettingsURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to update IP Settings: %w", err)
 	}

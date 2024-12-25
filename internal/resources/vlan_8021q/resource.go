@@ -19,12 +19,12 @@ var (
 	_ resource.ResourceWithImportState = &vlan8021qResource{}
 )
 
-// vlan8021qResource defines the VLAN resource using *sdk.HRUIClient
+// vlan8021qResource defines the VLAN resource using *sdk.HRUIClient.
 type vlan8021qResource struct {
 	client *sdk.HRUIClient
 }
 
-// NewResource creates a new VLAN resource instance
+// NewResource creates a new VLAN resource instance.
 func NewResource() resource.Resource {
 	return &vlan8021qResource{}
 }
@@ -77,10 +77,10 @@ func (r *vlan8021qResource) Configure(_ context.Context, req resource.ConfigureR
 	r.client = client
 }
 
-func extractInt64List(l types.List) ([]int, diag.Diagnostics) {
+func extractInt64List(ctx context.Context, l types.List) ([]int, diag.Diagnostics) {
 	var result []int
 	var diags diag.Diagnostics
-	err := l.ElementsAs(context.Background(), &result, false)
+	err := l.ElementsAs(ctx, &result, false)
 	if err != nil {
 		diags.AddError("Error extracting list", fmt.Sprintf("Failed to extract list: %s", err))
 	}
@@ -88,7 +88,7 @@ func extractInt64List(l types.List) ([]int, diag.Diagnostics) {
 	return result, diags
 }
 
-// Create configures the VLAN with the given ID, name, and ports
+// Create configures the VLAN with the given ID, name, and ports.
 func (r *vlan8021qResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var model vlan8021qModel
 
@@ -100,13 +100,13 @@ func (r *vlan8021qResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	// Extract the untagged and tagged ports from the model
-	untaggedPorts, diags := extractInt64List(model.UntaggedPorts)
+	untaggedPorts, diags := extractInt64List(ctx, model.UntaggedPorts)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	taggedPorts, diags := extractInt64List(model.TaggedPorts)
+	taggedPorts, diags := extractInt64List(ctx, model.TaggedPorts)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -197,13 +197,13 @@ func (r *vlan8021qResource) Update(ctx context.Context, req resource.UpdateReque
 	}
 
 	// Extract values from tagged and untagged ports
-	untaggedPorts, diags := extractInt64List(plan.UntaggedPorts)
+	untaggedPorts, diags := extractInt64List(ctx, plan.UntaggedPorts)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	taggedPorts, diags := extractInt64List(plan.TaggedPorts)
+	taggedPorts, diags := extractInt64List(ctx, plan.TaggedPorts)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
