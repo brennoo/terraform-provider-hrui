@@ -1,4 +1,4 @@
-package sdk_test
+package sdk
 
 import (
 	"net/http"

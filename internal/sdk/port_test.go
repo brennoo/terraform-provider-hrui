@@ -1,11 +1,10 @@
-package sdk_test
+package sdk
 
 import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -103,7 +102,7 @@ func TestGetAllPorts(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        server.URL,
 		HttpClient: server.Client(),
 	}
@@ -112,7 +111,7 @@ func TestGetAllPorts(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, ports, 6)
 
-	expectedPorts := []*sdk.Port{
+	expectedPorts := []*Port{
 		{ID: 1, State: 1, SpeedDuplex: "Auto", FlowControl: "Off"},
 		{ID: 2, State: 1, SpeedDuplex: "Auto", FlowControl: "Off"},
 		{ID: 3, State: 1, SpeedDuplex: "Auto", FlowControl: "Off"},
@@ -131,7 +130,7 @@ func TestGetPort(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        server.URL,
 		HttpClient: server.Client(),
 	}
@@ -139,7 +138,7 @@ func TestGetPort(t *testing.T) {
 	port, err := client.GetPort(1)
 	require.NoError(t, err)
 
-	expectedPort := &sdk.Port{
+	expectedPort := &Port{
 		ID:          1,
 		State:       1,
 		SpeedDuplex: "Auto",
@@ -200,7 +199,7 @@ func TestGetPortStatistics(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        server.URL,
 		HttpClient: server.Client(),
 	}
@@ -208,7 +207,7 @@ func TestGetPortStatistics(t *testing.T) {
 	stats, err := client.GetPortStatistics()
 	require.NoError(t, err)
 
-	expectedStats := []*sdk.PortStatistics{
+	expectedStats := []*PortStatistics{
 		{Port: 1, State: 1, LinkStatus: "Link Up", TxGoodPkt: 1539909, TxBadPkt: 0, RxGoodPkt: 6063265, RxBadPkt: 0},
 		{Port: 2, State: 1, LinkStatus: "Link Down", TxGoodPkt: 173978, TxBadPkt: 0, RxGoodPkt: 2140448, RxBadPkt: 0},
 	}

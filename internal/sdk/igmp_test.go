@@ -1,4 +1,4 @@
-package sdk_test
+package sdk
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -89,15 +88,6 @@ func mockIGMPHTMLStaticPorts(enabledPorts []int) string {
 	return html
 }
 
-func contains(s []int, e int) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
-}
-
 func TestGetPortIGMPSnooping(t *testing.T) {
 	tests := []struct {
 		name           string
@@ -162,7 +152,7 @@ func TestGetPortIGMPSnooping(t *testing.T) {
 			defer server.Close()
 
 			// Create the mock client
-			client := &sdk.HRUIClient{
+			client := &HRUIClient{
 				URL:        server.URL,
 				HttpClient: server.Client(),
 			}

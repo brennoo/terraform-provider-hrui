@@ -1,10 +1,9 @@
-package sdk_test
+package sdk
 
 import (
 	"net/http"
 	"testing"
 
-	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -38,7 +37,7 @@ func TestGetLoopProtocol(t *testing.T) {
 	mockServer := mockServerMock(htmlResponse, http.StatusOK)
 	defer mockServer.Close()
 
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        mockServer.URL,
 		HttpClient: &http.Client{},
 	}
@@ -55,7 +54,7 @@ func TestGetLoopProtocol(t *testing.T) {
 	assert.Equal(t, 10, loopProtocol.RecoverTime)
 
 	// Expected port statuses for each port (based on the HTML response)
-	expected := []sdk.PortStatus{
+	expected := []PortStatus{
 		{Port: 1, Enable: false, LoopState: "Disable", LoopStatus: "Forwarding"},
 		{Port: 2, Enable: true, LoopState: "Enable", LoopStatus: "Forwarding"},
 	}
@@ -70,13 +69,13 @@ func TestUpdateLoopProtocol(t *testing.T) {
 	defer mock.Close()
 
 	// Create an HRUIClient pointing to the mock server
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        mock.URL,
 		HttpClient: &http.Client{},
 	}
 
 	// Call UpdateLoopProtocol and assert that no error is returned.
-	err := client.UpdateLoopProtocol("Loop Prevention", 5, 12, []sdk.PortStatus{
+	err := client.UpdateLoopProtocol("Loop Prevention", 5, 12, []PortStatus{
 		{Port: 1, Enable: true},
 		{Port: 2, Enable: false},
 	})
@@ -170,7 +169,7 @@ func TestGetSTPPortSettings(t *testing.T) {
 	defer mockServer.Close()
 
 	// Create a client instance
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        mockServer.URL,
 		HttpClient: &http.Client{},
 	}
@@ -180,7 +179,7 @@ func TestGetSTPPortSettings(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Expected result based on the mock HTML structure
-	expected := []sdk.STPPort{
+	expected := []STPPort{
 		{
 			Port:           0,
 			State:          "Forwarding",
@@ -264,7 +263,7 @@ func TestGetLoopProtocol_LoopPreventionMode(t *testing.T) {
 	mockServer := mockServerMock(htmlResponse, http.StatusOK)
 	defer mockServer.Close()
 
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        mockServer.URL,
 		HttpClient: &http.Client{},
 	}
@@ -276,7 +275,7 @@ func TestGetLoopProtocol_LoopPreventionMode(t *testing.T) {
 	assert.Equal(t, 5, loopProtocol.IntervalTime)
 	assert.Equal(t, 10, loopProtocol.RecoverTime)
 
-	expected := []sdk.PortStatus{
+	expected := []PortStatus{
 		{Port: 1, Enable: false, LoopState: "Disable", LoopStatus: "Forwarding"},
 		{Port: 2, Enable: true, LoopState: "Enable", LoopStatus: "Forwarding"},
 	}
@@ -288,7 +287,7 @@ func TestUpdateSTPPortSettings(t *testing.T) {
 	mock := mockServerMock("OK", http.StatusOK)
 	defer mock.Close()
 
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        mock.URL,
 		HttpClient: &http.Client{},
 	}
@@ -346,7 +345,7 @@ func TestGetSTPSettings(t *testing.T) {
 	defer mockServer.Close()
 
 	// Create the HRUIClient with the mocked server URL.
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        mockServer.URL,
 		HttpClient: &http.Client{},
 	}
@@ -377,13 +376,13 @@ func TestUpdateSTPSettings(t *testing.T) {
 	mock := mockServerMock("OK", http.StatusOK)
 	defer mock.Close()
 
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        mock.URL,
 		HttpClient: &http.Client{},
 	}
 
 	// Create the STPGlobalSettings that we want to update.
-	stpUpdate := &sdk.STPGlobalSettings{
+	stpUpdate := &STPGlobalSettings{
 		ForceVersion: "RSTP", // Should map to version=1
 		Priority:     4096,
 		MaxAge:       15,

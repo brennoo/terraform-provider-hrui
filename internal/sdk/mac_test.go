@@ -1,12 +1,10 @@
-package sdk_test
+package sdk
 
 import (
 	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 )
 
 func TestGetMACAddressTable(t *testing.T) {
@@ -59,7 +57,7 @@ func TestGetMACAddressTable(t *testing.T) {
 	defer mock.Close()
 
 	// Create an HRUIClient pointing to the mock server
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        mock.URL,
 		HttpClient: &http.Client{},
 	}
@@ -68,7 +66,7 @@ func TestGetMACAddressTable(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Validate results with anonymized expected MAC addresses
-	expected := []sdk.MACAddressEntry{
+	expected := []MACAddressEntry{
 		{ID: 1, MAC: "AA:BB:CC:DD:EE:FF", VLANID: 1, Type: "dynamic", Port: 1},
 		{ID: 2, MAC: "11:22:33:44:55:66", VLANID: 1, Type: "dynamic", Port: 1},
 		{ID: 3, MAC: "77:88:99:AA:BB:CC", VLANID: 1, Type: "dynamic", Port: 1},
@@ -108,7 +106,7 @@ func TestGetStaticMACAddressTable(t *testing.T) {
 	defer mock.Close()
 
 	// Create client pointing to the mock server
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        mock.URL,
 		HttpClient: &http.Client{},
 	}
@@ -119,7 +117,7 @@ func TestGetStaticMACAddressTable(t *testing.T) {
 	assert.Len(t, entries, 1)
 
 	// Validate the parsed entry
-	expectedEntry := sdk.StaticMACEntry{
+	expectedEntry := StaticMACEntry{
 		ID:         1,
 		MACAddress: "A8:80:55:59:E9:72",
 		VLANID:     1,
@@ -134,7 +132,7 @@ func TestAddStaticMACAddress(t *testing.T) {
 	defer mock.Close()
 
 	// Create client pointing to the mock server
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        mock.URL,
 		HttpClient: &http.Client{},
 	}
@@ -150,13 +148,13 @@ func TestDeleteStaticMACAddress(t *testing.T) {
 	defer mock.Close()
 
 	// Create client pointing to the mock server
-	client := &sdk.HRUIClient{
+	client := &HRUIClient{
 		URL:        mock.URL,
 		HttpClient: &http.Client{},
 	}
 
 	// Test `DeleteStaticMACAddress` with two entries
-	entries := []sdk.StaticMACEntry{
+	entries := []StaticMACEntry{
 		{MACAddress: "01:23:45:67:89:AB", VLANID: 10},
 		{MACAddress: "02:33:44:55:66:77", VLANID: 20},
 	}

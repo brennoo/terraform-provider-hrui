@@ -1,11 +1,10 @@
-package sdk_test
+package sdk
 
 import (
 	"fmt"
 	"net/http"
 	"testing"
 
-	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -74,7 +73,7 @@ func TestGetVLAN(t *testing.T) {
 	server := mockServerMock(htmlResponse, http.StatusOK)
 	defer server.Close()
 
-	client, err := sdk.NewClient(server.URL, "testuser", "testpass", false)
+	client, err := NewClient(server.URL, "testuser", "testpass", false)
 	require.NoError(t, err)
 	require.NotNil(t, client, "Client should not be nil")
 
@@ -99,10 +98,10 @@ func TestCreateVLAN_NotMemberPorts(t *testing.T) {
 	server := mockServerMock("", http.StatusOK)
 	defer server.Close()
 
-	client, _ := sdk.NewClient(server.URL, "testuser", "testpass", false)
+	client, _ := NewClient(server.URL, "testuser", "testpass", false)
 	totalPorts := 6
 
-	vlan := &sdk.Vlan{
+	vlan := &Vlan{
 		VlanID:        10,
 		Name:          "VLAN-Test",
 		UntaggedPorts: []int{1, 2}, // Members
@@ -120,7 +119,7 @@ func TestDeleteVLAN(t *testing.T) {
 	defer server.Close()
 
 	// Create an HRUIClient and point it to the mock server URL
-	client, _ := sdk.NewClient(server.URL, "testuser", "testpass", false)
+	client, _ := NewClient(server.URL, "testuser", "testpass", false)
 
 	// Test that deleting the VLAN sends the correct form submission
 	err := client.DeleteVLAN(10)
@@ -190,7 +189,7 @@ func TestGetAllVLANs(t *testing.T) {
 	server := mockServerMock(htmlResponse, http.StatusOK)
 	defer server.Close()
 
-	client, _ := sdk.NewClient(server.URL, "testuser", "testpass", false)
+	client, _ := NewClient(server.URL, "testuser", "testpass", false)
 
 	vlans, err := client.GetAllVLANs()
 	assert.NoError(t, err)
@@ -205,7 +204,7 @@ func TestGetAllVLANs(t *testing.T) {
 
 	assert.Equal(t, 4, len(vlans))
 
-	expectedVLANs := []*sdk.Vlan{
+	expectedVLANs := []*Vlan{
 		{VlanID: 1, Name: "", MemberPorts: []int{1, 2, 3, 4, 5, 6}, TaggedPorts: []int{}, UntaggedPorts: []int{1, 2, 3, 4, 5, 6}},
 		{VlanID: 4, Name: "vier", MemberPorts: []int{6}, TaggedPorts: []int{}, UntaggedPorts: []int{6}},
 		{VlanID: 5, Name: "funf", MemberPorts: []int{5}, TaggedPorts: []int{}, UntaggedPorts: []int{5}},
@@ -264,7 +263,7 @@ func TestGetAllPortVLANConfigs(t *testing.T) {
 	server := mockServerMock(htmlResponse, http.StatusOK)
 	defer server.Close()
 
-	client, _ := sdk.NewClient(server.URL, "testuser", "testpass", false)
+	client, _ := NewClient(server.URL, "testuser", "testpass", false)
 
 	configs, err := client.GetAllPortVLANConfigs()
 	assert.NoError(t, err)
@@ -280,7 +279,7 @@ func TestGetAllPortVLANConfigs(t *testing.T) {
 	assert.Equal(t, 6, len(configs))
 
 	// Assert the values for each port
-	expectedConfigs := []*sdk.PortVLANConfig{
+	expectedConfigs := []*PortVLANConfig{
 		{Port: 1, PVID: 1, AcceptFrameType: "All"},
 		{Port: 2, PVID: 1, AcceptFrameType: "All"},
 		{Port: 3, PVID: 1, AcceptFrameType: "All"},

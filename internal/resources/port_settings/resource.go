@@ -81,14 +81,6 @@ func (r *portSettingResource) Create(ctx context.Context, req resource.CreateReq
 		return
 	}
 
-	// Save the configuration if autosave is enabled
-	if r.client.Autosave {
-		if err := r.client.SaveConfiguration(); err != nil {
-			resp.Diagnostics.AddError("Save Error", fmt.Sprintf("Unable to save HRUI configuration, got error: %s", err))
-			return
-		}
-	}
-
 	// Set the ID
 	plan.ID = types.StringValue(strconv.FormatInt(plan.PortID.ValueInt64(), 10))
 
@@ -155,14 +147,6 @@ func (r *portSettingResource) Update(ctx context.Context, req resource.UpdateReq
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create HRUI port settings, got error: %s", err))
 		return
-	}
-
-	// Save the configuration if autosave is enabled
-	if r.client.Autosave {
-		if err := r.client.SaveConfiguration(); err != nil {
-			resp.Diagnostics.AddError("Save Error", fmt.Sprintf("Unable to save HRUI configuration, got error: %s", err))
-			return
-		}
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)

@@ -155,10 +155,6 @@ func (c *HRUIClient) UpdatePortSettings(port *Port) error {
 		return fmt.Errorf("failed to update port settings: %w", err)
 	}
 
-	if c.Autosave {
-		return c.SaveConfiguration()
-	}
-
 	return nil
 }
 
