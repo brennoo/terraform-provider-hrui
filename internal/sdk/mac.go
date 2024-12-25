@@ -1,9 +1,7 @@
 package sdk
 
 import (
-	"errors"
 	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -30,21 +28,17 @@ type StaticMACEntry struct {
 
 // GetMACAddressTable fetches and parses the MAC table from the switch.
 func (c *HRUIClient) GetMACAddressTable() ([]MACAddressEntry, error) {
-	// Send an HTTP GET request to fetch the MAC table page.
-	resp, err := c.HttpClient.Get(c.URL + "/mac.cgi?page=fwd_tbl")
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
+	url := c.URL + "/mac.cgi?page=fwd_tbl"
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("failed to fetch MAC address table: status " + strconv.Itoa(resp.StatusCode))
+	respBody, err := c.ExecuteRequest("GET", url, nil, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching MAC address table: %w", err)
 	}
 
 	// Load the HTML response into goquery
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
-		return nil, errors.New("failed to parse MAC table HTML: " + err.Error())
+		return nil, fmt.Errorf("failed to parse MAC table HTML: %w", err)
 	}
 
 	// Extract MAC address entries from the table
@@ -81,21 +75,17 @@ func (c *HRUIClient) GetMACAddressTable() ([]MACAddressEntry, error) {
 	return entries, nil
 }
 
-// GetStaticMACAddressTable retrieves the static MAC address table via the "mac.cgi?page=static" endpoint.
+// GetStaticMACAddressTable retrieves the static MAC address table.
 func (c *HRUIClient) GetStaticMACAddressTable() ([]StaticMACEntry, error) {
-	// Perform a GET request using MakeRequest
-	resp, err := c.MakeRequest(c.URL + "/mac.cgi?page=static")
+	url := c.URL + "/mac.cgi?page=static"
+
+	respBody, err := c.ExecuteRequest("GET", url, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching static MAC address table: %w", err)
 	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
 
 	// Parse the HTML document using goquery
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("error parsing HTML: %w", err)
 	}
@@ -140,12 +130,10 @@ func (c *HRUIClient) AddStaticMACAddress(mac string, vlanID int, port int) error
 		"cmd":  {"macstatic"},
 	}
 
-	// Submit the form using PostForm
-	resp, err := c.PostForm(c.URL+"/mac.cgi?page=static", formData)
+	_, err := c.ExecuteFormRequest(c.URL+"/mac.cgi?page=static", formData)
 	if err != nil {
-		return err
+		return fmt.Errorf("error adding static MAC address: %w", err)
 	}
-	defer resp.Body.Close()
 
 	return nil
 }
@@ -162,12 +150,10 @@ func (c *HRUIClient) DeleteStaticMACAddress(macEntries []StaticMACEntry) error {
 		formData.Add("del", checkboxValue)
 	}
 
-	// Submit the form using PostForm
-	resp, err := c.PostForm(c.URL+"/mac.cgi?page=staticdel", formData)
+	_, err := c.ExecuteFormRequest(c.URL+"/mac.cgi?page=staticdel", formData)
 	if err != nil {
-		return err
+		return fmt.Errorf("error deleting static MAC addresses: %w", err)
 	}
-	defer resp.Body.Close()
 
 	return nil
 }

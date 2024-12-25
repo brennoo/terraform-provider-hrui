@@ -20,22 +20,20 @@ type StormControlEntry struct {
 	UnknownMulticastRateKbps *int `json:"unknown_multicast_rate_kbps"` // Unknown Multicast, nil if "Off"
 }
 
-// StormControlConfig represents all the storm control entries in the table
+// StormControlConfig represents all the storm control entries in the table.
 type StormControlConfig struct {
 	Entries []StormControlEntry `json:"entries"`
 }
 
-// GetStormControlStatus fetches the current storm control status from the HTML page
+// GetStormControlStatus fetches the current storm control status from the HTML page.
 func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
-	// Perform the GET request to fetch the page content
-	resp, err := c.HttpClient.Get(c.URL + "/fwd.cgi?page=storm_ctrl")
+	respBody, err := c.ExecuteRequest("GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch storm control page: %w", err)
 	}
-	defer resp.Body.Close()
 
 	// Parse the HTML page using goquery
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, errors.New("failed to parse HTML response")
 	}
@@ -81,7 +79,7 @@ func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
 	return &StormControlConfig{Entries: entries}, nil
 }
 
-// Helper function to parse rates from text (converts "Off" to nil)
+// Helper function to parse rates from text (converts "Off" to nil).
 func parseRate(rate string) *int {
 	if rate == "Off" {
 		return nil
@@ -96,7 +94,7 @@ func parseRate(rate string) *int {
 	return &value
 }
 
-// UpdateStormControl updates the storm control settings for specific ports
+// UpdateStormControl updates the storm control settings for specific ports.
 func (c *HRUIClient) UpdateStormControl(
 	stormType string, // Type of storm control: "Broadcast", "Known Multicast", etc.
 	ports []int, // Ports to apply settings to, as integers.
@@ -129,15 +127,13 @@ func (c *HRUIClient) UpdateStormControl(
 	// Add ports
 	formData.Set("portid", strings.Join(backendPorts, ","))
 
-	// Perform the POST request
-	resp, err := c.HttpClient.PostForm(c.URL+"/fwd.cgi?page=storm_ctrl", formData)
+	respBody, err := c.ExecuteFormRequest(c.URL+"/fwd.cgi?page=storm_ctrl", formData)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to update storm control settings: %w", err)
 	}
-	defer resp.Body.Close()
 
 	// Parse the response body to check for errors
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return errors.New("failed to parse HTML response")
 	}
@@ -159,23 +155,20 @@ func (c *HRUIClient) UpdateStormControl(
 // GetPortMaxRate retrieves the maximum allowed traffic rate (kbps) for a specific port
 // from the "Rate (kbps)" column in the storm control HTML page.
 func (c *HRUIClient) GetPortMaxRate(port int) (int64, error) {
-	// Convert the provided integer port to the backend's string format
 	portString := intToBackendPort(port)
 
-	// Step 1: Fetch the storm control page
-	resp, err := c.HttpClient.Get(c.URL + "/fwd.cgi?page=storm_ctrl")
+	respBody, err := c.ExecuteRequest("GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
 	if err != nil {
-		return 0, fmt.Errorf("failed to fetch storm control page: %v", err)
-	}
-	defer resp.Body.Close()
-
-	// Step 2: Parse the HTML content using goquery
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
-	if err != nil {
-		return 0, fmt.Errorf("error parsing storm control page: %v", err)
+		return 0, fmt.Errorf("failed to fetch storm control page: %w", err)
 	}
 
-	// Step 3: Look for the row corresponding to the given port
+	// Parse the HTML content using goquery
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
+	if err != nil {
+		return 0, fmt.Errorf("error parsing storm control page: %w", err)
+	}
+
+	// Look for the row corresponding to the given port
 	var rateText string
 	doc.Find("tr").Each(func(i int, s *goquery.Selection) {
 		// Check if this row contains the specified port string
@@ -189,12 +182,12 @@ func (c *HRUIClient) GetPortMaxRate(port int) (int64, error) {
 		}
 	})
 
-	// Step 4: Handle cases where the port or rate was not found
+	// Handle cases where the port or rate was not found
 	if rateText == "" {
 		return 0, fmt.Errorf("could not find rate information for port '%s'", portString)
 	}
 
-	// Step 5: Extract the max rate from the text using regex
+	// Extract the max rate from the text using regex
 	re := regexp.MustCompile(`1-(\d+).*kbps`) // Match the "1-XXXXXX" structure and extract XXXXXX
 	matches := re.FindStringSubmatch(rateText)
 	if len(matches) < 2 {
@@ -204,13 +197,13 @@ func (c *HRUIClient) GetPortMaxRate(port int) (int64, error) {
 	// Convert the extracted max rate to int64
 	maxRate, err := strconv.ParseInt(matches[1], 10, 64)
 	if err != nil {
-		return 0, fmt.Errorf("error converting max rate to integer: %v", err)
+		return 0, fmt.Errorf("error converting max rate to integer: %w", err)
 	}
 
 	return maxRate, nil
 }
 
-// Helper function to convert storm type to its corresponding ID
+// Helper function to convert storm type to its corresponding ID.
 func stormTypeToID(stormType string) string {
 	switch strings.ToLower(stormType) {
 	case "broadcast":

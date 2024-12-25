@@ -22,7 +22,7 @@ type igmpSnoopingStaticResource struct {
 	client *sdk.HRUIClient
 }
 
-// New creates a new resource instance
+// New creates a new resource instance.
 func NewResource() resource.Resource {
 	return &igmpSnoopingStaticResource{}
 }
@@ -70,7 +70,7 @@ func (r *igmpSnoopingStaticResource) Configure(_ context.Context, req resource.C
 	r.client = client
 }
 
-// Create enables IGMP snooping for a specific port
+// Create enables IGMP snooping for a specific port.
 func (r *igmpSnoopingStaticResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan igmpSnoopingStaticModel
 

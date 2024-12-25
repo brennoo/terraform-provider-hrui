@@ -11,15 +11,15 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// Ensure implementation satisfies the resource.Resource interface
+// Ensure implementation satisfies the resource.Resource interface.
 var _ resource.Resource = &macStaticResource{}
 
-// macStaticResource manages static MAC entries on the switch
+// macStaticResource manages static MAC entries on the switch.
 type macStaticResource struct {
 	client *sdk.HRUIClient
 }
 
-// NewResource initializes a new instance of the `macStaticResource`
+// NewResource initializes a new instance of the `macStaticResource`.
 func NewResource() resource.Resource {
 	return &macStaticResource{}
 }

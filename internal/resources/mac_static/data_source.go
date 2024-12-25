@@ -9,25 +9,25 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// Ensure implementation satisfies the datasource.DataSource interface
+// Ensure implementation satisfies the datasource.DataSource interface.
 var _ datasource.DataSource = &macStaticDataSource{}
 
-// macStaticDataSource retrieves static MAC addresses from the HRUI device
+// macStaticDataSource retrieves static MAC addresses from the HRUI device.
 type macStaticDataSource struct {
 	client *sdk.HRUIClient
 }
 
-// NewDataSource initializes a new instance of the data source
+// NewDataSource initializes a new instance of the data source.
 func NewDataSource() datasource.DataSource {
 	return &macStaticDataSource{}
 }
 
-// Metadata sets the type name for the data source
+// Metadata sets the type name for the data source.
 func (d *macStaticDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_mac_static"
 }
 
-// Schema defines the schema for the data source
+// Schema defines the schema for the data source.
 func (d *macStaticDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "Data source for querying static MAC addresses from the HRUI device.",
@@ -68,7 +68,7 @@ func (d *macStaticDataSource) Schema(ctx context.Context, req datasource.SchemaR
 	}
 }
 
-// Configure assigns the SDK client from provider configuration
+// Configure assigns the SDK client from provider configuration.
 func (d *macStaticDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData != nil {
 		client, ok := req.ProviderData.(*sdk.HRUIClient)
@@ -80,7 +80,7 @@ func (d *macStaticDataSource) Configure(ctx context.Context, req datasource.Conf
 	}
 }
 
-// Read queries static MAC addresses and returns the filtered results
+// Read queries static MAC addresses and returns the filtered results.
 func (d *macStaticDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	// Extract filters from the request
 	var filters macStaticDataSourceModel

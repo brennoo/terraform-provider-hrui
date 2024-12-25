@@ -1,7 +1,6 @@
 package sdk
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -99,8 +98,11 @@ func TestGetAllQOSPortQueues(t *testing.T) {
 `
 
 	// Create a mock HTTP server to return the sample HTML.
+
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, html)
+		if _, err := w.Write([]byte(html)); err != nil {
+			t.Fatalf("failed to write mock HTML response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -166,7 +168,9 @@ func TestGetAllQOSQueueWeights_Success(t *testing.T) {
 	// Create a test server that returns the above HTML
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(htmlResponse))
+		if _, err := w.Write([]byte(htmlResponse)); err != nil {
+			t.Fatalf("failed to write response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -216,7 +220,9 @@ func TestGetAllQOSQueueWeights_EmptyTable(t *testing.T) {
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(htmlResponse))
+		if _, err := w.Write([]byte(htmlResponse)); err != nil {
+			t.Fatalf("failed to write response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -250,7 +256,9 @@ func TestGetAllQOSQueueWeights_MalformedHTML(t *testing.T) {
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(htmlResponse))
+		if _, err := w.Write([]byte(htmlResponse)); err != nil {
+			t.Fatalf("failed to write response: %v", err)
+		}
 	}))
 	defer server.Close()
 
@@ -321,7 +329,7 @@ func TestUpdateQOSQueueWeight_Failure(t *testing.T) {
 
 	// Call the method to test
 	err := client.UpdateQOSQueueWeight(1, 10)
-	if err == nil || !strings.Contains(err.Error(), "unexpected status code 500") {
+	if err == nil || !strings.Contains(err.Error(), "returned status 500") {
 		t.Fatalf("expected an error with status code 500, but got %v", err)
 	}
 }

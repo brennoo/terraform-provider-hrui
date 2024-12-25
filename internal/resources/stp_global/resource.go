@@ -156,7 +156,7 @@ func (r *stpGlobalResource) Create(ctx context.Context, req resource.CreateReque
 	resp.Diagnostics.Append(diags...)
 }
 
-// Read fetches the current state for hrui_stp_global
+// Read fetches the current state for hrui_stp_global.
 func (r *stpGlobalResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state stpGlobalModel
 

@@ -13,14 +13,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-// Ensure implementation satisfies the resource.Resource interface
+// Ensure implementation satisfies the resource.Resource interface.
 var _ resource.Resource = &stormControlResource{}
 
 type stormControlResource struct {
 	client *sdk.HRUIClient
 }
 
-// Constants for supported storm types
+// Constants for supported storm types.
 const (
 	stormTypeBroadcast        = "broadcast"
 	stormTypeKnownMulticast   = "known multicast"
@@ -88,9 +88,12 @@ func (r *stormControlResource) Configure(ctx context.Context, req resource.Confi
 // Create a new storm control configuration.
 func (r *stormControlResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data stormControlModel
-	if diags := req.Plan.Get(ctx, &data); diags.HasError() {
+	diags := req.Plan.Get(ctx, &data)
+	if diags != nil {
 		resp.Diagnostics.Append(diags...)
-		return
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	}
 
 	maxRate, err := r.client.GetPortMaxRate(int(data.Port.ValueInt64()))
@@ -121,9 +124,12 @@ func (r *stormControlResource) Create(ctx context.Context, req resource.CreateRe
 // Read the current storm control configuration.
 func (r *stormControlResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state stormControlModel
-	if diags := req.State.Get(ctx, &state); diags.HasError() {
+	diags := req.State.Get(ctx, &state)
+	if diags != nil {
 		resp.Diagnostics.Append(diags...)
-		return
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	}
 
 	config, err := r.client.GetStormControlStatus()
@@ -158,7 +164,8 @@ func (r *stormControlResource) Read(ctx context.Context, req resource.ReadReques
 		}
 	}
 
-	if !isEntryFound || isStormControlDisabled(matchingRate, maxRate) {
+	// Check if we found a matching entry and handle nil matchingRate
+	if !isEntryFound || matchingRate == nil || isStormControlDisabled(matchingRate, maxRate) {
 		state.State = types.BoolValue(false)
 		state.Rate = types.Int64Null()
 	} else {
@@ -172,9 +179,12 @@ func (r *stormControlResource) Read(ctx context.Context, req resource.ReadReques
 // Update modifies an existing storm control configuration.
 func (r *stormControlResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan stormControlModel
-	if diags := req.Plan.Get(ctx, &plan); diags.HasError() {
+	diags := req.Plan.Get(ctx, &plan)
+	if diags != nil {
 		resp.Diagnostics.Append(diags...)
-		return
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	}
 
 	maxRate, err := r.client.GetPortMaxRate(int(plan.Port.ValueInt64()))
@@ -205,9 +215,12 @@ func (r *stormControlResource) Update(ctx context.Context, req resource.UpdateRe
 // Delete disables storm control for the given port and storm type.
 func (r *stormControlResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state stormControlModel
-	if diags := req.State.Get(ctx, &state); diags.HasError() {
+	diags := req.State.Get(ctx, &state)
+	if diags != nil {
 		resp.Diagnostics.Append(diags...)
-		return
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	}
 
 	err := r.client.UpdateStormControl(
@@ -221,7 +234,7 @@ func (r *stormControlResource) Delete(ctx context.Context, req resource.DeleteRe
 	}
 }
 
-// Validate Storm Control Rate
+// Validate Storm Control Rate.
 func validateStormControlRate(rate int64, maxRate int64) error {
 	if rate == 0 || rate == maxRate {
 		return fmt.Errorf(

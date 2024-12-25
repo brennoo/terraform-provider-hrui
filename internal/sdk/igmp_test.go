@@ -144,14 +144,19 @@ func TestGetPortIGMPSnooping(t *testing.T) {
 
 				if r.URL.Path == "/igmp.cgi" && r.URL.Query().Get("page") == "dump" {
 					w.WriteHeader(http.StatusOK)
-					w.Write([]byte(tt.mockHTML))
+					if _, err := w.Write([]byte(tt.mockHTML)); err != nil {
+						t.Fatalf("failed to write response for /igmp.cgi: %v", err)
+					}
 					return
 				}
 				if r.URL.Path == "/port.cgi" {
 					w.WriteHeader(http.StatusOK)
-					w.Write([]byte(mockPortHTML()))
+					if _, err := w.Write([]byte(mockPortHTML())); err != nil {
+						t.Fatalf("failed to write response for /port.cgi: %v", err)
+					}
 					return
 				}
+
 				http.Error(w, "not found", http.StatusNotFound)
 			}))
 			defer server.Close()
@@ -178,7 +183,7 @@ func TestGetPortIGMPSnooping(t *testing.T) {
 	}
 }
 
-// Helper function to create a mock response HTML for GetAllPorts
+// Helper function to create a mock response HTML for GetAllPorts.
 func mockPortHTML() string {
 	return `
 <html>

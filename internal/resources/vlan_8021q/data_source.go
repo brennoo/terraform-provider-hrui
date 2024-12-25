@@ -24,7 +24,7 @@ func NewDataSource() datasource.DataSource {
 	return &vlan8021qDataSource{}
 }
 
-// Metadata sets the data source type name in Terraform
+// Metadata sets the data source type name in Terraform.
 func (d *vlan8021qDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_vlan_8021q"
 }

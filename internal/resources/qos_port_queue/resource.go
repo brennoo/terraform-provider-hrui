@@ -76,9 +76,11 @@ func (r *qosPortQueueResource) Create(ctx context.Context, req resource.CreateRe
 	var plan qosPortQueueModel
 
 	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
+	if diags != nil {
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	}
 
 	portID := int(plan.PortID.ValueInt64())
@@ -106,9 +108,11 @@ func (r *qosPortQueueResource) Update(ctx context.Context, req resource.UpdateRe
 	var plan qosPortQueueModel
 
 	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
+	if diags != nil {
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	}
 
 	portID := int(plan.PortID.ValueInt64())
@@ -136,9 +140,11 @@ func (r *qosPortQueueResource) Read(ctx context.Context, req resource.ReadReques
 	var state qosPortQueueModel
 
 	diags := req.State.Get(ctx, &state)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
+	if diags != nil {
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	}
 
 	portID := int(state.PortID.ValueInt64())
@@ -159,9 +165,11 @@ func (r *qosPortQueueResource) Delete(ctx context.Context, req resource.DeleteRe
 	var state qosPortQueueModel
 
 	diags := req.State.Get(ctx, &state)
-	resp.Diagnostics.Append(diags...)
-	if diags.HasError() {
-		return
+	if diags != nil {
+		resp.Diagnostics.Append(diags...)
+		if resp.Diagnostics.HasError() {
+			return
+		}
 	}
 
 	portID := int(state.PortID.ValueInt64())
