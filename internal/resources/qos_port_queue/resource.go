@@ -92,14 +92,6 @@ func (r *qosPortQueueResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	if r.client.Autosave {
-		err = r.client.SaveConfiguration()
-		if err != nil {
-			resp.Diagnostics.AddError("Save Error", fmt.Sprintf("Unable to save configuration: %s", err))
-			return
-		}
-	}
-
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
@@ -122,14 +114,6 @@ func (r *qosPortQueueResource) Update(ctx context.Context, req resource.UpdateRe
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update QoS Port Queue: %s", err))
 		return
-	}
-
-	if r.client.Autosave {
-		err = r.client.SaveConfiguration()
-		if err != nil {
-			resp.Diagnostics.AddError("Save Error", fmt.Sprintf("Unable to save configuration: %s", err))
-			return
-		}
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
@@ -178,14 +162,6 @@ func (r *qosPortQueueResource) Delete(ctx context.Context, req resource.DeleteRe
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to reset QoS Port Queue for port %d: %s", portID, err))
 		return
-	}
-
-	if r.client.Autosave {
-		err = r.client.SaveConfiguration()
-		if err != nil {
-			resp.Diagnostics.AddError("Save Error", fmt.Sprintf("Unable to save configuration: %s", err))
-			return
-		}
 	}
 
 	resp.State.RemoveResource(ctx)

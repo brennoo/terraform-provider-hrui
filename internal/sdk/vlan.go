@@ -52,10 +52,6 @@ func (c *HRUIClient) CreateVLAN(vlan *Vlan, totalPorts int) error {
 		return fmt.Errorf("failed to create/update VLAN: %w", err)
 	}
 
-	if c.Autosave {
-		return c.SaveConfiguration()
-	}
-
 	return nil
 }
 
@@ -156,10 +152,6 @@ func (c *HRUIClient) DeleteVLAN(vlanID int) error {
 		return fmt.Errorf("failed to delete VLAN: %w", err)
 	}
 
-	if c.Autosave {
-		return c.SaveConfiguration()
-	}
-
 	return nil
 }
 
@@ -258,10 +250,6 @@ func (c *HRUIClient) SetPortVLANConfig(config *PortVLANConfig) error {
 	_, err := c.ExecuteFormRequest(portVLANURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to set port VLAN config: %w", err)
-	}
-
-	if c.Autosave {
-		return c.SaveConfiguration()
 	}
 
 	return nil

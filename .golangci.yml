@@ -30,7 +30,4 @@ linters:
     - govet           # Report suspicious constructs
 
 output:
-  formats:
-    - format: github-actions
-      path: stdout
   show-stats: true

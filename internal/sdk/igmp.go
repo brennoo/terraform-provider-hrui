@@ -32,9 +32,6 @@ func (c *HRUIClient) UpdateIGMPSnooping(enable bool) error {
 		return fmt.Errorf("failed to update global IGMP snooping: %w", err)
 	}
 
-	if c.Autosave {
-		return c.SaveConfiguration()
-	}
 	return nil
 }
 
@@ -89,9 +86,6 @@ func (c *HRUIClient) UpdatePortIGMPSnooping(port int, enable bool) error {
 		return fmt.Errorf("failed to update IGMP snooping for port %d: %w", port, err)
 	}
 
-	if c.Autosave {
-		return c.SaveConfiguration()
-	}
 	return nil
 }
 

@@ -1,8 +1,6 @@
 package sdk
 
 import (
-	"bufio"
-	"bytes"
 	"crypto/md5" //#nosec G501 -- HRUI switch auth requires it
 	"encoding/hex"
 	"fmt"
@@ -131,29 +129,29 @@ func (client *HRUIClient) ExecuteRequest(method, endpoint string, body io.Reader
 	// Ensure Body.Close() is called and its error is checked
 	defer func() {
 		if closeErr := resp.Body.Close(); closeErr != nil {
-			// Log or return the close error if necessary
 			fmt.Printf("warning: error closing response body: %v\n", closeErr)
 		}
 	}()
 
-	// Use a scanner to read the response body in chunks
-	scanner := bufio.NewScanner(resp.Body)
-	scanner.Buffer(make([]byte, 1024), 1024*1024) // Adjust buffer size as needed
-
-	var respBody bytes.Buffer
-	for scanner.Scan() {
-		respBody.Write(scanner.Bytes())
-	}
-	if err := scanner.Err(); err != nil {
+	// Read the response body
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
 		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
 	// Handle non-2xx status codes
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, fmt.Errorf("HTTP request to %s returned status %d: %s", endpoint, resp.StatusCode, string(respBody.Bytes()))
+		return nil, fmt.Errorf("HTTP request to %s returned status %d: %s", endpoint, resp.StatusCode, string(respBody))
 	}
 
-	return respBody.Bytes(), nil
+	// If Autosave is enabled, save the configuration
+	if client.Autosave {
+		if err := client.SaveConfiguration(); err != nil {
+			return nil, fmt.Errorf("form request succeeded, but saving configuration failed: %w", err)
+		}
+	}
+
+	return respBody, nil
 }
 
 // ExecuteFormRequest simplifies form submissions via POST and returns the response body as a byte slice.
@@ -181,16 +179,31 @@ func (c *HRUIClient) SaveConfiguration() error {
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
 
-	// Execute the POST request using ExecuteRequest
-	respBody, err := c.ExecuteRequest("POST", url, strings.NewReader("cmd=save"), headers)
-	if err != nil {
-		return fmt.Errorf("failed to save HRUI configuration: %w", err)
+	const maxRetries = 3
+	const retryDelay = 2 * time.Second
+
+	var lastError error
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		// Execute the POST request using ExecuteRequest
+		respBody, err := c.ExecuteRequest("POST", url, strings.NewReader("cmd=save"), headers)
+		if err == nil {
+			// Check if the body contains an error message (e.g., for a 500 status code)
+			if strings.Contains(string(respBody), "Error saving configuration") {
+				lastError = fmt.Errorf("failed to save HRUI configuration: %s", string(respBody))
+			} else {
+				// Save succeeded
+				return nil
+			}
+		} else {
+			lastError = fmt.Errorf("failed to save HRUI configuration: %w", err)
+		}
+
+		// If not the last attempt, wait before retrying
+		if attempt < maxRetries {
+			time.Sleep(retryDelay)
+		}
 	}
 
-	// Check if the body contains an error message (e.g., for a 500 status code)
-	if strings.Contains(string(respBody), "Error saving configuration") {
-		return fmt.Errorf("failed to save HRUI configuration: %s", string(respBody))
-	}
-
-	return nil
+	// Return the last error after exhausting all retries
+	return fmt.Errorf("save configuration failed after %d retries: %w", maxRetries, lastError)
 }

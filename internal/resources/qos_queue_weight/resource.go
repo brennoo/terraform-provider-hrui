@@ -113,14 +113,6 @@ func (r *qosQueueWeightResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
-	if r.client.Autosave {
-		err = r.client.SaveConfiguration()
-		if err != nil {
-			resp.Diagnostics.AddError("Save Error", fmt.Sprintf("Unable to save configuration: %s", err))
-			return
-		}
-	}
-
 	// Set the new state of the resource in Terraform
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
@@ -193,14 +185,6 @@ func (r *qosQueueWeightResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
-	if r.client.Autosave {
-		err = r.client.SaveConfiguration()
-		if err != nil {
-			resp.Diagnostics.AddError("Save Error", fmt.Sprintf("Unable to save configuration: %s", err))
-			return
-		}
-	}
-
 	// Persist the latest state to Terraform
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
@@ -223,14 +207,6 @@ func (r *qosQueueWeightResource) Delete(ctx context.Context, req resource.Delete
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to reset QoS Queue Weight: %s", err))
 		return
-	}
-
-	if r.client.Autosave {
-		err = r.client.SaveConfiguration()
-		if err != nil {
-			resp.Diagnostics.AddError("Save Error", fmt.Sprintf("Unable to save configuration: %s", err))
-			return
-		}
 	}
 
 	// Remove resource from state

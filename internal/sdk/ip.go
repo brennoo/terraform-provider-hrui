@@ -76,9 +76,5 @@ func (c *HRUIClient) UpdateIPAddressSettings(settings *IPAddressSettings) error 
 		return fmt.Errorf("failed to update IP Settings: %w", err)
 	}
 
-	if c.Autosave {
-		return c.SaveConfiguration()
-	}
-
 	return nil
 }
