@@ -49,7 +49,7 @@ type PortStatistics struct {
 }
 
 func (c *HRUIClient) GetPort(portID int) (*Port, error) {
-	ports, err := c.GetAllPorts()
+	ports, err := c.ListPorts()
 	if err != nil {
 		log.Print("failed to fetch Ports:", err)
 		return nil, err
@@ -64,11 +64,11 @@ func (c *HRUIClient) GetPort(portID int) (*Port, error) {
 	return nil, fmt.Errorf("port with ID %d not found", portID)
 }
 
-// GetAllPorts retrieves information about all switch ports.
-func (c *HRUIClient) GetAllPorts() ([]*Port, error) {
+// ListPorts retrieves information about all switch ports.
+func (c *HRUIClient) ListPorts() ([]*Port, error) {
 	portURL := fmt.Sprintf("%s/port.cgi?page=static", c.URL)
 
-	respBody, err := c.ExecuteRequest("GET", portURL, nil, nil)
+	respBody, err := c.Request("GET", portURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch Port settings from HRUI: %w", err)
 	}
@@ -117,7 +117,7 @@ func (c *HRUIClient) GetAllPorts() ([]*Port, error) {
 	return ports, nil
 }
 
-func (c *HRUIClient) UpdatePortSettings(port *Port) error {
+func (c *HRUIClient) ConfigurePort(port *Port) error {
 	// Validate `SpeedDuplex` and `FlowControl` values
 	validSpeedDuplex := false
 	for _, v := range speedDuplexMapping {
@@ -150,7 +150,7 @@ func (c *HRUIClient) UpdatePortSettings(port *Port) error {
 
 	// submit the form
 	portsURL := fmt.Sprintf("%s/port.cgi", c.URL)
-	_, err := c.ExecuteFormRequest(portsURL, form)
+	_, err := c.FormRequest(portsURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to update port settings: %w", err)
 	}
@@ -159,7 +159,7 @@ func (c *HRUIClient) UpdatePortSettings(port *Port) error {
 }
 
 func (c *HRUIClient) GetTotalPorts() (int, error) {
-	ports, err := c.GetAllPorts()
+	ports, err := c.ListPorts()
 	if err != nil {
 		return 0, fmt.Errorf("failed to get total ports: %w", err)
 	}
@@ -170,7 +170,7 @@ func (c *HRUIClient) GetTotalPorts() (int, error) {
 func (c *HRUIClient) GetPortStatistics() ([]*PortStatistics, error) {
 	statsURL := fmt.Sprintf("%s/port.cgi?page=stats", c.URL)
 
-	respBody, err := c.ExecuteRequest("GET", statsURL, nil, nil)
+	respBody, err := c.Request("GET", statsURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch port statistics page: %w", err)
 	}

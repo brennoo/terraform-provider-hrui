@@ -134,8 +134,8 @@ func (r *vlan8021qResource) Create(ctx context.Context, req resource.CreateReque
 		MemberPorts:   memberPorts,
 	}
 
-	// Call CreateVLAN with totalPorts
-	if err := r.client.CreateVLAN(vlan, totalPorts); err != nil {
+	// Call AddVLAN with totalPorts
+	if err := r.client.AddVLAN(vlan, totalPorts); err != nil {
 		resp.Diagnostics.AddError("Error creating VLAN", fmt.Sprintf("Failed to create VLAN: %s", err))
 		return
 	}
@@ -230,7 +230,7 @@ func (r *vlan8021qResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	if err := r.client.CreateVLAN(vlan, totalPorts); err != nil {
+	if err := r.client.AddVLAN(vlan, totalPorts); err != nil {
 		resp.Diagnostics.AddError("Error updating VLAN", fmt.Sprintf("Failed to update VLAN ID %d: %s", plan.VlanID.ValueInt64(), err))
 		return
 	}
@@ -255,7 +255,7 @@ func (r *vlan8021qResource) Delete(ctx context.Context, req resource.DeleteReque
 	}
 
 	// Delete the VLAN using the SDK
-	if err := r.client.DeleteVLAN(int(state.VlanID.ValueInt64())); err != nil {
+	if err := r.client.RemoveVLAN(int(state.VlanID.ValueInt64())); err != nil {
 		resp.Diagnostics.AddError("Error deleting VLAN", err.Error())
 	}
 }

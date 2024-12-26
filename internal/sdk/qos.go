@@ -22,9 +22,9 @@ type QoSQueueWeight struct {
 	Weight string
 }
 
-// GetAllQOSPortQueues fetches and parses QoS port queues from the HTML page.
-func (client *HRUIClient) GetAllQOSPortQueues() ([]QoSPortQueue, error) {
-	respBody, err := client.ExecuteRequest("GET", client.URL+"/qos.cgi?page=port_pri", nil, nil)
+// ListQoSPortQueues fetches and parses QoS port queues from the HTML page.
+func (c *HRUIClient) ListQoSPortQueues() ([]QoSPortQueue, error) {
+	respBody, err := c.Request("GET", c.URL+"/qos.cgi?page=port_pri", nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to request QoS Port Queues: %w", err)
 	}
@@ -84,9 +84,9 @@ func parseQueueID(queueText string) (int, error) {
 	return strconv.Atoi(match)
 }
 
-// GetQOSPortQueue fetches the QoS port queue by portID (0-based input).
-func (client *HRUIClient) GetQOSPortQueue(portID int) (*QoSPortQueue, error) {
-	portQueues, err := client.GetAllQOSPortQueues()
+// GetQoSPortQueue fetches the QoS port queue by portID (0-based input).
+func (c *HRUIClient) GetQoSPortQueue(portID int) (*QoSPortQueue, error) {
+	portQueues, err := c.ListQoSPortQueues()
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve list of QoS port queues: %w", err)
 	}
@@ -100,8 +100,8 @@ func (client *HRUIClient) GetQOSPortQueue(portID int) (*QoSPortQueue, error) {
 	return nil, fmt.Errorf("QoS Port Queue not found for Port ID %d", portID+1)
 }
 
-// UpdateQOSPortQueue updates the QoS port queue for the given port.
-func (client *HRUIClient) UpdateQOSPortQueue(portID, queue int) error {
+// SetQoSPortQueue updates the QoS port queue for the given port.
+func (c *HRUIClient) SetQoSPortQueue(portID, queue int) error {
 	// Prepare form values for the HTTP request
 	data := url.Values{}
 	data.Set("cmd", "portprio")                      // API command for modifying port priority
@@ -109,10 +109,10 @@ func (client *HRUIClient) UpdateQOSPortQueue(portID, queue int) error {
 	data.Set("port_priority", strconv.Itoa(queue-1)) // The new QoS queue value to set (0-based)
 
 	// Prepare the endpoint to send the update request to
-	updateURL := client.URL + "/qos.cgi?page=port_pri"
+	updateURL := c.URL + "/qos.cgi?page=port_pri"
 
 	// Send the POST request to update the QoS Port Queue
-	_, err := client.ExecuteFormRequest(updateURL, data)
+	_, err := c.FormRequest(updateURL, data)
 	if err != nil {
 		return fmt.Errorf("failed to update QoS Port Queue: %w", err)
 	}
@@ -120,10 +120,10 @@ func (client *HRUIClient) UpdateQOSPortQueue(portID, queue int) error {
 	return nil
 }
 
-// GetAllQOSQueueWeights fetches the current queues and weights from the HTML page.
-func (client *HRUIClient) GetAllQOSQueueWeights() ([]QoSQueueWeight, error) {
-	// Use ExecuteRequest to fetch the HTML page with QoS queue weights
-	respBody, err := client.ExecuteRequest("GET", client.URL+"/qos.cgi?page=pkt_sch", nil, nil)
+// ListQoSQueueWeights fetches the current queues and weights from the HTML page.
+func (c *HRUIClient) ListQoSQueueWeights() ([]QoSQueueWeight, error) {
+	// Use Request to fetch the HTML page with QoS queue weights
+	respBody, err := c.Request("GET", c.URL+"/qos.cgi?page=pkt_sch", nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to request queue weights page: %w", err)
 	}
@@ -160,17 +160,17 @@ func (client *HRUIClient) GetAllQOSQueueWeights() ([]QoSQueueWeight, error) {
 	return queueWeights, nil
 }
 
-// UpdateQOSQueueWeight updates the weight for a given queue.
-func (client *HRUIClient) UpdateQOSQueueWeight(queue, weight int) error {
+// SetQoSQueueWeight updates the weight for a given queue.
+func (c *HRUIClient) SetQoSQueueWeight(queue, weight int) error {
 	data := url.Values{}
 	data.Set("cmd", "qweight")                 // Command for setting queue weight
 	data.Set("queueid", strconv.Itoa(queue-1)) // Queue (0-based for the backend)
 	data.Set("weight", strconv.Itoa(weight))   // Weight (already 0-based as expected)
 
-	updateURL := client.URL + "/qos.cgi?page=que_weight"
+	updateURL := c.URL + "/qos.cgi?page=que_weight"
 
-	// Send the POST request to update the queue weight using ExecuteFormRequest
-	_, err := client.ExecuteFormRequest(updateURL, data)
+	// Send the POST request to update the queue weight using FormRequest
+	_, err := c.FormRequest(updateURL, data)
 	if err != nil {
 		return fmt.Errorf("failed to update QoS Queue Weight: %w", err)
 	}

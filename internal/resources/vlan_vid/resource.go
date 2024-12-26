@@ -127,7 +127,7 @@ func (r *vlanVIDResource) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 
 	port := int(state.Port.ValueInt64())
-	configs, err := r.client.GetAllPortVLANConfigs()
+	configs, err := r.client.ListPortVLANConfigs()
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error reading VLAN VID configuration",

@@ -66,7 +66,7 @@ func (d *qosQueueWeightDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	// Call the SDK to fetch all QoS Queue Weights
-	fetchedQueues, err := d.client.GetAllQOSQueueWeights()
+	fetchedQueues, err := d.client.ListQoSQueueWeights()
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to list QoS Queue Weights", err.Error())
 		return

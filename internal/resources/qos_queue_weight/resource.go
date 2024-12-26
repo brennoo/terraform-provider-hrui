@@ -107,7 +107,7 @@ func (r *qosQueueWeightResource) Create(ctx context.Context, req resource.Create
 	}
 
 	// Apply the weight configuration using the SDK client
-	err := r.client.UpdateQOSQueueWeight(queueID, weight)
+	err := r.client.SetQoSQueueWeight(queueID, weight)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to set QoS Queue Weight: %s", err))
 		return
@@ -130,7 +130,7 @@ func (r *qosQueueWeightResource) Read(ctx context.Context, req resource.ReadRequ
 
 	// Use SDK to get current queue weights and update state
 	queueID := int(state.QueueID.ValueInt64())
-	queueWeights, err := r.client.GetAllQOSQueueWeights()
+	queueWeights, err := r.client.ListQoSQueueWeights()
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to fetch QoS Queue Weights: %s", err))
 		return
@@ -179,7 +179,7 @@ func (r *qosQueueWeightResource) Update(ctx context.Context, req resource.Update
 	}
 
 	// Apply the update using the SDK
-	err := r.client.UpdateQOSQueueWeight(queueID, weight)
+	err := r.client.SetQoSQueueWeight(queueID, weight)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update QoS Queue Weight: %s", err))
 		return
@@ -203,7 +203,7 @@ func (r *qosQueueWeightResource) Delete(ctx context.Context, req resource.Delete
 	queueID := int(state.QueueID.ValueInt64())
 
 	// Reset the weight to default (strict priority)
-	err := r.client.UpdateQOSQueueWeight(queueID, 0)
+	err := r.client.SetQoSQueueWeight(queueID, 0)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to reset QoS Queue Weight: %s", err))
 		return

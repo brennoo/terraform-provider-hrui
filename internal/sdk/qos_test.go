@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestGetAllQOSPortQueues(t *testing.T) {
+func TestListQoSPortQueues(t *testing.T) {
 	// Sample HTML output from the device.
 	html := `
 <html>
@@ -112,8 +112,8 @@ func TestGetAllQOSPortQueues(t *testing.T) {
 		HttpClient: http.DefaultClient,
 	}
 
-	// Call GetAllQOSPortQueues to parse the HTML.
-	portQueues, err := client.GetAllQOSPortQueues()
+	// Call ListQoSPortQueues to parse the HTML.
+	portQueues, err := client.ListQoSPortQueues()
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
@@ -141,8 +141,8 @@ func TestGetAllQOSPortQueues(t *testing.T) {
 	}
 }
 
-// TestGetAllQOSQueueWeights_Success tests successfully parsing queue weights from an HTML page.
-func TestGetAllQOSQueueWeights_Success(t *testing.T) {
+// TestListQoSQueueWeights_Success tests successfully parsing queue weights from an HTML page.
+func TestListQoSQueueWeights_Success(t *testing.T) {
 	// Simulate HTML response
 	htmlResponse := `
 		<html>
@@ -181,7 +181,7 @@ func TestGetAllQOSQueueWeights_Success(t *testing.T) {
 	}
 
 	// Call the actual method to test
-	queueWeights, err := client.GetAllQOSQueueWeights()
+	queueWeights, err := client.ListQoSQueueWeights()
 	if err != nil {
 		t.Fatalf("expected no error, but got %v", err)
 	}
@@ -203,8 +203,8 @@ func TestGetAllQOSQueueWeights_Success(t *testing.T) {
 	}
 }
 
-// TestGetAllQOSQueueWeights_EmptyTable tests the case where the HTML contains no queue data.
-func TestGetAllQOSQueueWeights_EmptyTable(t *testing.T) {
+// TestListQoSQueueWeights_EmptyTable tests the case where the HTML contains no queue data.
+func TestListQoSQueueWeights_EmptyTable(t *testing.T) {
 	htmlResponse := `
 		<html>
 		<body>
@@ -231,7 +231,7 @@ func TestGetAllQOSQueueWeights_EmptyTable(t *testing.T) {
 		URL:        server.URL,
 	}
 
-	queueWeights, err := client.GetAllQOSQueueWeights()
+	queueWeights, err := client.ListQoSQueueWeights()
 	if err != nil {
 		t.Fatalf("expected no error, but got %v", err)
 	}
@@ -241,8 +241,8 @@ func TestGetAllQOSQueueWeights_EmptyTable(t *testing.T) {
 	}
 }
 
-// TestGetAllQOSQueueWeights_MalformedHTML tests handling of malformed HTML.
-func TestGetAllQOSQueueWeights_MalformedHTML(t *testing.T) {
+// TestListQoSQueueWeights_MalformedHTML tests handling of malformed HTML.
+func TestListQoSQueueWeights_MalformedHTML(t *testing.T) {
 	// Simulate malformed HTML
 	htmlResponse := `
 		<html>
@@ -268,7 +268,7 @@ func TestGetAllQOSQueueWeights_MalformedHTML(t *testing.T) {
 	}
 
 	// Call the method to test; it should not return an error.
-	queueWeights, err := client.GetAllQOSQueueWeights()
+	queueWeights, err := client.ListQoSQueueWeights()
 	if err != nil {
 		t.Fatalf("expected no error, but got %v", err)
 	}
@@ -279,8 +279,8 @@ func TestGetAllQOSQueueWeights_MalformedHTML(t *testing.T) {
 	}
 }
 
-// TestUpdateQOSQueueWeight_Success tests a successful POST request for updating queue weights.
-func TestUpdateQOSQueueWeight_Success(t *testing.T) {
+// TestSetQoSQueueWeight_Success tests a successful POST request for updating queue weights.
+func TestSetQoSQueueWeight_Success(t *testing.T) {
 	// Simulate the backend responding to the POST request
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		err := r.ParseForm()
@@ -307,14 +307,14 @@ func TestUpdateQOSQueueWeight_Success(t *testing.T) {
 	}
 
 	// Call the actual method to test
-	err := client.UpdateQOSQueueWeight(1, 15) // Set weight 15 for queue 1 (which is 0-based for the backend)
+	err := client.SetQoSQueueWeight(1, 15) // Set weight 15 for queue 1 (which is 0-based for the backend)
 	if err != nil {
 		t.Fatalf("expected no error, but got %v", err)
 	}
 }
 
-// TestUpdateQOSQueueWeight_Failure tests failure scenarios for updating queue weights.
-func TestUpdateQOSQueueWeight_Failure(t *testing.T) {
+// TestSetQoSQueueWeight_Failure tests failure scenarios for updating queue weights.
+func TestSetQoSQueueWeight_Failure(t *testing.T) {
 	// Simulate the backend returning 500 Internal Server Error
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -328,7 +328,7 @@ func TestUpdateQOSQueueWeight_Failure(t *testing.T) {
 	}
 
 	// Call the method to test
-	err := client.UpdateQOSQueueWeight(1, 10)
+	err := client.SetQoSQueueWeight(1, 10)
 	if err == nil || !strings.Contains(err.Error(), "returned status 500") {
 		t.Fatalf("expected an error with status code 500, but got %v", err)
 	}

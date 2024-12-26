@@ -27,7 +27,7 @@ type StormControlConfig struct {
 
 // GetStormControlStatus fetches the current storm control status from the HTML page.
 func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
-	respBody, err := c.ExecuteRequest("GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
+	respBody, err := c.Request("GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch storm control page: %w", err)
 	}
@@ -94,8 +94,8 @@ func parseRate(rate string) *int {
 	return &value
 }
 
-// UpdateStormControl updates the storm control settings for specific ports.
-func (c *HRUIClient) UpdateStormControl(
+// SetStormControlConfig updates the storm control settings for specific ports.
+func (c *HRUIClient) SetStormControlConfig(
 	stormType string, // Type of storm control: "Broadcast", "Known Multicast", etc.
 	ports []int, // Ports to apply settings to, as integers.
 	state bool, // Whether to enable or disable storm control.
@@ -127,7 +127,7 @@ func (c *HRUIClient) UpdateStormControl(
 	// Add ports
 	formData.Set("portid", strings.Join(backendPorts, ","))
 
-	respBody, err := c.ExecuteFormRequest(c.URL+"/fwd.cgi?page=storm_ctrl", formData)
+	respBody, err := c.FormRequest(c.URL+"/fwd.cgi?page=storm_ctrl", formData)
 	if err != nil {
 		return fmt.Errorf("failed to update storm control settings: %w", err)
 	}
@@ -157,7 +157,7 @@ func (c *HRUIClient) UpdateStormControl(
 func (c *HRUIClient) GetPortMaxRate(port int) (int64, error) {
 	portString := intToBackendPort(port)
 
-	respBody, err := c.ExecuteRequest("GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
+	respBody, err := c.Request("GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
 	if err != nil {
 		return 0, fmt.Errorf("failed to fetch storm control page: %w", err)
 	}

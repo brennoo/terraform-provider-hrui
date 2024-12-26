@@ -173,7 +173,7 @@ func TestGetPortIGMPSnooping(t *testing.T) {
 	}
 }
 
-// Helper function to create a mock response HTML for GetAllPorts.
+// Helper function to create a mock response HTML for ListPorts.
 func mockPortHTML() string {
 	return `
 <html>

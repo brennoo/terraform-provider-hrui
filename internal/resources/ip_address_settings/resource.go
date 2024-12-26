@@ -63,7 +63,7 @@ func (r *ipAddressResource) Create(ctx context.Context, req resource.CreateReque
 		Gateway:     data.Gateway.ValueString(),
 	}
 
-	if err := r.client.UpdateIPAddressSettings(settings); err != nil {
+	if err := r.client.SetIPAddressSettings(settings); err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create HRUI IP address settings, got error: %s", err))
 		return
 	}
@@ -118,7 +118,7 @@ func (r *ipAddressResource) Update(ctx context.Context, req resource.UpdateReque
 		Gateway:     data.Gateway.ValueString(),
 	}
 
-	if err := r.client.UpdateIPAddressSettings(settings); err != nil {
+	if err := r.client.SetIPAddressSettings(settings); err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to update HRUI IP address settings",
 			fmt.Sprintf("Failed to update IP address settings: %s", err),

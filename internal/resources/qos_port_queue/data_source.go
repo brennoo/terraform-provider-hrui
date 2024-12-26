@@ -72,7 +72,7 @@ func (d *qosPortQueueDataSource) Read(ctx context.Context, req datasource.ReadRe
 	portID := int(state.PortID.ValueInt64())
 
 	// Fetch the specific QoS port queue data from the API using the SDK.
-	portQueue, err := d.client.GetQOSPortQueue(portID)
+	portQueue, err := d.client.GetQoSPortQueue(portID)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to fetch QoS Port Queue for port %d: %s", portID, err))
 		return

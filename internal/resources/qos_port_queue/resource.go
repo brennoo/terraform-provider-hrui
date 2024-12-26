@@ -86,7 +86,7 @@ func (r *qosPortQueueResource) Create(ctx context.Context, req resource.CreateRe
 	portID := int(plan.PortID.ValueInt64())
 	queue := int(plan.Queue.ValueInt64())
 
-	err := r.client.UpdateQOSPortQueue(portID, queue)
+	err := r.client.SetQoSPortQueue(portID, queue)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create QoS Port Queue: %s", err))
 		return
@@ -110,7 +110,7 @@ func (r *qosPortQueueResource) Update(ctx context.Context, req resource.UpdateRe
 	portID := int(plan.PortID.ValueInt64())
 	queue := int(plan.Queue.ValueInt64())
 
-	err := r.client.UpdateQOSPortQueue(portID, queue)
+	err := r.client.SetQoSPortQueue(portID, queue)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update QoS Port Queue: %s", err))
 		return
@@ -133,7 +133,7 @@ func (r *qosPortQueueResource) Read(ctx context.Context, req resource.ReadReques
 
 	portID := int(state.PortID.ValueInt64())
 
-	portQueue, err := r.client.GetQOSPortQueue(portID)
+	portQueue, err := r.client.GetQoSPortQueue(portID)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to fetch QoS Port Queue for port %d: %s", portID, err))
 		return
@@ -158,7 +158,7 @@ func (r *qosPortQueueResource) Delete(ctx context.Context, req resource.DeleteRe
 
 	portID := int(state.PortID.ValueInt64())
 
-	err := r.client.UpdateQOSPortQueue(portID, 1) // Reset to queue 1
+	err := r.client.SetQoSPortQueue(portID, 1) // Reset to queue 1
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to reset QoS Port Queue for port %d: %s", portID, err))
 		return

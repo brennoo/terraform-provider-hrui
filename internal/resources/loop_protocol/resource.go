@@ -160,7 +160,7 @@ func (r *loopProtocolResource) Create(ctx context.Context, req resource.CreateRe
 	// Avoid managing port statuses since they are not handled in this resource.
 	portStatuses := []sdk.PortStatus{}
 
-	err := r.client.UpdateLoopProtocol(loopFunction, intervalTime, recoverTime, portStatuses)
+	err := r.client.ConfigureLoopProtocol(loopFunction, intervalTime, recoverTime, portStatuses)
 	if err != nil {
 		resp.Diagnostics.AddError("Error Creating Loop Protocol", fmt.Sprintf("Unable to create Loop Protocol: %s", err.Error()))
 		return
@@ -226,7 +226,7 @@ func (r *loopProtocolResource) Update(ctx context.Context, req resource.UpdateRe
 	// Avoid managing port statuses since they are not handled in this resource.
 	portStatuses := []sdk.PortStatus{}
 
-	err := r.client.UpdateLoopProtocol(loopFunction, intervalTime, recoverTime, portStatuses)
+	err := r.client.ConfigureLoopProtocol(loopFunction, intervalTime, recoverTime, portStatuses)
 	if err != nil {
 		resp.Diagnostics.AddError("Error Updating Loop Protocol", fmt.Sprintf("Unable to update Loop Protocol: %s", err.Error()))
 		return
@@ -242,7 +242,7 @@ func (r *loopProtocolResource) Delete(ctx context.Context, req resource.DeleteRe
 	// Use an empty slice since port statuses are not handled.
 	portStatuses := []sdk.PortStatus{}
 
-	err := r.client.UpdateLoopProtocol("Off", 0, 0, portStatuses)
+	err := r.client.ConfigureLoopProtocol("Off", 0, 0, portStatuses)
 	if err != nil {
 		resp.Diagnostics.AddError("Error Deleting Loop Protocol", fmt.Sprintf("Unable to delete Loop Protocol: %s", err.Error()))
 		return

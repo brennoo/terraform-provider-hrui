@@ -51,7 +51,7 @@ func TestNewClient_FailedAuthentication(t *testing.T) {
 	require.Nil(t, clientObj)
 }
 
-func TestClient_SaveConfiguration_Success(t *testing.T) {
+func TestClient_CommitChanges_Success(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/index.cgi":
@@ -67,11 +67,11 @@ func TestClient_SaveConfiguration_Success(t *testing.T) {
 	defer server.Close()
 
 	clientObj := createAuthenticatedClient(t, server)
-	err := clientObj.SaveConfiguration()
+	err := clientObj.CommitChanges()
 	require.NoError(t, err)
 }
 
-func TestClient_SaveConfiguration_Failure(t *testing.T) {
+func TestClient_CommitChanges_Failure(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/index.cgi":
@@ -87,12 +87,12 @@ func TestClient_SaveConfiguration_Failure(t *testing.T) {
 	defer server.Close()
 
 	clientObj := createAuthenticatedClient(t, server)
-	err := clientObj.SaveConfiguration()
+	err := clientObj.CommitChanges()
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "returned status 500: Error saving configuration")
 }
 
-func TestClient_ExecuteRequest_Success(t *testing.T) {
+func TestClient_Request_Success(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/index.cgi":
@@ -108,12 +108,12 @@ func TestClient_ExecuteRequest_Success(t *testing.T) {
 	defer server.Close()
 
 	clientObj := createAuthenticatedClient(t, server)
-	respBody, err := clientObj.ExecuteRequest("GET", fmt.Sprintf("%s/test", server.URL), nil, nil)
+	respBody, err := clientObj.Request("GET", fmt.Sprintf("%s/test", server.URL), nil, nil)
 	require.NoError(t, err)
 	require.Equal(t, "Success", string(respBody))
 }
 
-func TestClient_ExecuteRequest_Failure(t *testing.T) {
+func TestClient_Request_Failure(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/index.cgi" {
 			w.WriteHeader(http.StatusOK)
@@ -125,12 +125,12 @@ func TestClient_ExecuteRequest_Failure(t *testing.T) {
 	defer server.Close()
 
 	clientObj := createAuthenticatedClient(t, server)
-	_, err := clientObj.ExecuteRequest("GET", fmt.Sprintf("%s/test", server.URL), nil, nil)
+	_, err := clientObj.Request("GET", fmt.Sprintf("%s/test", server.URL), nil, nil)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "/test returned status 404")
 }
 
-func TestClient_ExecuteFormRequest_Success(t *testing.T) {
+func TestClient_FormRequest_Success(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/index.cgi":
@@ -161,12 +161,12 @@ func TestClient_ExecuteFormRequest_Success(t *testing.T) {
 	formData.Set("param1", "value1")
 	formData.Set("param2", "value2")
 
-	respBody, err := clientObj.ExecuteFormRequest(fmt.Sprintf("%s/test", server.URL), formData)
+	respBody, err := clientObj.FormRequest(fmt.Sprintf("%s/test", server.URL), formData)
 	require.NoError(t, err)
 	require.Equal(t, "Success", string(respBody))
 }
 
-func TestClient_ExecuteFormRequest_Failure(t *testing.T) {
+func TestClient_FormRequest_Failure(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/index.cgi" {
 			w.WriteHeader(http.StatusOK)
@@ -181,7 +181,7 @@ func TestClient_ExecuteFormRequest_Failure(t *testing.T) {
 	formData := url.Values{}
 	formData.Set("param1", "value1")
 
-	_, err := clientObj.ExecuteFormRequest(fmt.Sprintf("%s/test", server.URL), formData)
+	_, err := clientObj.FormRequest(fmt.Sprintf("%s/test", server.URL), formData)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "/test returned status 404")
 }
