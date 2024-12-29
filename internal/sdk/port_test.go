@@ -71,15 +71,7 @@ var mockPortResponse = `
     <td>Off</td>
   </tr>
   <tr>
-    <td>Port 5</td>
-    <td>Enable</td>
-    <td>Auto</td>
-    <td>Link Down</td>
-    <td>Off</td>
-    <td>Off</td>
-  </tr>
-  <tr>
-    <td>Port 6</td>
+    <td>Trunk1</td>
     <td>Enable</td>
     <td>Auto</td>
     <td>Link Down</td>
@@ -109,15 +101,55 @@ func TestListPorts(t *testing.T) {
 
 	ports, err := client.ListPorts()
 	require.NoError(t, err)
-	require.Len(t, ports, 6)
+	require.Len(t, ports, 5)
 
+	// Updated expected ports
 	expectedPorts := []*Port{
-		{ID: 1, State: 1, SpeedDuplex: "Auto", FlowControl: "Off"},
-		{ID: 2, State: 1, SpeedDuplex: "Auto", FlowControl: "Off"},
-		{ID: 3, State: 1, SpeedDuplex: "Auto", FlowControl: "Off"},
-		{ID: 4, State: 0, SpeedDuplex: "Auto", FlowControl: "Off"},
-		{ID: 5, State: 1, SpeedDuplex: "Auto", FlowControl: "Off"},
-		{ID: 6, State: 1, SpeedDuplex: "Auto", FlowControl: "Off"},
+		{
+			ID:                "Port 1",
+			IsTrunk:           false,
+			State:             1,
+			SpeedDuplexConfig: "Auto",
+			SpeedDuplexActual: "1000Full",
+			FlowControlConfig: "Off",
+			FlowControlActual: "Off",
+		},
+		{
+			ID:                "Port 2",
+			IsTrunk:           false,
+			State:             1,
+			SpeedDuplexConfig: "Auto",
+			SpeedDuplexActual: "Link Down",
+			FlowControlConfig: "Off",
+			FlowControlActual: "Off",
+		},
+		{
+			ID:                "Port 3",
+			IsTrunk:           false,
+			State:             1,
+			SpeedDuplexConfig: "Auto",
+			SpeedDuplexActual: "Link Down",
+			FlowControlConfig: "Off",
+			FlowControlActual: "Off",
+		},
+		{
+			ID:                "Port 4",
+			IsTrunk:           false,
+			State:             0,
+			SpeedDuplexConfig: "Auto",
+			SpeedDuplexActual: "Link Down",
+			FlowControlConfig: "Off",
+			FlowControlActual: "Off",
+		},
+		{
+			ID:                "Trunk1",
+			IsTrunk:           true,
+			State:             1,
+			SpeedDuplexConfig: "Auto",
+			SpeedDuplexActual: "Link Down",
+			FlowControlConfig: "Off",
+			FlowControlActual: "Off",
+		},
 	}
 
 	assert.Equal(t, expectedPorts, ports)
@@ -135,14 +167,34 @@ func TestGetPort(t *testing.T) {
 		HttpClient: server.Client(),
 	}
 
-	port, err := client.GetPort(1)
+	// Test for a physical port
+	port, err := client.GetPort("Port 1")
 	require.NoError(t, err)
 
 	expectedPort := &Port{
-		ID:          1,
-		State:       1,
-		SpeedDuplex: "Auto",
-		FlowControl: "Off",
+		ID:                "Port 1",
+		IsTrunk:           false,
+		State:             1,
+		SpeedDuplexConfig: "Auto",
+		SpeedDuplexActual: "1000Full",
+		FlowControlConfig: "Off",
+		FlowControlActual: "Off",
+	}
+
+	assert.Equal(t, expectedPort, port)
+
+	// Test for a trunk port
+	port, err = client.GetPort("Trunk1")
+	require.NoError(t, err)
+
+	expectedPort = &Port{
+		ID:                "Trunk1",
+		IsTrunk:           true,
+		State:             1,
+		SpeedDuplexConfig: "Auto",
+		SpeedDuplexActual: "Link Down",
+		FlowControlConfig: "Off",
+		FlowControlActual: "Off",
 	}
 
 	assert.Equal(t, expectedPort, port)
@@ -179,7 +231,7 @@ func TestGetPortStatistics(t *testing.T) {
 							<td>0</td>
 						</tr>
 						<tr>
-							<td>Port 2</td>
+							<td>Trunk1</td>
 							<td>Enable</td>
 							<td>Link Down</td>
 							<td>173978</td>
@@ -208,8 +260,8 @@ func TestGetPortStatistics(t *testing.T) {
 	require.NoError(t, err)
 
 	expectedStats := []*PortStatistics{
-		{Port: 1, State: 1, LinkStatus: "Link Up", TxGoodPkt: 1539909, TxBadPkt: 0, RxGoodPkt: 6063265, RxBadPkt: 0},
-		{Port: 2, State: 1, LinkStatus: "Link Down", TxGoodPkt: 173978, TxBadPkt: 0, RxGoodPkt: 2140448, RxBadPkt: 0},
+		{Port: "Port 1", State: 1, LinkStatus: "Link Up", TxGoodPkt: 1539909, TxBadPkt: 0, RxGoodPkt: 6063265, RxBadPkt: 0},
+		{Port: "Trunk1", State: 1, LinkStatus: "Link Down", TxGoodPkt: 173978, TxBadPkt: 0, RxGoodPkt: 2140448, RxBadPkt: 0},
 	}
 
 	assert.Equal(t, expectedStats, stats)

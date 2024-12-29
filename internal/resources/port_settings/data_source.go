@@ -3,10 +3,10 @@ package port_settings
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -24,6 +24,50 @@ type portSettingDataSource struct {
 // NewDataSource is a helper function to instantiate the data source.
 func NewDataSource() datasource.DataSource {
 	return &portSettingDataSource{}
+}
+
+func (d *portSettingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
+		Description: "Fetches port settings for the HRUI system.",
+		Attributes: map[string]schema.Attribute{
+			"port": schema.StringAttribute{
+				Required:            true,
+				MarkdownDescription: "The port name or ID (e.g., 'Port 1', 'Trunk1').",
+			},
+			"enabled": schema.BoolAttribute{
+				Computed:            true,
+				MarkdownDescription: "Whether the port is enabled.",
+			},
+			"speed": schema.SingleNestedAttribute{
+				Computed:            true,
+				MarkdownDescription: "Speed and duplex settings of the port.",
+				Attributes: map[string]schema.Attribute{
+					"config": schema.StringAttribute{
+						Computed:            true,
+						MarkdownDescription: "Configured speed and duplex mode retrieved from the system.",
+					},
+					"actual": schema.StringAttribute{
+						Computed:            true,
+						MarkdownDescription: "Actual speed and duplex mode returned by the system.",
+					},
+				},
+			},
+			"flow_control": schema.SingleNestedAttribute{
+				Computed:            true,
+				MarkdownDescription: "Flow control configuration of the port.",
+				Attributes: map[string]schema.Attribute{
+					"config": schema.StringAttribute{
+						Computed:            true,
+						MarkdownDescription: "Configured flow control setting retrieved from the system.",
+					},
+					"actual": schema.StringAttribute{
+						Computed:            true,
+						MarkdownDescription: "Actual flow control setting returned by the system.",
+					},
+				},
+			},
+		},
+	}
 }
 
 // Configure assigns the provider-configured client to the data source.
@@ -61,27 +105,32 @@ func (d *portSettingDataSource) Read(ctx context.Context, req datasource.ReadReq
 
 	// Make sure the client is set up before making any request
 	if d.client == nil {
-		resp.Diagnostics.AddError("Client Not Configured", "The HRUI client was not properly configured. Ensure the provider is set up correctly.")
+		resp.Diagnostics.AddError(
+			"Client Not Configured",
+			"The HRUI client was not properly configured. Ensure the provider is set up correctly.",
+		)
 		return
 	}
 
-	port, err := d.client.GetPort(int(data.PortID.ValueInt64()))
+	port, err := d.client.GetPort(data.Port.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read HRUI port settings, got error: %s", err))
+		resp.Diagnostics.AddError(
+			"Client Error",
+			fmt.Sprintf("Unable to read HRUI port settings, got error: %s", err),
+		)
 		return
 	}
 
-	// Assign the state
+	// Map the port settings into the Terraform data source state
 	data.Enabled = types.BoolValue(port.State == 1)
 	data.Speed = &portSettingSpeed{
-		Config: types.StringValue(port.SpeedDuplex),
-		Actual: types.StringValue(port.SpeedDuplex),
+		Config: types.StringValue(port.SpeedDuplexConfig),
+		Actual: types.StringValue(port.SpeedDuplexActual),
 	}
 	data.FlowControl = &portSettingFlowControl{
-		Config: types.StringValue(port.FlowControl),
-		Actual: types.StringValue(port.FlowControl),
+		Config: types.StringValue(port.FlowControlConfig),
+		Actual: types.StringValue(port.FlowControlActual),
 	}
-	data.ID = types.StringValue(strconv.FormatInt(data.PortID.ValueInt64(), 10))
 
 	// Save the state back to Terraform state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)

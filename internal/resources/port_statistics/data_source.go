@@ -14,6 +14,12 @@ type portStatisticsDataSource struct {
 	client *sdk.HRUIClient
 }
 
+// Ensure the data source implements necessary interfaces.
+var (
+	_ datasource.DataSource              = &portStatisticsDataSource{}
+	_ datasource.DataSourceWithConfigure = &portStatisticsDataSource{}
+)
+
 // NewDataSource creates a new instance of the Port Statistics data source.
 func NewDataSource() datasource.DataSource {
 	return &portStatisticsDataSource{}
@@ -34,8 +40,8 @@ func (d *portStatisticsDataSource) Schema(_ context.Context, _ datasource.Schema
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
-						"port": schema.Int64Attribute{
-							Description: "The port ID.",
+						"port": schema.StringAttribute{
+							Description: "The port ID (e.g., 'Port 1', 'Trunk1').",
 							Computed:    true,
 						},
 						"state": schema.StringAttribute{
@@ -83,18 +89,34 @@ func (d *portStatisticsDataSource) Schema(_ context.Context, _ datasource.Schema
 
 // Configure associates the client to the data source.
 func (d *portStatisticsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData != nil {
-		client, ok := req.ProviderData.(*sdk.HRUIClient)
-		if !ok {
-			resp.Diagnostics.AddError("Unexpected Provider Data", "Expected *sdk.HRUIClient")
-			return
-		}
-		d.client = client
+	if req.ProviderData == nil {
+		return
 	}
+
+	client, ok := req.ProviderData.(*sdk.HRUIClient)
+	if !ok || client == nil {
+		resp.Diagnostics.AddError(
+			"Invalid Provider Client",
+			"The provider client could not be configured. Please ensure the provider is correctly set up.",
+		)
+		return
+	}
+
+	// Assign the configured client to the data source
+	d.client = client
 }
 
 // Read fetches the port statistics from the switch.
 func (d *portStatisticsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	// Ensure the client is not nil
+	if d.client == nil {
+		resp.Diagnostics.AddError(
+			"Client Not Configured",
+			"The client has not been configured. Ensure the provider is properly set up.",
+		)
+		return
+	}
+
 	// Fetch port statistics from the SDK client
 	portStats, err := d.client.GetPortStatistics()
 	if err != nil {
@@ -112,7 +134,7 @@ func (d *portStatisticsDataSource) Read(ctx context.Context, req datasource.Read
 		}
 
 		portStatistics[i] = portStatisticsModel{
-			Port:       types.Int64Value(int64(stat.Port)),
+			Port:       types.StringValue(stat.Port),
 			State:      types.StringValue(state),
 			LinkStatus: types.StringValue(stat.LinkStatus),
 			TxPackets: &packetStatistics{
@@ -132,7 +154,4 @@ func (d *portStatisticsDataSource) Read(ctx context.Context, req datasource.Read
 	}
 	diags := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 }
