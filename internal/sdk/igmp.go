@@ -18,8 +18,8 @@ type IGMPConfig struct {
 	Ports   []bool
 }
 
-// UpdateIGMPSnooping updates the global IGMP snooping setting (enable or disable).
-func (c *HRUIClient) UpdateIGMPSnooping(enable bool) error {
+// ConfigureIGMPSnooping updates the global IGMP snooping setting (enable or disable).
+func (c *HRUIClient) ConfigureIGMPSnooping(enable bool) error {
 	formData := url.Values{}
 	if enable {
 		formData.Set("enable_igmp", "on")
@@ -27,7 +27,7 @@ func (c *HRUIClient) UpdateIGMPSnooping(enable bool) error {
 
 	url := fmt.Sprintf("%s/igmp.cgi?page=enable_igmp", c.URL)
 
-	_, err := c.ExecuteFormRequest(url, formData)
+	_, err := c.FormRequest(url, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update global IGMP snooping: %w", err)
 	}
@@ -37,16 +37,16 @@ func (c *HRUIClient) UpdateIGMPSnooping(enable bool) error {
 
 // EnableIGMPSnooping enables IGMP snooping globally.
 func (c *HRUIClient) EnableIGMPSnooping() error {
-	return c.UpdateIGMPSnooping(true)
+	return c.ConfigureIGMPSnooping(true)
 }
 
-// DisableIGMPSnooping disables IGMP snooping globally.
-func (c *HRUIClient) DisableIGMPSnooping() error {
-	return c.UpdateIGMPSnooping(false)
+// TurnOffIGMPSnooping disables IGMP snooping globally.
+func (c *HRUIClient) TurnOffIGMPSnooping() error {
+	return c.ConfigureIGMPSnooping(false)
 }
 
-// UpdatePortIGMPSnooping enables or disables IGMP snooping for a specific port.
-func (c *HRUIClient) UpdatePortIGMPSnooping(port int, enable bool) error {
+// ConfigurePortIGMPSnooping enables or disables IGMP snooping for a specific port.
+func (c *HRUIClient) ConfigurePortIGMPSnooping(port int, enable bool) error {
 	// Lock the operation to prevent race conditions
 	igmpUpdateLock.Lock()
 	defer igmpUpdateLock.Unlock()
@@ -61,7 +61,7 @@ func (c *HRUIClient) UpdatePortIGMPSnooping(port int, enable bool) error {
 	}
 
 	// Fetch current configuration of all ports
-	config, err := c.GetIGMPConfig()
+	config, err := c.FetchIGMPConfig()
 	if err != nil {
 		return fmt.Errorf("failed to retrieve current IGMP configuration: %w", err)
 	}
@@ -81,7 +81,7 @@ func (c *HRUIClient) UpdatePortIGMPSnooping(port int, enable bool) error {
 
 	url := fmt.Sprintf("%s/igmp.cgi?page=igmp_static_router", c.URL)
 
-	_, err = c.ExecuteFormRequest(url, formData)
+	_, err = c.FormRequest(url, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update IGMP snooping for port %d: %w", port, err)
 	}
@@ -91,12 +91,12 @@ func (c *HRUIClient) UpdatePortIGMPSnooping(port int, enable bool) error {
 
 // EnablePortIGMPSnooping enables IGMP snooping for a specific port.
 func (c *HRUIClient) EnablePortIGMPSnooping(port int) error {
-	return c.UpdatePortIGMPSnooping(port, true)
+	return c.ConfigurePortIGMPSnooping(port, true)
 }
 
 // DisablePortIGMPSnooping disables IGMP snooping for a specific port.
 func (c *HRUIClient) DisablePortIGMPSnooping(port int) error {
-	return c.UpdatePortIGMPSnooping(port, false)
+	return c.ConfigurePortIGMPSnooping(port, false)
 }
 
 // GetPortIGMPSnooping retrieves the IGMP snooping status for a specific port.
@@ -112,8 +112,8 @@ func (c *HRUIClient) GetPortIGMPSnooping(port int) (bool, error) {
 
 	url := fmt.Sprintf("%s/igmp.cgi?page=dump", c.URL)
 
-	// Use ExecuteRequest to fetch the IGMP configuration
-	respBody, err := c.ExecuteRequest("GET", url, nil, nil)
+	// Use Request to fetch the IGMP configuration
+	respBody, err := c.Request("GET", url, nil, nil)
 	if err != nil {
 		return false, fmt.Errorf("failed to fetch IGMP configuration for port %d: %w", port, err)
 	}
@@ -140,12 +140,12 @@ func (c *HRUIClient) GetPortIGMPSnooping(port int) (bool, error) {
 	return portStatus, nil
 }
 
-// GetIGMPConfig retrieves the full IGMP snooping configuration for the device.
-func (c *HRUIClient) GetIGMPConfig() (*IGMPConfig, error) {
+// FetchIGMPConfig retrieves the full IGMP snooping configuration for the device.
+func (c *HRUIClient) FetchIGMPConfig() (*IGMPConfig, error) {
 	url := fmt.Sprintf("%s/igmp.cgi?page=dump", c.URL)
 
-	// Use ExecuteRequest to fetch the IGMP configuration
-	respBody, err := c.ExecuteRequest("GET", url, nil, nil)
+	// Use Request to fetch the IGMP configuration
+	respBody, err := c.Request("GET", url, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch IGMP configuration: %w", err)
 	}

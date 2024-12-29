@@ -98,7 +98,7 @@ func (r *stpPortResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	err := r.client.UpdateSTPPortSettings(
+	err := r.client.SetSTPPortSettings(
 		int(plan.Port.ValueInt64()),
 		int(plan.PathCost.ValueInt64()),
 		int(plan.Priority.ValueInt64()),
@@ -172,7 +172,7 @@ func (r *stpPortResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	err := r.client.UpdateSTPPortSettings(
+	err := r.client.SetSTPPortSettings(
 		int(plan.Port.ValueInt64()),
 		int(plan.PathCost.ValueInt64()),
 		int(plan.Priority.ValueInt64()),
@@ -216,7 +216,7 @@ func (r *stpPortResource) Delete(ctx context.Context, req resource.DeleteRequest
 		return
 	}
 
-	err := r.client.UpdateSTPPortSettings(
+	err := r.client.SetSTPPortSettings(
 		int(state.Port.ValueInt64()),
 		20000, // Default path cost
 		128,   // Default priority

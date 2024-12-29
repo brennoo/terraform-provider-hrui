@@ -107,7 +107,7 @@ func (r *stormControlResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	err = r.client.UpdateStormControl(
+	err = r.client.SetStormControlConfig(
 		data.StormType.ValueString(),
 		[]int{int(data.Port.ValueInt64())},
 		data.State.ValueBool(),
@@ -198,7 +198,7 @@ func (r *stormControlResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	err = r.client.UpdateStormControl(
+	err = r.client.SetStormControlConfig(
 		plan.StormType.ValueString(),
 		[]int{int(plan.Port.ValueInt64())},
 		plan.State.ValueBool(),
@@ -223,7 +223,7 @@ func (r *stormControlResource) Delete(ctx context.Context, req resource.DeleteRe
 		}
 	}
 
-	err := r.client.UpdateStormControl(
+	err := r.client.SetStormControlConfig(
 		state.StormType.ValueString(),
 		[]int{int(state.Port.ValueInt64())},
 		false, // Disable storm control

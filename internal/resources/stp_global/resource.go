@@ -115,7 +115,7 @@ func (r *stpGlobalResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	// Call the backend API to create/configure the STP settings
-	err := r.client.UpdateSTPSettingsAsync(&stpSettings)
+	err := r.client.SetSTPSettingsAsync(&stpSettings)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to Update STP Settings",
@@ -215,7 +215,7 @@ func (r *stpGlobalResource) Update(ctx context.Context, req resource.UpdateReque
 	}
 
 	// Call the backend API to update the STP settings
-	err := r.client.UpdateSTPSettingsAsync(&stpSettings)
+	err := r.client.SetSTPSettingsAsync(&stpSettings)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to Update STP Settings",
@@ -262,7 +262,7 @@ func (r *stpGlobalResource) Delete(ctx context.Context, req resource.DeleteReque
 		STPStatus: "Disable",
 	}
 
-	err := r.client.UpdateSTPSettingsAsync(&stpSettings)
+	err := r.client.SetSTPSettingsAsync(&stpSettings)
 	if err != nil {
 		resp.Diagnostics.AddError("Error Deleting STP Global Resource", fmt.Sprintf("Unable to delete STP Global Resource: %s", err))
 	}

@@ -27,7 +27,7 @@ type StormControlConfig struct {
 
 // GetStormControlStatus fetches the current storm control status from the HTML page.
 func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
-	respBody, err := c.ExecuteRequest("GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
+	respBody, err := c.Request("GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch storm control page: %w", err)
 	}
@@ -36,6 +36,14 @@ func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, errors.New("failed to parse HTML response")
+	}
+
+	// Define parse options for rates
+	parseRateOptions := func() []ParseOption {
+		return []ParseOption{
+			WithSpecialCases("Auto", "Off"),
+			WithReturnNilOnSpecialCases(),
+		}
 	}
 
 	// Find the last table row entries in the Storm Control status table
@@ -54,18 +62,18 @@ func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
 		}
 
 		portString := strings.TrimSpace(cols.Eq(0).Text())
-		port, err := backendPortToInt(portString)
-		if err != nil {
+		port := parseInt(portString, WithTrimPrefix("Port "))
+		if port == nil {
 			return // Skip invalid port entries
 		}
 
-		broadcast := parseRate(strings.TrimSpace(cols.Eq(1).Text()))
-		knownMulticast := parseRate(strings.TrimSpace(cols.Eq(2).Text()))
-		unknownUnicast := parseRate(strings.TrimSpace(cols.Eq(3).Text()))
-		unknownMulticast := parseRate(strings.TrimSpace(cols.Eq(4).Text()))
+		broadcast := parseInt(strings.TrimSpace(cols.Eq(1).Text()), parseRateOptions()...)
+		knownMulticast := parseInt(strings.TrimSpace(cols.Eq(2).Text()), parseRateOptions()...)
+		unknownUnicast := parseInt(strings.TrimSpace(cols.Eq(3).Text()), parseRateOptions()...)
+		unknownMulticast := parseInt(strings.TrimSpace(cols.Eq(4).Text()), parseRateOptions()...)
 
 		entry := StormControlEntry{
-			Port:                     port,
+			Port:                     *port,
 			BroadcastRateKbps:        broadcast,
 			KnownMulticastRateKbps:   knownMulticast,
 			UnknownUnicastRateKbps:   unknownUnicast,
@@ -79,23 +87,8 @@ func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
 	return &StormControlConfig{Entries: entries}, nil
 }
 
-// Helper function to parse rates from text (converts "Off" to nil).
-func parseRate(rate string) *int {
-	if rate == "Off" {
-		return nil
-	}
-
-	// Convert from string to integer
-	value, err := strconv.Atoi(rate)
-	if err != nil {
-		return nil
-	}
-
-	return &value
-}
-
-// UpdateStormControl updates the storm control settings for specific ports.
-func (c *HRUIClient) UpdateStormControl(
+// SetStormControlConfig updates the storm control settings for specific ports.
+func (c *HRUIClient) SetStormControlConfig(
 	stormType string, // Type of storm control: "Broadcast", "Known Multicast", etc.
 	ports []int, // Ports to apply settings to, as integers.
 	state bool, // Whether to enable or disable storm control.
@@ -127,7 +120,7 @@ func (c *HRUIClient) UpdateStormControl(
 	// Add ports
 	formData.Set("portid", strings.Join(backendPorts, ","))
 
-	respBody, err := c.ExecuteFormRequest(c.URL+"/fwd.cgi?page=storm_ctrl", formData)
+	respBody, err := c.FormRequest(c.URL+"/fwd.cgi?page=storm_ctrl", formData)
 	if err != nil {
 		return fmt.Errorf("failed to update storm control settings: %w", err)
 	}
@@ -157,7 +150,7 @@ func (c *HRUIClient) UpdateStormControl(
 func (c *HRUIClient) GetPortMaxRate(port int) (int64, error) {
 	portString := intToBackendPort(port)
 
-	respBody, err := c.ExecuteRequest("GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
+	respBody, err := c.Request("GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
 	if err != nil {
 		return 0, fmt.Errorf("failed to fetch storm control page: %w", err)
 	}
@@ -221,12 +214,4 @@ func stormTypeToID(stormType string) string {
 
 func intToBackendPort(port int) string {
 	return fmt.Sprintf("Port %d", port)
-}
-
-func backendPortToInt(port string) (int, error) {
-	parts := strings.Split(port, " ")
-	if len(parts) != 2 || parts[0] != "Port" {
-		return 0, fmt.Errorf("invalid port format: %s", port)
-	}
-	return strconv.Atoi(parts[1])
 }

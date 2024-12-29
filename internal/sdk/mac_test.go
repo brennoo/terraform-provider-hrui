@@ -126,7 +126,7 @@ func TestGetStaticMACAddressTable(t *testing.T) {
 	assert.Equal(t, expectedEntry, entries[0])
 }
 
-func TestAddStaticMACAddress(t *testing.T) {
+func TestAddStaticMACEntry(t *testing.T) {
 	// Use the mock server to simulate POST response
 	mock := mockServerMock("OK", http.StatusOK)
 	defer mock.Close()
@@ -137,12 +137,12 @@ func TestAddStaticMACAddress(t *testing.T) {
 		HttpClient: &http.Client{},
 	}
 
-	// Test the `AddStaticMACAddress` method
-	err := client.AddStaticMACAddress("01:23:45:67:89:AB", 10, 1)
+	// Test the `AddStaticMACEntry` method
+	err := client.AddStaticMACEntry("01:23:45:67:89:AB", 10, 1)
 	assert.NoError(t, err)
 }
 
-func TestDeleteStaticMACAddress(t *testing.T) {
+func TestRemoveStaticMACEntries(t *testing.T) {
 	// Use the mock server to simulate POST response
 	mock := mockServerMock("OK", http.StatusOK)
 	defer mock.Close()
@@ -153,12 +153,12 @@ func TestDeleteStaticMACAddress(t *testing.T) {
 		HttpClient: &http.Client{},
 	}
 
-	// Test `DeleteStaticMACAddress` with two entries
+	// Test `RemoveStaticMACEntries` with two entries
 	entries := []StaticMACEntry{
 		{MACAddress: "01:23:45:67:89:AB", VLANID: 10},
 		{MACAddress: "02:33:44:55:66:77", VLANID: 20},
 	}
 
-	err := client.DeleteStaticMACAddress(entries)
+	err := client.RemoveStaticMACEntries(entries)
 	assert.NoError(t, err)
 }

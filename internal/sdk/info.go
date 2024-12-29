@@ -11,7 +11,7 @@ import (
 func (c *HRUIClient) GetSystemInfo() (map[string]string, error) {
 	systemInfoURL := fmt.Sprintf("%s/info.cgi", c.URL)
 
-	respBody, err := c.ExecuteRequest("GET", systemInfoURL, nil, nil)
+	respBody, err := c.Request("GET", systemInfoURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch System Info from HRUI: %w", err)
 	}

@@ -23,7 +23,7 @@ func (c *HRUIClient) GetIPAddressSettings() (*IPAddressSettings, error) {
 	ipSettingsURL := fmt.Sprintf("%s/ip.cgi", c.URL)
 
 	// Execute GET request to fetch IP settings
-	respBody, err := c.ExecuteRequest("GET", ipSettingsURL, nil, nil)
+	respBody, err := c.Request("GET", ipSettingsURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch IP Settings configuration: %w", err)
 	}
@@ -59,8 +59,8 @@ func (c *HRUIClient) GetIPAddressSettings() (*IPAddressSettings, error) {
 	return settings, nil
 }
 
-// UpdateIPAddressSettings updates the IP address settings on the HRUI server.
-func (c *HRUIClient) UpdateIPAddressSettings(settings *IPAddressSettings) error {
+// SetIPAddressSettings updates the IP address settings on the HRUI server.
+func (c *HRUIClient) SetIPAddressSettings(settings *IPAddressSettings) error {
 	form := url.Values{}
 	form.Set("dhcp_state", "0")
 	if settings.DHCPEnabled {
@@ -71,7 +71,7 @@ func (c *HRUIClient) UpdateIPAddressSettings(settings *IPAddressSettings) error 
 	form.Set("gateway", settings.Gateway)
 
 	ipSettingsURL := fmt.Sprintf("%s/ip.cgi", c.URL)
-	_, err := c.ExecuteFormRequest(ipSettingsURL, form)
+	_, err := c.FormRequest(ipSettingsURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to update IP Settings: %w", err)
 	}

@@ -43,7 +43,7 @@ func NewClient(url, username, password string, autosave bool) (*HRUIClient, erro
 	}
 
 	// Authenticate the client
-	err = client.Authenticate()
+	err = client.SetAuthCookie()
 	if err != nil {
 		return nil, fmt.Errorf("failed to authenticate HRUIClient: %w", err)
 	}
@@ -55,8 +55,8 @@ func NewClient(url, username, password string, autosave bool) (*HRUIClient, erro
 	return client, nil
 }
 
-// Authenticate sets the authentication cookie for the HRUI system.
-func (c *HRUIClient) Authenticate() error {
+// SetAuthCookie sets the authentication cookie for the HRUI system.
+func (c *HRUIClient) SetAuthCookie() error {
 	// Generate MD5 hash of the username + password (as per HRUI spec).
 	//#nosec G401
 	hash := md5.Sum([]byte(c.Username + c.Password))
@@ -77,15 +77,15 @@ func (c *HRUIClient) Authenticate() error {
 	c.HttpClient.Jar.SetCookies(u, []*http.Cookie{authCookie})
 
 	// Validate the authentication
-	return c.validateAuth()
+	return c.ValidateAuthCookie()
 }
 
-// validateAuth checks whether the authentication was successful.
-func (c *HRUIClient) validateAuth() error {
+// ValidateAuthCookie checks whether the authentication was successful.
+func (c *HRUIClient) ValidateAuthCookie() error {
 	authURL := fmt.Sprintf("%s/index.cgi", c.URL)
 
-	// Execute the GET request using ExecuteRequest
-	responseBody, err := c.ExecuteRequest("GET", authURL, nil, nil)
+	// Execute the GET request using Request
+	responseBody, err := c.Request("GET", authURL, nil, nil)
 	if err != nil {
 		return fmt.Errorf("authentication validation request failed: %w", err)
 	}
@@ -109,8 +109,8 @@ func (c *HRUIClient) validateAuth() error {
 	return nil
 }
 
-// ExecuteRequest handles all HTTP methods and returns the response body as a byte slice.
-func (client *HRUIClient) ExecuteRequest(method, endpoint string, body io.Reader, headers map[string]string) ([]byte, error) {
+// Request handles all HTTP methods and returns the response body as a byte slice.
+func (c *HRUIClient) Request(method, endpoint string, body io.Reader, headers map[string]string) ([]byte, error) {
 	req, err := http.NewRequest(method, endpoint, body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
@@ -121,7 +121,7 @@ func (client *HRUIClient) ExecuteRequest(method, endpoint string, body io.Reader
 		req.Header.Set(key, value)
 	}
 
-	resp, err := client.HttpClient.Do(req)
+	resp, err := c.HttpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute %s request to %s: %w", method, endpoint, err)
 	}
@@ -144,9 +144,25 @@ func (client *HRUIClient) ExecuteRequest(method, endpoint string, body io.Reader
 		return nil, fmt.Errorf("HTTP request to %s returned status %d: %s", endpoint, resp.StatusCode, string(respBody))
 	}
 
-	// If Autosave is enabled, save the configuration
-	if client.Autosave {
-		if err := client.SaveConfiguration(); err != nil {
+	return respBody, nil
+}
+
+// FormRequest simplifies form submissions via POST and returns the response body as a byte slice.
+func (c *HRUIClient) FormRequest(endpoint string, formData url.Values) ([]byte, error) {
+	formEncoded := formData.Encode()
+	headers := map[string]string{
+		"Content-Type": "application/x-www-form-urlencoded",
+	}
+
+	// Send the POST request using the Request function
+	respBody, err := c.Request("POST", endpoint, strings.NewReader(formEncoded), headers)
+	if err != nil {
+		return nil, err
+	}
+
+	// If Autosave is enabled, save the configuration after the form request
+	if c.Autosave {
+		if err := c.CommitChanges(); err != nil {
 			return nil, fmt.Errorf("form request succeeded, but saving configuration failed: %w", err)
 		}
 	}
@@ -154,18 +170,8 @@ func (client *HRUIClient) ExecuteRequest(method, endpoint string, body io.Reader
 	return respBody, nil
 }
 
-// ExecuteFormRequest simplifies form submissions via POST and returns the response body as a byte slice.
-func (client *HRUIClient) ExecuteFormRequest(endpoint string, formData url.Values) ([]byte, error) {
-	formEncoded := formData.Encode()
-	headers := map[string]string{
-		"Content-Type": "application/x-www-form-urlencoded",
-	}
-
-	return client.ExecuteRequest("POST", endpoint, strings.NewReader(formEncoded), headers)
-}
-
-// SaveConfiguration saves the configuration by making a POST request to `/save.cgi`.
-func (c *HRUIClient) SaveConfiguration() error {
+// CommitChanges saves the configuration by making a POST request to `/save.cgi`.
+func (c *HRUIClient) CommitChanges() error {
 	if c == nil {
 		return fmt.Errorf("HRUIClient is nil")
 	}
@@ -184,8 +190,8 @@ func (c *HRUIClient) SaveConfiguration() error {
 
 	var lastError error
 	for attempt := 1; attempt <= maxRetries; attempt++ {
-		// Execute the POST request using ExecuteRequest
-		respBody, err := c.ExecuteRequest("POST", url, strings.NewReader("cmd=save"), headers)
+		// Execute the POST request using Request
+		respBody, err := c.Request("POST", url, strings.NewReader("cmd=save"), headers)
 		if err == nil {
 			// Check if the body contains an error message (e.g., for a 500 status code)
 			if strings.Contains(string(respBody), "Error saving configuration") {

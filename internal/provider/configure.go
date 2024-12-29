@@ -86,7 +86,7 @@ func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 	}
 
 	// Test connectivity with a basic request to validate the client setup.
-	_, err = hruiClient.ExecuteRequest("GET", hruiClient.URL, nil, nil)
+	_, err = hruiClient.Request("GET", hruiClient.URL, nil, nil)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Connection Error",

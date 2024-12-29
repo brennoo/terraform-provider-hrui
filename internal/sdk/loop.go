@@ -68,10 +68,10 @@ type STPPort struct {
 }
 
 // GetLoopProtocol fetches the loop protocol settings.
-func (client *HRUIClient) GetLoopProtocol() (*LoopProtocol, error) {
-	loopURL := client.URL + "/loop.cgi"
+func (c *HRUIClient) GetLoopProtocol() (*LoopProtocol, error) {
+	loopURL := c.URL + "/loop.cgi"
 
-	respBody, err := client.ExecuteRequest("GET", loopURL, nil, nil)
+	respBody, err := c.Request("GET", loopURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch loop protocol page: %w", err)
 	}
@@ -90,8 +90,15 @@ func (client *HRUIClient) GetLoopProtocol() (*LoopProtocol, error) {
 
 	// Parse interval and recovery time if "Loop Prevention" is enabled
 	if protocol.LoopFunction == "Loop Prevention" {
-		protocol.IntervalTime, _ = extractIntAttribute(doc, `input[name="interval_time"]`, "value")
-		protocol.RecoverTime, _ = extractIntAttribute(doc, `input[name="recover_time"]`, "value")
+		protocol.IntervalTime, err = extractInt(doc, `input[name="interval_time"]`, "attribute", "value")
+		if err != nil {
+			return nil, fmt.Errorf("failed to extract interval time: %w", err)
+		}
+
+		protocol.RecoverTime, err = extractInt(doc, `input[name="recover_time"]`, "attribute", "value")
+		if err != nil {
+			return nil, fmt.Errorf("failed to extract recovery time: %w", err)
+		}
 	}
 
 	// Parse port statuses
@@ -100,9 +107,9 @@ func (client *HRUIClient) GetLoopProtocol() (*LoopProtocol, error) {
 	return protocol, nil
 }
 
-// UpdateLoopProtocol updates the loop function and associated settings.
-func (client *HRUIClient) UpdateLoopProtocol(loopFunction string, intervalTime, recoverTime int, portStatuses []PortStatus) error {
-	loopURL := client.URL + "/loop.cgi"
+// ConfigureLoopProtocol updates the loop function and associated settings.
+func (c *HRUIClient) ConfigureLoopProtocol(loopFunction string, intervalTime, recoverTime int, portStatuses []PortStatus) error {
+	loopURL := c.URL + "/loop.cgi"
 	funcType, valid := LoopFunctionType[loopFunction]
 	if !valid {
 		return fmt.Errorf("invalid loop function type: %s", loopFunction)
@@ -116,7 +123,7 @@ func (client *HRUIClient) UpdateLoopProtocol(loopFunction string, intervalTime, 
 		"recover_time":  {strconv.Itoa(recoverTime)},
 	}
 
-	_, err := client.ExecuteFormRequest(loopURL, formData)
+	_, err := c.FormRequest(loopURL, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update loop protocol: %w", err)
 	}
@@ -125,10 +132,10 @@ func (client *HRUIClient) UpdateLoopProtocol(loopFunction string, intervalTime, 
 }
 
 // GetSTPSettings fetches and parses the STP Global Settings page.
-func (client *HRUIClient) GetSTPSettings() (*STPGlobalSettings, error) {
-	stpURL := client.URL + "/loop.cgi?page=stp_global"
+func (c *HRUIClient) GetSTPSettings() (*STPGlobalSettings, error) {
+	stpURL := c.URL + "/loop.cgi?page=stp_global"
 
-	respBody, err := client.ExecuteRequest("GET", stpURL, nil, nil)
+	respBody, err := c.Request("GET", stpURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch STP Global Settings page: %w", err)
 	}
@@ -141,9 +148,9 @@ func (client *HRUIClient) GetSTPSettings() (*STPGlobalSettings, error) {
 	return parseSTPGlobalSettings(doc)
 }
 
-// UpdateSTPSettings updates the STP global settings.
-func (client *HRUIClient) UpdateSTPSettings(stp *STPGlobalSettings) error {
-	stpURL := client.URL + "/loop.cgi?page=stp_global"
+// SetSTPSettings updates the STP global settings.
+func (c *HRUIClient) SetSTPSettings(stp *STPGlobalSettings) error {
+	stpURL := c.URL + "/loop.cgi?page=stp_global"
 	formData := url.Values{
 		"cmd":      {"stp"},
 		"version":  {stp.GetVersionValue()},
@@ -153,7 +160,7 @@ func (client *HRUIClient) UpdateSTPSettings(stp *STPGlobalSettings) error {
 		"delay":    {strconv.Itoa(stp.ForwardDelay)},
 	}
 
-	_, err := client.ExecuteFormRequest(stpURL, formData)
+	_, err := c.FormRequest(stpURL, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update STP global settings: %w", err)
 	}
@@ -161,10 +168,10 @@ func (client *HRUIClient) UpdateSTPSettings(stp *STPGlobalSettings) error {
 	return nil
 }
 
-// UpdateSTPSettingsAsync performs a fire-and-forget POST request to update the STP Global Settings.
+// SetSTPSettingsAsync performs a fire-and-forget POST request to update the STP Global Settings.
 // needed due to a bug in the cgi for updating stp global settings that never returns.
-func (client *HRUIClient) UpdateSTPSettingsAsync(stp *STPGlobalSettings) error {
-	stpURL := client.URL + "/loop.cgi?page=stp_global"
+func (c *HRUIClient) SetSTPSettingsAsync(stp *STPGlobalSettings) error {
+	stpURL := c.URL + "/loop.cgi?page=stp_global"
 
 	// Prepare form data for POST request
 	data := url.Values{
@@ -176,8 +183,8 @@ func (client *HRUIClient) UpdateSTPSettingsAsync(stp *STPGlobalSettings) error {
 		"cmd":      {"stp"},
 	}
 
-	client.HttpClient.Timeout = 2 * time.Second
-	_, err := client.ExecuteFormRequest(stpURL, data)
+	c.HttpClient.Timeout = 2 * time.Second
+	_, err := c.FormRequest(stpURL, data)
 	if err != nil {
 		log.Printf("[WARN] POST request timed out or failed: %v", err)
 		return nil
@@ -187,10 +194,10 @@ func (client *HRUIClient) UpdateSTPSettingsAsync(stp *STPGlobalSettings) error {
 }
 
 // GetSTPPortSettings fetches the STP port settings.
-func (client *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
-	stpURL := client.URL + "/loop.cgi?page=stp_port"
+func (c *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
+	stpURL := c.URL + "/loop.cgi?page=stp_port"
 
-	respBody, err := client.ExecuteRequest("GET", stpURL, nil, nil)
+	respBody, err := c.Request("GET", stpURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch STP port settings page: %w", err)
 	}
@@ -199,6 +206,16 @@ func (client *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse HTML: %w", err)
 	}
+
+	// Parsing options for STP integers (without offset)
+	parseSTPIntOptions := []ParseOption{
+		WithDefaultValue(0),
+		WithSpecialCases("Auto", "-"),
+		WithLogging(),
+	}
+
+	// Parsing options for port number (with offset)
+	parsePortOptions := append(parseSTPIntOptions, WithOffset(-1))
 
 	// Target the last table (STP settings table)
 	table := doc.Find("table").Last()
@@ -221,14 +238,16 @@ func (client *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 
 		// Parse the STP Port entry
 		portText := tds.Eq(0).Text()
-		port := parsePortNumber(portText) // parse "Port X" -> X - 1
+		portStr := strings.TrimPrefix(portText, "Port ")
+		port := parseInt(portStr, parsePortOptions...)
+
 		stpPort := STPPort{
-			Port:           port,
+			Port:           *port,
 			State:          strings.TrimSpace(tds.Eq(1).Text()),
 			Role:           strings.TrimSpace(tds.Eq(2).Text()),
-			PathCostConfig: parseSTPInt(tds.Eq(3).Text()),
-			PathCostActual: parseSTPInt(tds.Eq(4).Text()),
-			Priority:       parseSTPInt(tds.Eq(5).Text()),
+			PathCostConfig: *parseInt(tds.Eq(3).Text(), parseSTPIntOptions...),
+			PathCostActual: *parseInt(tds.Eq(4).Text(), parseSTPIntOptions...),
+			Priority:       *parseInt(tds.Eq(5).Text(), parseSTPIntOptions...),
 			P2PConfig:      normalizeBoolString(tds.Eq(6).Text()),
 			P2PActual:      normalizeBoolString(tds.Eq(7).Text()),
 			EdgeConfig:     normalizeBoolString(tds.Eq(8).Text()),
@@ -244,9 +263,9 @@ func (client *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 	return stpPorts, nil
 }
 
-// UpdateSTPPortSettings updates the STP settings for a specific port.
-func (client *HRUIClient) UpdateSTPPortSettings(portID, pathCost, priority int, p2p, edge string) error {
-	stpURL := client.URL + "/loop.cgi?page=stp_port"
+// SetSTPPortSettings updates the STP settings for a specific port.
+func (c *HRUIClient) SetSTPPortSettings(portID, pathCost, priority int, p2p, edge string) error {
+	stpURL := c.URL + "/loop.cgi?page=stp_port"
 	formData := url.Values{
 		"cmd":      {"stp_port"},
 		"portid":   {strconv.Itoa(portID)},
@@ -257,7 +276,7 @@ func (client *HRUIClient) UpdateSTPPortSettings(portID, pathCost, priority int, 
 		"submit":   {"+++Apply+++"},
 	}
 
-	_, err := client.ExecuteFormRequest(stpURL, formData)
+	_, err := c.FormRequest(stpURL, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update STP port settings: %w", err)
 	}
@@ -266,8 +285,8 @@ func (client *HRUIClient) UpdateSTPPortSettings(portID, pathCost, priority int, 
 }
 
 // GetSTPPort fetches a single STP port by its ID from the backend.
-func (client *HRUIClient) GetSTPPort(portID int) (*STPPort, error) {
-	ports, err := client.GetSTPPortSettings()
+func (c *HRUIClient) GetSTPPort(portID int) (*STPPort, error) {
+	ports, err := c.GetSTPPortSettings()
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch STP port settings: %w", err)
 	}
@@ -281,7 +300,6 @@ func (client *HRUIClient) GetSTPPort(portID int) (*STPPort, error) {
 	return nil, fmt.Errorf("port with ID %d not found", portID)
 }
 
-// parsePortStatuses parses the port table and returns a list of port statuses.
 func parsePortStatuses(doc *goquery.Document) []PortStatus {
 	var portStatuses []PortStatus
 
@@ -295,13 +313,15 @@ func parsePortStatuses(doc *goquery.Document) []PortStatus {
 			return
 		}
 
-		port := parseInt(strings.TrimSpace(tds.Eq(0).Text()))
+		portStr := strings.TrimSpace(tds.Eq(0).Text())
+		port := parseInt(portStr)
+
 		loopState := strings.TrimSpace(tds.Eq(1).Text())
 		loopStatus := strings.TrimSpace(tds.Eq(2).Text())
 		enable := loopState == "Enable"
 
 		portStatuses = append(portStatuses, PortStatus{
-			Port:       port,
+			Port:       *port,
 			Enable:     enable,
 			LoopState:  loopState,
 			LoopStatus: loopStatus,
@@ -336,23 +356,23 @@ func parseSTPGlobalSettings(doc *goquery.Document) (*STPGlobalSettings, error) {
 	}
 
 	// Parse Priority (uses attribute value)
-	if settings.Priority, err = extractIntAttribute(doc, "select[name='priority'] option[selected]", "value"); err != nil {
+	if settings.Priority, err = extractInt(doc, "select[name='priority'] option[selected]", "attribute", "value"); err != nil {
 		return nil, err
 	}
 
 	// Parse MaxAge, HelloTime, ForwardDelay (uses attribute value)
-	if settings.MaxAge, err = extractIntAttribute(doc, "input[name='maxage']", "value"); err != nil {
+	if settings.MaxAge, err = extractInt(doc, "input[name='maxage']", "attribute", "value"); err != nil {
 		return nil, err
 	}
-	if settings.HelloTime, err = extractIntAttribute(doc, "input[name='hello']", "value"); err != nil {
+	if settings.HelloTime, err = extractInt(doc, "input[name='hello']", "attribute", "value"); err != nil {
 		return nil, err
 	}
-	if settings.ForwardDelay, err = extractIntAttribute(doc, "input[name='delay']", "value"); err != nil {
+	if settings.ForwardDelay, err = extractInt(doc, "input[name='delay']", "attribute", "value"); err != nil {
 		return nil, err
 	}
 
 	// Parse Root Priority
-	if settings.RootPriority, err = extractInt(doc, "th:contains('Root Priority') + td"); err != nil {
+	if settings.RootPriority, err = extractInt(doc, "th:contains('Root Priority') + td", "text"); err != nil {
 		return nil, err
 	}
 
@@ -362,7 +382,7 @@ func parseSTPGlobalSettings(doc *goquery.Document) (*STPGlobalSettings, error) {
 	}
 
 	// Parse Root Path Cost
-	if settings.RootPathCost, err = extractInt(doc, "th:contains('Root Path Cost') + td"); err != nil {
+	if settings.RootPathCost, err = extractInt(doc, "th:contains('Root Path Cost') + td", "text"); err != nil {
 		return nil, err
 	}
 
@@ -371,74 +391,29 @@ func parseSTPGlobalSettings(doc *goquery.Document) (*STPGlobalSettings, error) {
 		return nil, err
 	}
 
-	// Parse RootMaxAge, removing units like "Sec"
-	if maxAgeRaw, err := extractText(doc, "th:contains('Root Maximum Age') + td"); err != nil {
+	// Parse RootMaxAge, removing " Sec"
+	if rawValue, err := extractText(doc, "th:contains('Root Maximum Age') + td"); err != nil {
 		return nil, err
 	} else {
-		settings.RootMaxAge = parseInt(strings.Fields(maxAgeRaw)[0]) // Split on space and take the first part
+		settings.RootMaxAge = *parseInt(rawValue, WithTrimSuffix(" Sec"))
 	}
 
-	// Parse RootHelloTime, removing units like "Sec"
-	if helloTimeRaw, err := extractText(doc, "th:contains('Root Hello Time') + td"); err != nil {
+	// Parse RootHelloTime, removing " Sec"
+	if rawValue, err := extractText(doc, "th:contains('Root Hello Time') + td"); err != nil {
 		return nil, err
 	} else {
-		settings.RootHelloTime = parseInt(strings.Fields(helloTimeRaw)[0])
+		settings.RootHelloTime = *parseInt(rawValue, WithTrimSuffix(" Sec"))
 	}
 
-	// Parse RootForwardDelay, removing units like "Sec"
-	if forwardDelayRaw, err := extractText(doc, "th:contains('Root Forward Delay') + td"); err != nil {
+	// Parse RootForwardDelay, removing " Sec"
+	if rawValue, err := extractText(doc, "th:contains('Root Forward Delay') + td"); err != nil {
 		return nil, err
 	} else {
-		settings.RootForwardDelay = parseInt(strings.Fields(forwardDelayRaw)[0])
+		settings.RootForwardDelay = *parseInt(rawValue, WithTrimSuffix(" Sec"))
 	}
 
 	log.Printf("[DEBUG] Parsed STPGlobalSettings: %+v", settings)
 	return settings, nil
-}
-
-func parseInt(value string) int {
-	if i, err := strconv.Atoi(strings.TrimSpace(value)); err == nil {
-		return i
-	}
-	return 0
-}
-
-// extractInt extracts an integer from the text content of a given selector.
-func extractInt(doc *goquery.Document, selector string) (int, error) {
-	text, err := extractText(doc, selector)
-	if err != nil {
-		return 0, err
-	}
-	return strconv.Atoi(strings.TrimSpace(text))
-}
-
-// extractIntAttribute extracts an integer from the value of an attribute (e.g., `value`).
-func extractIntAttribute(doc *goquery.Document, selector, attr string) (int, error) { //nolint:unparam
-	value := doc.Find(selector).AttrOr(attr, "")
-	return strconv.Atoi(strings.TrimSpace(value))
-}
-
-func parsePortNumber(portText string) int {
-	portText = strings.TrimPrefix(portText, "Port ")
-	port, err := strconv.Atoi(portText)
-	if err != nil {
-		log.Printf("[DEBUG] Failed to parse port number: %s", portText)
-		return -1
-	}
-	return port - 1
-}
-
-func parseSTPInt(value string) int {
-	value = strings.TrimSpace(value)
-	if value == "Auto" || value == "-" {
-		return 0
-	}
-	num, err := strconv.Atoi(value)
-	if err != nil {
-		log.Printf("[DEBUG] Failed to parse int: %s", value)
-		return 0
-	}
-	return num
 }
 
 func normalizeBoolString(value string) string {

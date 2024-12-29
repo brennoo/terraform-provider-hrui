@@ -95,7 +95,7 @@ var mockPortResponse = `
 </html>
 `
 
-func TestGetAllPorts(t *testing.T) {
+func TestListPorts(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte(mockPortResponse))
@@ -107,7 +107,7 @@ func TestGetAllPorts(t *testing.T) {
 		HttpClient: server.Client(),
 	}
 
-	ports, err := client.GetAllPorts()
+	ports, err := client.ListPorts()
 	require.NoError(t, err)
 	require.Len(t, ports, 6)
 

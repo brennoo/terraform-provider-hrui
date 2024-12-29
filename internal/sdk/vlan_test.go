@@ -92,8 +92,8 @@ func TestGetVLAN(t *testing.T) {
 	assert.Nil(t, vlan)
 }
 
-// Test CreateVLAN function - test NotMemberPorts calculation.
-func TestCreateVLAN_NotMemberPorts(t *testing.T) {
+// Test AddVLAN function - test NotMemberPorts calculation.
+func TestAddVLAN_NotMemberPorts(t *testing.T) {
 	// Create a mock server to test VLAN creation
 	server := mockServerMock("", http.StatusOK)
 	defer server.Close()
@@ -108,12 +108,12 @@ func TestCreateVLAN_NotMemberPorts(t *testing.T) {
 		TaggedPorts:   []int{3},    // Members
 	}
 
-	err := client.CreateVLAN(vlan, totalPorts)
+	err := client.AddVLAN(vlan, totalPorts)
 	require.NoError(t, err)
 }
 
-// Test DeleteVLAN is still unchanged.
-func TestDeleteVLAN(t *testing.T) {
+// Test RemoveVLAN is still unchanged.
+func TestRemoveVLAN(t *testing.T) {
 	// Simulate deleting a VLAN
 	server := mockServerMock("", http.StatusOK)
 	defer server.Close()
@@ -122,11 +122,11 @@ func TestDeleteVLAN(t *testing.T) {
 	client, _ := NewClient(server.URL, "testuser", "testpass", false)
 
 	// Test that deleting the VLAN sends the correct form submission
-	err := client.DeleteVLAN(10)
+	err := client.RemoveVLAN(10)
 	require.NoError(t, err)
 }
 
-func TestGetAllVLANs(t *testing.T) {
+func TestListVLANs(t *testing.T) {
 	htmlResponse := `
         <html>
         <body>
@@ -191,7 +191,7 @@ func TestGetAllVLANs(t *testing.T) {
 
 	client, _ := NewClient(server.URL, "testuser", "testpass", false)
 
-	vlans, err := client.GetAllVLANs()
+	vlans, err := client.ListVLANs()
 	assert.NoError(t, err)
 
 	// Print the number of VLANs found
@@ -213,7 +213,7 @@ func TestGetAllVLANs(t *testing.T) {
 	assert.Equal(t, expectedVLANs, vlans)
 }
 
-func TestGetAllPortVLANConfigs(t *testing.T) {
+func TestListPortVLANConfigs(t *testing.T) {
 	htmlResponse := `
         <html><head></head>
         <body>
@@ -265,7 +265,7 @@ func TestGetAllPortVLANConfigs(t *testing.T) {
 
 	client, _ := NewClient(server.URL, "testuser", "testpass", false)
 
-	configs, err := client.GetAllPortVLANConfigs()
+	configs, err := client.ListPortVLANConfigs()
 	assert.NoError(t, err)
 
 	// Print the number of configs found

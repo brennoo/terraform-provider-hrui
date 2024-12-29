@@ -30,7 +30,7 @@ type StaticMACEntry struct {
 func (c *HRUIClient) GetMACAddressTable() ([]MACAddressEntry, error) {
 	url := c.URL + "/mac.cgi?page=fwd_tbl"
 
-	respBody, err := c.ExecuteRequest("GET", url, nil, nil)
+	respBody, err := c.Request("GET", url, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching MAC address table: %w", err)
 	}
@@ -79,7 +79,7 @@ func (c *HRUIClient) GetMACAddressTable() ([]MACAddressEntry, error) {
 func (c *HRUIClient) GetStaticMACAddressTable() ([]StaticMACEntry, error) {
 	url := c.URL + "/mac.cgi?page=static"
 
-	respBody, err := c.ExecuteRequest("GET", url, nil, nil)
+	respBody, err := c.Request("GET", url, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching static MAC address table: %w", err)
 	}
@@ -121,8 +121,8 @@ func (c *HRUIClient) GetStaticMACAddressTable() ([]StaticMACEntry, error) {
 	return entries, nil
 }
 
-// AddStaticMACAddress adds a new static MAC address entry by sending a POST request.
-func (c *HRUIClient) AddStaticMACAddress(mac string, vlanID int, port int) error {
+// AddStaticMACEntry adds a new static MAC address entry by sending a POST request.
+func (c *HRUIClient) AddStaticMACEntry(mac string, vlanID int, port int) error {
 	formData := url.Values{
 		"mac":  {mac},
 		"vlan": {strconv.Itoa(vlanID)},
@@ -130,7 +130,7 @@ func (c *HRUIClient) AddStaticMACAddress(mac string, vlanID int, port int) error
 		"cmd":  {"macstatic"},
 	}
 
-	_, err := c.ExecuteFormRequest(c.URL+"/mac.cgi?page=static", formData)
+	_, err := c.FormRequest(c.URL+"/mac.cgi?page=static", formData)
 	if err != nil {
 		return fmt.Errorf("error adding static MAC address: %w", err)
 	}
@@ -138,8 +138,8 @@ func (c *HRUIClient) AddStaticMACAddress(mac string, vlanID int, port int) error
 	return nil
 }
 
-// DeleteStaticMACAddress deletes one or more static MAC address entries.
-func (c *HRUIClient) DeleteStaticMACAddress(macEntries []StaticMACEntry) error {
+// RemoveStaticMACEntries deletes one or more static MAC address entries.
+func (c *HRUIClient) RemoveStaticMACEntries(macEntries []StaticMACEntry) error {
 	// Prepare the form data
 	formData := url.Values{
 		"cmd": {"macstatictbl"},
@@ -150,7 +150,7 @@ func (c *HRUIClient) DeleteStaticMACAddress(macEntries []StaticMACEntry) error {
 		formData.Add("del", checkboxValue)
 	}
 
-	_, err := c.ExecuteFormRequest(c.URL+"/mac.cgi?page=staticdel", formData)
+	_, err := c.FormRequest(c.URL+"/mac.cgi?page=staticdel", formData)
 	if err != nil {
 		return fmt.Errorf("error deleting static MAC addresses: %w", err)
 	}

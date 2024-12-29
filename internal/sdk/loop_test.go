@@ -63,7 +63,7 @@ func TestGetLoopProtocol(t *testing.T) {
 	assert.Equal(t, expected, loopProtocol.PortStatuses)
 }
 
-func TestUpdateLoopProtocol(t *testing.T) {
+func TestConfigureLoopProtocol(t *testing.T) {
 	// Use the mock server to simulate the HTTP POST response.
 	mock := mockServerMock("OK", http.StatusOK)
 	defer mock.Close()
@@ -74,8 +74,8 @@ func TestUpdateLoopProtocol(t *testing.T) {
 		HttpClient: &http.Client{},
 	}
 
-	// Call UpdateLoopProtocol and assert that no error is returned.
-	err := client.UpdateLoopProtocol("Loop Prevention", 5, 12, []PortStatus{
+	// Call ConfigureLoopProtocol and assert that no error is returned.
+	err := client.ConfigureLoopProtocol("Loop Prevention", 5, 12, []PortStatus{
 		{Port: 1, Enable: true},
 		{Port: 2, Enable: false},
 	})
@@ -282,7 +282,7 @@ func TestGetLoopProtocol_LoopPreventionMode(t *testing.T) {
 	assert.Equal(t, expected, loopProtocol.PortStatuses)
 }
 
-func TestUpdateSTPPortSettings(t *testing.T) {
+func TestSetSTPPortSettings(t *testing.T) {
 	// Mock POST response (200 OK) for STP update
 	mock := mockServerMock("OK", http.StatusOK)
 	defer mock.Close()
@@ -292,8 +292,8 @@ func TestUpdateSTPPortSettings(t *testing.T) {
 		HttpClient: &http.Client{},
 	}
 
-	// Call UpdateSTPPortSettings on Port 1 with specific settings
-	err := client.UpdateSTPPortSettings(1, 2000, 128, "Auto", "True")
+	// Call SetSTPPortSettings on Port 1 with specific settings
+	err := client.SetSTPPortSettings(1, 2000, 128, "Auto", "True")
 	assert.NoError(t, err)
 }
 
@@ -370,8 +370,8 @@ func TestGetSTPSettings(t *testing.T) {
 	assert.Equal(t, 15, stpSettings.RootForwardDelay)
 }
 
-// TestUpdateSTPSettings ensures the correct POST data is sent when updating the STP settings.
-func TestUpdateSTPSettings(t *testing.T) {
+// TestSetSTPSettings ensures the correct POST data is sent when updating the STP settings.
+func TestSetSTPSettings(t *testing.T) {
 	// Prepare mock server to validate POST data.
 	mock := mockServerMock("OK", http.StatusOK)
 	defer mock.Close()
@@ -390,8 +390,8 @@ func TestUpdateSTPSettings(t *testing.T) {
 		ForwardDelay: 7,
 	}
 
-	// Execute the UpdateSTPSettings function.
-	err := client.UpdateSTPSettings(stpUpdate)
+	// Execute the SetSTPSettings function.
+	err := client.SetSTPSettings(stpUpdate)
 	assert.NoError(t, err)
 
 	// Test has already passed if data was sent correctly (mock does the validation).

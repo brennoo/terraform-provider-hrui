@@ -75,7 +75,7 @@ func (r *portSettingResource) Create(ctx context.Context, req resource.CreateReq
 	}
 
 	// Make API request to create the VLAN
-	err := r.client.UpdatePortSettings(port)
+	err := r.client.ConfigurePort(port)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create HRUI port settings, got error: %s", err))
 		return
@@ -143,7 +143,7 @@ func (r *portSettingResource) Update(ctx context.Context, req resource.UpdateReq
 	}
 
 	// Make API request to create the VLAN
-	err := r.client.UpdatePortSettings(port)
+	err := r.client.ConfigurePort(port)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create HRUI port settings, got error: %s", err))
 		return

@@ -82,7 +82,7 @@ func (r *igmpSnoopingStaticResource) Create(ctx context.Context, req resource.Cr
 	}
 
 	// Enable the specified port while preserving other ports
-	if err := r.client.UpdatePortIGMPSnooping(int(plan.Port.ValueInt64()), plan.Enabled.ValueBool()); err != nil {
+	if err := r.client.ConfigurePortIGMPSnooping(int(plan.Port.ValueInt64()), plan.Enabled.ValueBool()); err != nil {
 		resp.Diagnostics.AddError(
 			"Error Configuring IGMP Snooping for Port",
 			fmt.Sprintf("Failed to configure IGMP snooping for port %d: %s", plan.Port.ValueInt64(), err.Error()),
@@ -132,7 +132,7 @@ func (r *igmpSnoopingStaticResource) Update(ctx context.Context, req resource.Up
 	}
 
 	// Update the specified port while preserving other ports
-	if err := r.client.UpdatePortIGMPSnooping(int(plan.Port.ValueInt64()), plan.Enabled.ValueBool()); err != nil {
+	if err := r.client.ConfigurePortIGMPSnooping(int(plan.Port.ValueInt64()), plan.Enabled.ValueBool()); err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating IGMP Snooping for Port",
 			fmt.Sprintf("Failed to update IGMP snooping for port %d: %s", plan.Port.ValueInt64(), err.Error()),
@@ -156,7 +156,7 @@ func (r *igmpSnoopingStaticResource) Delete(ctx context.Context, req resource.De
 	}
 
 	// Disable the specified port while preserving other ports
-	if err := r.client.UpdatePortIGMPSnooping(int(state.Port.ValueInt64()), false); err != nil {
+	if err := r.client.ConfigurePortIGMPSnooping(int(state.Port.ValueInt64()), false); err != nil {
 		resp.Diagnostics.AddError(
 			"Error Removing IGMP Snooping for Port",
 			fmt.Sprintf("Failed to disable IGMP snooping for port %d: %s", state.Port.ValueInt64(), err.Error()),

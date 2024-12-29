@@ -77,7 +77,7 @@ func (r *macStaticResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	// Use the SDK to add the static MAC entry
-	err := r.client.AddStaticMACAddress(data.MACAddress.ValueString(), int(data.VLANID.ValueInt64()), int(data.Port.ValueInt64()))
+	err := r.client.AddStaticMACEntry(data.MACAddress.ValueString(), int(data.VLANID.ValueInt64()), int(data.Port.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to create static MAC entry", err.Error())
 		return
@@ -159,7 +159,7 @@ func (r *macStaticResource) Update(ctx context.Context, req resource.UpdateReque
 		state.VLANID.ValueInt64() != plan.VLANID.ValueInt64() ||
 		state.Port.ValueInt64() != plan.Port.ValueInt64() {
 		// Delete the existing entry
-		err := r.client.DeleteStaticMACAddress([]sdk.StaticMACEntry{
+		err := r.client.RemoveStaticMACEntries([]sdk.StaticMACEntry{
 			{
 				MACAddress: state.MACAddress.ValueString(),
 				VLANID:     int(state.VLANID.ValueInt64()),
@@ -171,7 +171,7 @@ func (r *macStaticResource) Update(ctx context.Context, req resource.UpdateReque
 		}
 
 		// Add the updated entry
-		err = r.client.AddStaticMACAddress(plan.MACAddress.ValueString(), int(plan.VLANID.ValueInt64()), int(plan.Port.ValueInt64()))
+		err = r.client.AddStaticMACEntry(plan.MACAddress.ValueString(), int(plan.VLANID.ValueInt64()), int(plan.Port.ValueInt64()))
 		if err != nil {
 			resp.Diagnostics.AddError("Failed to create updated static MAC entry", err.Error())
 			return
@@ -201,7 +201,7 @@ func (r *macStaticResource) Delete(ctx context.Context, req resource.DeleteReque
 		MACAddress: state.MACAddress.ValueString(),
 		VLANID:     int(state.VLANID.ValueInt64()),
 	}
-	err := r.client.DeleteStaticMACAddress([]sdk.StaticMACEntry{entry})
+	err := r.client.RemoveStaticMACEntries([]sdk.StaticMACEntry{entry})
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to delete static MAC entry", err.Error())
 	}
