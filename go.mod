@@ -5,6 +5,7 @@ go 1.23.0
 require (
 	github.com/PuerkitoBio/goquery v1.10.1
 	github.com/hashicorp/terraform-plugin-framework v1.13.0
+	github.com/hashicorp/terraform-plugin-framework-validators v0.16.0
 	github.com/stretchr/testify v1.10.0
 )
 
