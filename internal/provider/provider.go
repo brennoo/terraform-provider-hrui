@@ -17,6 +17,7 @@ import (
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/stp_global"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/stp_port"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/system_info"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/trunk_group"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/vlan_8021q"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/vlan_vid"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -77,5 +78,6 @@ func (p *hruiProvider) Resources(ctx context.Context) []func() resource.Resource
 		storm_control.NewResource,
 		igmp_snooping.NewResource,
 		igmp_snooping_static.NewResource,
+		trunk_group.NewResource,
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
@@ -158,6 +159,20 @@ func (c *HRUIClient) FormRequest(endpoint string, formData url.Values) ([]byte, 
 	respBody, err := c.Request("POST", endpoint, strings.NewReader(formEncoded), headers)
 	if err != nil {
 		return nil, err
+	}
+
+	// Check for error dialogs in the HTML response
+	responseStr := string(respBody)
+	if strings.Contains(responseStr, "alert.cgi?alertmsg=") {
+		re := regexp.MustCompile(`alertmsg=([^']+)`)
+		match := re.FindStringSubmatch(responseStr)
+		if len(match) > 1 {
+			alertMsg, _ := url.QueryUnescape(match[1])
+			return nil, fmt.Errorf("device reported an error: %s", alertMsg)
+		}
+
+		// Generic error fallback (in case the extraction fails)
+		return nil, fmt.Errorf("device reported an unknown error")
 	}
 
 	// If Autosave is enabled, save the configuration after the form request
