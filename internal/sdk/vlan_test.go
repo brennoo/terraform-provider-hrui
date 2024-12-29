@@ -3,6 +3,8 @@ package sdk
 import (
 	"fmt"
 	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -288,4 +290,99 @@ func TestListPortVLANConfigs(t *testing.T) {
 		{Port: 6, PVID: 10, AcceptFrameType: "All"},
 	}
 	assert.Equal(t, expectedConfigs, configs)
+}
+
+func TestListVLANsWithTrunkMembers(t *testing.T) {
+	// Mock HTML response for VLANs
+	vlanHTMLResponse := `
+        <html>
+        <body>
+        <center>
+        <fieldset>
+        <legend>802.1Q VLAN</legend>
+        <form method="post" action="/vlan.cgi?page=getRmvVlanEntry" name=formVlanStatus>
+         <table border="1">
+          <tr>
+           <th nowrap width="60">VLAN</th>
+           <th nowrap>VLAN Name</th>
+           <th nowrap>Member Ports</th>
+           <th nowrap>Tagged Ports</th>
+           <th nowrap>Untagged Ports</th>
+           <th nowrap width="50">Delete</th>
+          </tr>
+          <tr>
+           <td><a href="/vlan.cgi?page=getVlanEntry&pickVlanId=10">10</a></td>
+           <td>myvlan1</td>
+           <td nowrap>1,3,Trunk1</td>
+           <td nowrap>Trunk1</td>
+           <td nowrap>1,3</td>
+           <td align="center"><input type="checkbox" id="vlan_0" /></td>
+          </tr>
+         </table>
+        </form>
+        </fieldset>
+        </center>
+        </body>
+        </html>
+    `
+
+	// Mock HTML response for port.cgi
+	portHTMLResponse := `
+        <html>
+        <body>
+        <form action="/port.cgi" method="get">
+            <select name="portid">
+                <option value="0">Port 1</option>
+                <option value="1">Port 2</option>
+                <option value="2">Port 3</option>
+                <option value="5">Port 6</option>
+                <option value="7">Trunk1</option>
+            </select>
+        </form>
+        </body>
+        </html>
+    `
+
+	// Create a mock HTTP server
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.Contains(r.URL.Path, "vlan.cgi") {
+			// Serve VLAN mock HTML
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(vlanHTMLResponse))
+		} else if strings.Contains(r.URL.Path, "port.cgi") {
+			// Serve port.cgi mock HTML
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(portHTMLResponse))
+		} else if strings.Contains(r.URL.Path, "index.cgi") {
+			// Mock the authentication /index.cgi response
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`<html><body>Welcome to HRUI!</body></html>`)) // Simulate authentication success
+		} else {
+			// Unknown path
+			http.NotFound(w, r)
+		}
+	}))
+
+	defer server.Close()
+
+	// Debugging: Ensure server URL is valid
+	t.Logf("Server URL: %s", server.URL)
+
+	// Create client pointing to mock server URL
+	client, err := NewClient(server.URL, "testuser", "testpassword", false)
+	require.NoError(t, err, "Failed to initialize HRUIClient")
+	require.NotNil(t, client, "HRUIClient should not be nil")
+
+	// Call ListVLANs
+	vlans, err := client.ListVLANs()
+	require.NoError(t, err)
+	require.Len(t, vlans, 1)
+
+	// Validate the parsed VLAN
+	vlan := vlans[0]
+	assert.Equal(t, 10, vlan.VlanID)
+	assert.Equal(t, "myvlan1", vlan.Name)
+	assert.ElementsMatch(t, []int{1, 3, 7}, vlan.MemberPorts) // Trunk1 resolved to Port_7
+	assert.ElementsMatch(t, []int{7}, vlan.TaggedPorts)       // Trunk1 tagged
+	assert.ElementsMatch(t, []int{1, 3}, vlan.UntaggedPorts)  // Regular untagged
 }
