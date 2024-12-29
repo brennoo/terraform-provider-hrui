@@ -157,32 +157,9 @@ func (r *portSettingResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
-	// Extract the `config` and `actual` values returned from the device
+	// Extract values returned from the device
 	deviceSpeedConfig := port.SpeedDuplexConfig
 	deviceFlowControlConfig := port.FlowControlConfig
-
-	// Detect drift by comparing the device `config` values against Terraform `config`
-	if state.Speed != nil && state.Speed.Config.ValueString() != deviceSpeedConfig {
-		resp.Diagnostics.AddWarning(
-			"Speed Configuration Drift Detected",
-			fmt.Sprintf(
-				"The configured speed in Terraform (%s) does not match the device's configured speed (%s).",
-				state.Speed.Config.ValueString(),
-				deviceSpeedConfig,
-			),
-		)
-	}
-
-	if state.FlowControl != nil && state.FlowControl.Config.ValueString() != deviceFlowControlConfig {
-		resp.Diagnostics.AddWarning(
-			"Flow Control Configuration Drift Detected",
-			fmt.Sprintf(
-				"The configured flow control in Terraform (%s) does not match the device's configured flow control (%s).",
-				state.FlowControl.Config.ValueString(),
-				deviceFlowControlConfig,
-			),
-		)
-	}
 
 	// Update the state with both the actual and configured values from the device
 	state.Enabled = types.BoolValue(port.State == 1)
