@@ -38,6 +38,14 @@ func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
 		return nil, errors.New("failed to parse HTML response")
 	}
 
+	// Define parse options for rates
+	parseRateOptions := func() []ParseOption {
+		return []ParseOption{
+			WithSpecialCases("Auto", "Off"),
+			WithReturnNilOnSpecialCases(),
+		}
+	}
+
 	// Find the last table row entries in the Storm Control status table
 	var entries []StormControlEntry
 
@@ -54,18 +62,18 @@ func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
 		}
 
 		portString := strings.TrimSpace(cols.Eq(0).Text())
-		port, err := backendPortToInt(portString)
-		if err != nil {
+		port := parseInt(portString, WithTrimPrefix("Port "))
+		if port == nil {
 			return // Skip invalid port entries
 		}
 
-		broadcast := parseRate(strings.TrimSpace(cols.Eq(1).Text()))
-		knownMulticast := parseRate(strings.TrimSpace(cols.Eq(2).Text()))
-		unknownUnicast := parseRate(strings.TrimSpace(cols.Eq(3).Text()))
-		unknownMulticast := parseRate(strings.TrimSpace(cols.Eq(4).Text()))
+		broadcast := parseInt(strings.TrimSpace(cols.Eq(1).Text()), parseRateOptions()...)
+		knownMulticast := parseInt(strings.TrimSpace(cols.Eq(2).Text()), parseRateOptions()...)
+		unknownUnicast := parseInt(strings.TrimSpace(cols.Eq(3).Text()), parseRateOptions()...)
+		unknownMulticast := parseInt(strings.TrimSpace(cols.Eq(4).Text()), parseRateOptions()...)
 
 		entry := StormControlEntry{
-			Port:                     port,
+			Port:                     *port,
 			BroadcastRateKbps:        broadcast,
 			KnownMulticastRateKbps:   knownMulticast,
 			UnknownUnicastRateKbps:   unknownUnicast,
@@ -77,21 +85,6 @@ func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
 
 	// Return the parsed results
 	return &StormControlConfig{Entries: entries}, nil
-}
-
-// Helper function to parse rates from text (converts "Off" to nil).
-func parseRate(rate string) *int {
-	if rate == "Off" {
-		return nil
-	}
-
-	// Convert from string to integer
-	value, err := strconv.Atoi(rate)
-	if err != nil {
-		return nil
-	}
-
-	return &value
 }
 
 // SetStormControlConfig updates the storm control settings for specific ports.
@@ -221,12 +214,4 @@ func stormTypeToID(stormType string) string {
 
 func intToBackendPort(port int) string {
 	return fmt.Sprintf("Port %d", port)
-}
-
-func backendPortToInt(port string) (int, error) {
-	parts := strings.Split(port, " ")
-	if len(parts) != 2 || parts[0] != "Port" {
-		return 0, fmt.Errorf("invalid port format: %s", port)
-	}
-	return strconv.Atoi(parts[1])
 }

@@ -3,7 +3,6 @@ package sdk
 import (
 	"fmt"
 	"net/url"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -45,43 +44,28 @@ func (c *HRUIClient) ListQoSPortQueues() ([]QoSPortQueue, error) {
 			return
 		}
 
-		portID, err := parsePortID(portText)
-		if err != nil {
+		queueIDOptions := []ParseOption{
+			WithDefaultValue(0),
+			WithSpecialCases("N/A"),
+		}
+
+		portID := parseInt(portText, WithTrimPrefix("Port "))
+		if portID == nil {
 			return
 		}
 
-		queueID, err := parseQueueID(queueText)
-		if err != nil {
+		queueID := parseInt(queueText, queueIDOptions...)
+		if queueID == nil {
 			return
 		}
 
 		portQueues = append(portQueues, QoSPortQueue{
-			PortID: portID,
-			Queue:  queueID,
+			PortID: *portID,
+			Queue:  *queueID,
 		})
 	})
 
 	return portQueues, nil
-}
-
-// parsePortID extracts the port number from the given text.
-func parsePortID(portText string) (int, error) {
-	re := regexp.MustCompile(`Port (\d+)`)
-	match := re.FindStringSubmatch(portText)
-	if len(match) != 2 {
-		return 0, fmt.Errorf("invalid port text format: %s", portText)
-	}
-	return strconv.Atoi(match[1])
-}
-
-// parseQueueID extracts the queue ID from the given text.
-func parseQueueID(queueText string) (int, error) {
-	re := regexp.MustCompile(`\d+`)
-	match := re.FindString(queueText)
-	if match == "" {
-		return 0, fmt.Errorf("invalid queue text format: %s", queueText)
-	}
-	return strconv.Atoi(match)
 }
 
 // GetQoSPortQueue fetches the QoS port queue by portID (0-based input).

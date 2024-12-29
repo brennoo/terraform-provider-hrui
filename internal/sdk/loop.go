@@ -90,8 +90,15 @@ func (c *HRUIClient) GetLoopProtocol() (*LoopProtocol, error) {
 
 	// Parse interval and recovery time if "Loop Prevention" is enabled
 	if protocol.LoopFunction == "Loop Prevention" {
-		protocol.IntervalTime, _ = extractIntAttribute(doc, `input[name="interval_time"]`, "value")
-		protocol.RecoverTime, _ = extractIntAttribute(doc, `input[name="recover_time"]`, "value")
+		protocol.IntervalTime, err = extractInt(doc, `input[name="interval_time"]`, "attribute", "value")
+		if err != nil {
+			return nil, fmt.Errorf("failed to extract interval time: %w", err)
+		}
+
+		protocol.RecoverTime, err = extractInt(doc, `input[name="recover_time"]`, "attribute", "value")
+		if err != nil {
+			return nil, fmt.Errorf("failed to extract recovery time: %w", err)
+		}
 	}
 
 	// Parse port statuses
@@ -200,6 +207,16 @@ func (c *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 		return nil, fmt.Errorf("failed to parse HTML: %w", err)
 	}
 
+	// Parsing options for STP integers (without offset)
+	parseSTPIntOptions := []ParseOption{
+		WithDefaultValue(0),
+		WithSpecialCases("Auto", "-"),
+		WithLogging(),
+	}
+
+	// Parsing options for port number (with offset)
+	parsePortOptions := append(parseSTPIntOptions, WithOffset(-1))
+
 	// Target the last table (STP settings table)
 	table := doc.Find("table").Last()
 
@@ -221,14 +238,16 @@ func (c *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 
 		// Parse the STP Port entry
 		portText := tds.Eq(0).Text()
-		port := parsePortNumber(portText) // parse "Port X" -> X - 1
+		portStr := strings.TrimPrefix(portText, "Port ")
+		port := parseInt(portStr, parsePortOptions...)
+
 		stpPort := STPPort{
-			Port:           port,
+			Port:           *port,
 			State:          strings.TrimSpace(tds.Eq(1).Text()),
 			Role:           strings.TrimSpace(tds.Eq(2).Text()),
-			PathCostConfig: parseSTPInt(tds.Eq(3).Text()),
-			PathCostActual: parseSTPInt(tds.Eq(4).Text()),
-			Priority:       parseSTPInt(tds.Eq(5).Text()),
+			PathCostConfig: *parseInt(tds.Eq(3).Text(), parseSTPIntOptions...),
+			PathCostActual: *parseInt(tds.Eq(4).Text(), parseSTPIntOptions...),
+			Priority:       *parseInt(tds.Eq(5).Text(), parseSTPIntOptions...),
 			P2PConfig:      normalizeBoolString(tds.Eq(6).Text()),
 			P2PActual:      normalizeBoolString(tds.Eq(7).Text()),
 			EdgeConfig:     normalizeBoolString(tds.Eq(8).Text()),
@@ -281,7 +300,6 @@ func (c *HRUIClient) GetSTPPort(portID int) (*STPPort, error) {
 	return nil, fmt.Errorf("port with ID %d not found", portID)
 }
 
-// parsePortStatuses parses the port table and returns a list of port statuses.
 func parsePortStatuses(doc *goquery.Document) []PortStatus {
 	var portStatuses []PortStatus
 
@@ -295,13 +313,15 @@ func parsePortStatuses(doc *goquery.Document) []PortStatus {
 			return
 		}
 
-		port := parseInt(strings.TrimSpace(tds.Eq(0).Text()))
+		portStr := strings.TrimSpace(tds.Eq(0).Text())
+		port := parseInt(portStr)
+
 		loopState := strings.TrimSpace(tds.Eq(1).Text())
 		loopStatus := strings.TrimSpace(tds.Eq(2).Text())
 		enable := loopState == "Enable"
 
 		portStatuses = append(portStatuses, PortStatus{
-			Port:       port,
+			Port:       *port,
 			Enable:     enable,
 			LoopState:  loopState,
 			LoopStatus: loopStatus,
@@ -336,23 +356,23 @@ func parseSTPGlobalSettings(doc *goquery.Document) (*STPGlobalSettings, error) {
 	}
 
 	// Parse Priority (uses attribute value)
-	if settings.Priority, err = extractIntAttribute(doc, "select[name='priority'] option[selected]", "value"); err != nil {
+	if settings.Priority, err = extractInt(doc, "select[name='priority'] option[selected]", "attribute", "value"); err != nil {
 		return nil, err
 	}
 
 	// Parse MaxAge, HelloTime, ForwardDelay (uses attribute value)
-	if settings.MaxAge, err = extractIntAttribute(doc, "input[name='maxage']", "value"); err != nil {
+	if settings.MaxAge, err = extractInt(doc, "input[name='maxage']", "attribute", "value"); err != nil {
 		return nil, err
 	}
-	if settings.HelloTime, err = extractIntAttribute(doc, "input[name='hello']", "value"); err != nil {
+	if settings.HelloTime, err = extractInt(doc, "input[name='hello']", "attribute", "value"); err != nil {
 		return nil, err
 	}
-	if settings.ForwardDelay, err = extractIntAttribute(doc, "input[name='delay']", "value"); err != nil {
+	if settings.ForwardDelay, err = extractInt(doc, "input[name='delay']", "attribute", "value"); err != nil {
 		return nil, err
 	}
 
 	// Parse Root Priority
-	if settings.RootPriority, err = extractInt(doc, "th:contains('Root Priority') + td"); err != nil {
+	if settings.RootPriority, err = extractInt(doc, "th:contains('Root Priority') + td", "text"); err != nil {
 		return nil, err
 	}
 
@@ -362,7 +382,7 @@ func parseSTPGlobalSettings(doc *goquery.Document) (*STPGlobalSettings, error) {
 	}
 
 	// Parse Root Path Cost
-	if settings.RootPathCost, err = extractInt(doc, "th:contains('Root Path Cost') + td"); err != nil {
+	if settings.RootPathCost, err = extractInt(doc, "th:contains('Root Path Cost') + td", "text"); err != nil {
 		return nil, err
 	}
 
@@ -371,74 +391,29 @@ func parseSTPGlobalSettings(doc *goquery.Document) (*STPGlobalSettings, error) {
 		return nil, err
 	}
 
-	// Parse RootMaxAge, removing units like "Sec"
-	if maxAgeRaw, err := extractText(doc, "th:contains('Root Maximum Age') + td"); err != nil {
+	// Parse RootMaxAge, removing " Sec"
+	if rawValue, err := extractText(doc, "th:contains('Root Maximum Age') + td"); err != nil {
 		return nil, err
 	} else {
-		settings.RootMaxAge = parseInt(strings.Fields(maxAgeRaw)[0]) // Split on space and take the first part
+		settings.RootMaxAge = *parseInt(rawValue, WithTrimSuffix(" Sec"))
 	}
 
-	// Parse RootHelloTime, removing units like "Sec"
-	if helloTimeRaw, err := extractText(doc, "th:contains('Root Hello Time') + td"); err != nil {
+	// Parse RootHelloTime, removing " Sec"
+	if rawValue, err := extractText(doc, "th:contains('Root Hello Time') + td"); err != nil {
 		return nil, err
 	} else {
-		settings.RootHelloTime = parseInt(strings.Fields(helloTimeRaw)[0])
+		settings.RootHelloTime = *parseInt(rawValue, WithTrimSuffix(" Sec"))
 	}
 
-	// Parse RootForwardDelay, removing units like "Sec"
-	if forwardDelayRaw, err := extractText(doc, "th:contains('Root Forward Delay') + td"); err != nil {
+	// Parse RootForwardDelay, removing " Sec"
+	if rawValue, err := extractText(doc, "th:contains('Root Forward Delay') + td"); err != nil {
 		return nil, err
 	} else {
-		settings.RootForwardDelay = parseInt(strings.Fields(forwardDelayRaw)[0])
+		settings.RootForwardDelay = *parseInt(rawValue, WithTrimSuffix(" Sec"))
 	}
 
 	log.Printf("[DEBUG] Parsed STPGlobalSettings: %+v", settings)
 	return settings, nil
-}
-
-func parseInt(value string) int {
-	if i, err := strconv.Atoi(strings.TrimSpace(value)); err == nil {
-		return i
-	}
-	return 0
-}
-
-// extractInt extracts an integer from the text content of a given selector.
-func extractInt(doc *goquery.Document, selector string) (int, error) {
-	text, err := extractText(doc, selector)
-	if err != nil {
-		return 0, err
-	}
-	return strconv.Atoi(strings.TrimSpace(text))
-}
-
-// extractIntAttribute extracts an integer from the value of an attribute (e.g., `value`).
-func extractIntAttribute(doc *goquery.Document, selector, attr string) (int, error) { //nolint:unparam
-	value := doc.Find(selector).AttrOr(attr, "")
-	return strconv.Atoi(strings.TrimSpace(value))
-}
-
-func parsePortNumber(portText string) int {
-	portText = strings.TrimPrefix(portText, "Port ")
-	port, err := strconv.Atoi(portText)
-	if err != nil {
-		log.Printf("[DEBUG] Failed to parse port number: %s", portText)
-		return -1
-	}
-	return port - 1
-}
-
-func parseSTPInt(value string) int {
-	value = strings.TrimSpace(value)
-	if value == "Auto" || value == "-" {
-		return 0
-	}
-	num, err := strconv.Atoi(value)
-	if err != nil {
-		log.Printf("[DEBUG] Failed to parse int: %s", value)
-		return 0
-	}
-	return num
 }
 
 func normalizeBoolString(value string) string {

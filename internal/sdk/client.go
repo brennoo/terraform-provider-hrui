@@ -144,13 +144,6 @@ func (c *HRUIClient) Request(method, endpoint string, body io.Reader, headers ma
 		return nil, fmt.Errorf("HTTP request to %s returned status %d: %s", endpoint, resp.StatusCode, string(respBody))
 	}
 
-	// If Autosave is enabled, save the configuration
-	if c.Autosave {
-		if err := c.CommitChanges(); err != nil {
-			return nil, fmt.Errorf("form request succeeded, but saving configuration failed: %w", err)
-		}
-	}
-
 	return respBody, nil
 }
 
@@ -161,7 +154,20 @@ func (c *HRUIClient) FormRequest(endpoint string, formData url.Values) ([]byte, 
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
 
-	return c.Request("POST", endpoint, strings.NewReader(formEncoded), headers)
+	// Send the POST request using the Request function
+	respBody, err := c.Request("POST", endpoint, strings.NewReader(formEncoded), headers)
+	if err != nil {
+		return nil, err
+	}
+
+	// If Autosave is enabled, save the configuration after the form request
+	if c.Autosave {
+		if err := c.CommitChanges(); err != nil {
+			return nil, fmt.Errorf("form request succeeded, but saving configuration failed: %w", err)
+		}
+	}
+
+	return respBody, nil
 }
 
 // CommitChanges saves the configuration by making a POST request to `/save.cgi`.
