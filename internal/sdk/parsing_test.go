@@ -6,11 +6,11 @@ import (
 
 func TestParseInt(t *testing.T) {
 	tests := []struct {
-		name         string
-		value        string
-		options      []ParseOption
-		expected     *int
-		shouldBeNil  bool
+		name        string
+		value       string
+		options     []ParseOption
+		expected    *int
+		shouldBeNil bool
 	}{
 		{
 			name:     "Valid integer without options",
@@ -87,8 +87,7 @@ func TestParseInt(t *testing.T) {
 	}
 }
 
-// Helper to return a pointer to an int
+// Helper to return a pointer to an int.
 func intPtr(i int) *int {
 	return &i
 }
-
