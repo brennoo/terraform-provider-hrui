@@ -266,3 +266,92 @@ func TestGetPortStatistics(t *testing.T) {
 
 	assert.Equal(t, expectedStats, stats)
 }
+
+func TestPortMirroring(t *testing.T) {
+	portHTMLResponse := `
+        <html>
+        <body>
+        <form action="/port.cgi" method="get">
+            <select name="portid">
+                <option value="1">Port 1</option>
+                <option value="2">Port 2</option>
+                <option value="3">Port 3</option>
+                <option value="4">Port 4</option>
+                <option value="5">Port 5</option>
+                <option value="6">Port 6</option>
+                <option value="7">Trunk2</option>
+            </select>
+        </form>
+        </body>
+        </html>
+    `
+
+	portMirrorHTMLResponse := `
+	<html>
+	<body>
+	    <center>
+	        <fieldset>
+	            <legend>Port Mirroring Setting</legend>
+	            <form method="post" action="/port.cgi?page=delete_mirror">
+	                <table border="1">
+	                    <tr>
+	                        <th align="center" width="120">Mirror Direction</th>
+	                        <th align="center" width="120">Mirroring Port</th>
+	                        <th align="center" width="200">Mirrored Port List</th>
+	                    </tr>
+	                    <tr>
+	                        <td align="center">Rx</td>
+	                        <td align="center">1</td>
+	                        <td align="center">Trunk2</td>
+	                    </tr>
+	                </table>
+	            </form>
+	        </fieldset>
+	    </center>
+	</body>
+	</html>
+	`
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/port.cgi" && r.URL.RawQuery == "" {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(portHTMLResponse))
+		} else if r.URL.Path == "/port.cgi" && r.URL.RawQuery == "page=mirroring" {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(portMirrorHTMLResponse))
+		} else if r.URL.Path == "/port.cgi" && r.URL.RawQuery == "page=delete_mirror" {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`<html><body>Mirror deleted.</body></html>`))
+		} else if r.URL.Path == "/login.cgi" {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`<html><body>Login successful</body></html>`))
+		} else {
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client, err := NewClient(server.URL, "testuser", "testpassword", false)
+	require.NoError(t, err)
+	require.NotNil(t, client)
+
+	portMirror, err := client.GetPortMirror()
+	require.NoError(t, err)
+	expectedPortMirror := &PortMirror{
+		MirrorDirection: "Rx",
+		MirroringPort:   "Port 1",
+		MirroredPort:    "Trunk2",
+	}
+	assert.Equal(t, expectedPortMirror, portMirror)
+
+	newPortMirror := &PortMirror{
+		MirrorDirection: "Tx",
+		MirroringPort:   "Port 2",
+		MirroredPort:    "Port 3",
+	}
+	err = client.ConfigurePortMirror(newPortMirror)
+	require.NoError(t, err)
+
+	err = client.DeletePortMirror()
+	require.NoError(t, err)
+}
