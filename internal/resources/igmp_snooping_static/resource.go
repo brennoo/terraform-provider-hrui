@@ -84,8 +84,8 @@ func (r *igmpSnoopingStaticResource) Create(ctx context.Context, req resource.Cr
 	// Enable the specified port while preserving other ports
 	if err := r.client.ConfigurePortIGMPSnooping(int(plan.Port.ValueInt64()), plan.Enabled.ValueBool()); err != nil {
 		resp.Diagnostics.AddError(
-			"Error Configuring IGMP Snooping for Port",
-			fmt.Sprintf("Failed to configure IGMP snooping for port %d: %s", plan.Port.ValueInt64(), err.Error()),
+			"Error Configuring IGMP Snooping",
+			fmt.Sprintf("Failed to configure IGMP snooping for port %d: %s", plan.Port.ValueInt64(), err),
 		)
 		return
 	}
@@ -109,15 +109,17 @@ func (r *igmpSnoopingStaticResource) Read(ctx context.Context, req resource.Read
 	enabled, err := r.client.GetPortIGMPSnooping(int(state.Port.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error Reading IGMP Snooping Static Port",
-			fmt.Sprintf("Failed to fetch IGMP snooping status for port %d: %s", state.Port.ValueInt64(), err.Error()),
+			"Error Reading IGMP Snooping State",
+			fmt.Sprintf("Failed to read IGMP snooping state for port %d: %s", state.Port.ValueInt64(), err),
 		)
 		return
 	}
 
 	// Update the Terraform state
 	state.Enabled = types.BoolValue(enabled)
-	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+
+	diags = resp.State.Set(ctx, &state)
+	resp.Diagnostics.Append(diags...)
 }
 
 // Update modifies the IGMP snooping static configuration for a specific port.
@@ -134,8 +136,8 @@ func (r *igmpSnoopingStaticResource) Update(ctx context.Context, req resource.Up
 	// Update the specified port while preserving other ports
 	if err := r.client.ConfigurePortIGMPSnooping(int(plan.Port.ValueInt64()), plan.Enabled.ValueBool()); err != nil {
 		resp.Diagnostics.AddError(
-			"Error Updating IGMP Snooping for Port",
-			fmt.Sprintf("Failed to update IGMP snooping for port %d: %s", plan.Port.ValueInt64(), err.Error()),
+			"Error Updating IGMP Snooping",
+			fmt.Sprintf("Failed to update IGMP snooping for port %d: %s", plan.Port.ValueInt64(), err),
 		)
 		return
 	}
@@ -158,8 +160,8 @@ func (r *igmpSnoopingStaticResource) Delete(ctx context.Context, req resource.De
 	// Disable the specified port while preserving other ports
 	if err := r.client.ConfigurePortIGMPSnooping(int(state.Port.ValueInt64()), false); err != nil {
 		resp.Diagnostics.AddError(
-			"Error Removing IGMP Snooping for Port",
-			fmt.Sprintf("Failed to disable IGMP snooping for port %d: %s", state.Port.ValueInt64(), err.Error()),
+			"Error Disabling IGMP Snooping",
+			fmt.Sprintf("Failed to disable IGMP snooping for port %d: %s", state.Port.ValueInt64(), err),
 		)
 		return
 	}

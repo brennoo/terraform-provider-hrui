@@ -11,9 +11,8 @@ description: |-
 ## Example Usage
 
 ```terraform
-# Assign VLAN ID 10 to port 4 with "All" frame type
-resource "hrui_vlan_vid" "port_4_vlan_10" {
-  port              = 4
+resource "hrui_vlan_vid" "example" {
+  port              = "Trunk1"
   vlan_id           = 10
   accept_frame_type = "All"
 }
@@ -25,7 +24,7 @@ resource "hrui_vlan_vid" "port_4_vlan_10" {
 ### Required
 
 - `accept_frame_type` (String) Accepted frame type: 'All', 'Tagged', or 'Untagged'.
-- `port` (Number) Port number.
+- `port` (String) The name of the port (e.g., 'Port 1', 'Trunk2').
 - `vlan_id` (Number) VLAN ID to assign to the port.
 
 

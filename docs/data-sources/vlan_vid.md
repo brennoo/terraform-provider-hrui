@@ -11,18 +11,8 @@ description: |-
 ## Example Usage
 
 ```terraform
-# Get VLAN VID configuration for port 1
-data "hrui_vlan_vid" "port_1_config" {
-  port = 1
-}
-
-# Output the VLAN ID and accepted frame type
-output "vlan_id" {
-  value = data.hrui_vlan_vid.port_1_config.vlan_id
-}
-
-output "accept_frame_type" {
-  value = data.hrui_vlan_vid.port_1_config.accept_frame_type
+data "hrui_vlan_vid" "example" {
+  port = "Port 1"
 }
 ```
 
@@ -31,7 +21,7 @@ output "accept_frame_type" {
 
 ### Required
 
-- `port` (Number) Port number used to query the VLAN configuration.
+- `port` (String) The name of the port (e.g., 'Port 1', 'Trunk2') used to query the VLAN configuration.
 
 ### Read-Only
 

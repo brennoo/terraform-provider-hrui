@@ -44,7 +44,7 @@ func NewClient(url, username, password string, autosave bool) (*HRUIClient, erro
 	}
 
 	// Authenticate the client
-	err = client.SetAuthCookie()
+	err = client.Login()
 	if err != nil {
 		return nil, fmt.Errorf("failed to authenticate HRUIClient: %w", err)
 	}
@@ -56,8 +56,8 @@ func NewClient(url, username, password string, autosave bool) (*HRUIClient, erro
 	return client, nil
 }
 
-// SetAuthCookie sets the authentication cookie for the HRUI system.
-func (c *HRUIClient) SetAuthCookie() error {
+// Login sets the authentication cookie for the HRUI system.
+func (c *HRUIClient) Login() error {
 	// Generate MD5 hash of the username + password (as per HRUI spec).
 	//#nosec G401
 	hash := md5.Sum([]byte(c.Username + c.Password))
@@ -70,20 +70,56 @@ func (c *HRUIClient) SetAuthCookie() error {
 		Path:  "/",
 	}
 
-	// Set the cookie directly using the parsed URL
+	// Parse the base URL
 	u, err := url.Parse(c.URL)
 	if err != nil {
 		return fmt.Errorf("error parsing URL: %w", err)
 	}
+
+	// Set the cookie in the HTTP client jar
 	c.HttpClient.Jar.SetCookies(u, []*http.Cookie{authCookie})
 
-	// Validate the authentication
+	// Construct the login.cgi URL
+	loginURL := fmt.Sprintf("%s/login.cgi", strings.TrimSuffix(c.URL, "/"))
+
+	// Prepare POST form data
+	formData := url.Values{}
+	formData.Set("username", c.Username)
+	formData.Set("Response", cookieValue)
+	formData.Set("language", "EN")
+
+	// Create a POST request to login.cgi
+	req, err := http.NewRequest("POST", loginURL, strings.NewReader(formData.Encode()))
+	if err != nil {
+		return fmt.Errorf("error creating POST request for login.cgi: %w", err)
+	}
+
+	// Add appropriate headers for the form submission
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	// Send the POST request
+	resp, err := c.HttpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("error sending POST request to login.cgi: %w", err)
+	}
+	// Ensure response body is closed properly
+	defer func() {
+		if cerr := resp.Body.Close(); cerr != nil {
+			fmt.Printf("Warning: error closing response body: %v\n", cerr)
+		}
+	}()
+	// Check for HTTP errors in the response
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body) // for debugging
+		return fmt.Errorf("unexpected status code %d from login.cgi: %s", resp.StatusCode, string(body))
+	}
+
 	return c.ValidateAuthCookie()
 }
 
 // ValidateAuthCookie checks whether the authentication was successful.
 func (c *HRUIClient) ValidateAuthCookie() error {
-	authURL := fmt.Sprintf("%s/index.cgi", c.URL)
+	authURL := fmt.Sprintf("%s/login.cgi", c.URL)
 
 	// Execute the GET request using Request
 	responseBody, err := c.Request("GET", authURL, nil, nil)
@@ -104,7 +140,7 @@ func (c *HRUIClient) ValidateAuthCookie() error {
 	})
 
 	if strings.Contains(scriptContent, `window.top.location.replace("/login.cgi")`) {
-		return fmt.Errorf("authentication failed: redirected to login page")
+		return fmt.Errorf("authentication failed: redirected to login page\n\n%s", string(responseBody))
 	}
 
 	return nil

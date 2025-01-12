@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"net/url"
@@ -32,14 +33,17 @@ var stateMapping = map[string]int{
 }
 
 type Port struct {
-	ID          int
-	State       int
-	SpeedDuplex string
-	FlowControl string
+	ID                string
+	IsTrunk           bool
+	State             int
+	SpeedDuplexConfig string
+	SpeedDuplexActual string
+	FlowControlConfig string
+	FlowControlActual string
 }
 
 type PortStatistics struct {
-	Port       int
+	Port       string
 	State      int
 	LinkStatus string
 	TxGoodPkt  int64
@@ -48,10 +52,10 @@ type PortStatistics struct {
 	RxBadPkt   int64
 }
 
-func (c *HRUIClient) GetPort(portID int) (*Port, error) {
+func (c *HRUIClient) GetPort(portID string) (*Port, error) {
 	ports, err := c.ListPorts()
 	if err != nil {
-		log.Print("failed to fetch Ports:", err)
+		log.Printf("failed to fetch Ports: %v", err)
 		return nil, err
 	}
 
@@ -61,12 +65,49 @@ func (c *HRUIClient) GetPort(portID int) (*Port, error) {
 			return port, nil
 		}
 	}
-	return nil, fmt.Errorf("port with ID %d not found", portID)
+	return nil, fmt.Errorf("port with ID %s not found", portID)
+}
+
+// GetPortByName fetches port.cgi, parses it, and resolves the numeric port ID for a given port name.
+func (c *HRUIClient) GetPortByName(portName string) (string, error) {
+	respBody, err := c.Request("GET", fmt.Sprintf("%s/port.cgi", c.URL), nil, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to fetch port.cgi: %w", err)
+	}
+
+	// Load the HTML body into goquery
+	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(respBody))
+	if err != nil {
+		return "", fmt.Errorf("failed to parse port.cgi HTML: %w", err)
+	}
+
+	// Iterate over all <select> elements with name="portid" and extract <option> values
+	var portID string
+	doc.Find(`select[name="portid"] option`).EachWithBreak(func(i int, s *goquery.Selection) bool {
+		// Extract and sanitize the port name
+		text := strings.TrimSpace(s.Text())
+		if text == portName {
+			// Extract the numeric ID from the `value` attribute
+			id, exists := s.Attr("value")
+			if exists {
+				portID = id
+				return false
+			}
+		}
+		return true
+	})
+
+	// If portID is still empty, the portName was not found
+	if portID == "" {
+		return "", fmt.Errorf("port name '%s' not found in port.cgi", portName)
+	}
+
+	return portID, nil
 }
 
 // ListPorts retrieves information about all switch ports.
 func (c *HRUIClient) ListPorts() ([]*Port, error) {
-	portURL := fmt.Sprintf("%s/port.cgi?page=static", c.URL)
+	portURL := fmt.Sprintf("%s/port.cgi", c.URL)
 
 	respBody, err := c.Request("GET", portURL, nil, nil)
 	if err != nil {
@@ -80,7 +121,6 @@ func (c *HRUIClient) ListPorts() ([]*Port, error) {
 	}
 
 	var ports []*Port
-	// Find the third table within "body center fieldset" (assuming consistent structure)
 	doc.Find("body center fieldset table").Eq(2).Find("tr").Each(func(i int, tr *goquery.Selection) {
 		if i < 2 { // Skip header rows
 			return
@@ -91,24 +131,30 @@ func (c *HRUIClient) ListPorts() ([]*Port, error) {
 			text := strings.TrimSpace(td.Text())
 			switch k {
 			case 0: // Port ID
-				text = strings.TrimPrefix(text, "Port ")
-				var portID int
-				_, err := fmt.Sscanf(text, "%d", &portID)
-				if err != nil {
-					fmt.Println("failed to parse port ID:", err)
+				if strings.HasPrefix(text, "Port") {
+					port.ID = text
+					port.IsTrunk = false
+				} else if strings.HasPrefix(text, "Trunk") {
+					port.ID = text
+					port.IsTrunk = true
+				} else {
+					log.Printf("Unexpected port ID format: %s", text)
 					return
 				}
-				port.ID = portID
 			case 1: // State
 				if text == "Enable" {
 					port.State = 1
 				} else {
 					port.State = 0
 				}
-			case 2: // SpeedDuplex
-				port.SpeedDuplex = text
-			case 4: // FlowControl
-				port.FlowControl = text
+			case 2: // Configured Speed/Duplex
+				port.SpeedDuplexConfig = text
+			case 3: // Actual Speed/Duplex
+				port.SpeedDuplexActual = text
+			case 4: // Configured Flow Control
+				port.FlowControlConfig = text
+			case 5: // Actual Flow Control
+				port.FlowControlActual = text
 			}
 		})
 		ports = append(ports, port)
@@ -117,53 +163,115 @@ func (c *HRUIClient) ListPorts() ([]*Port, error) {
 	return ports, nil
 }
 
-func (c *HRUIClient) ConfigurePort(port *Port) error {
-	// Validate `SpeedDuplex` and `FlowControl` values
-	validSpeedDuplex := false
-	for _, v := range speedDuplexMapping {
-		if v == port.SpeedDuplex {
-			validSpeedDuplex = true
+// ConfigurePort updates the configuration for a single port.
+func (c *HRUIClient) ConfigurePort(port *Port) (*Port, error) {
+	var speedDuplexNumeric string
+	for k, v := range speedDuplexMapping {
+		if v == port.SpeedDuplexConfig {
+			speedDuplexNumeric = strconv.Itoa(k)
 			break
 		}
 	}
-	if !validSpeedDuplex {
-		return fmt.Errorf("invalid SpeedDuplex value: %s", port.SpeedDuplex)
+	if speedDuplexNumeric == "" {
+		return nil, fmt.Errorf("invalid SpeedDuplex value: %s", port.SpeedDuplexConfig)
 	}
 
-	validFlowControl := false
-	for _, v := range flowControlMapping {
-		if v == port.FlowControl {
-			validFlowControl = true
+	var flowControlNumeric string
+	for k, v := range flowControlMapping {
+		if v == port.FlowControlConfig {
+			flowControlNumeric = strconv.Itoa(k)
 			break
 		}
 	}
-	if !validFlowControl {
-		return fmt.Errorf("invalid FlowControl value: %s", port.FlowControl)
+	if flowControlNumeric == "" {
+		return nil, fmt.Errorf("invalid FlowControl value: %s", port.FlowControlConfig)
+	}
+
+	portID, err := c.GetPortByName(port.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve port name '%s': %w", port.ID, err)
 	}
 
 	form := url.Values{}
 	form.Set("cmd", "port")
-	form.Set("portid", strconv.Itoa(port.ID))
+	form.Set("portid", portID)
 	form.Set("state", strconv.Itoa(port.State))
-	form.Set("speed_duplex", port.SpeedDuplex)
-	form.Set("flow", port.FlowControl)
+	form.Set("speed_duplex", speedDuplexNumeric)
+	form.Set("flow", flowControlNumeric)
 
-	// submit the form
 	portsURL := fmt.Sprintf("%s/port.cgi", c.URL)
-	_, err := c.FormRequest(portsURL, form)
+	_, err = c.FormRequest(portsURL, form)
 	if err != nil {
-		return fmt.Errorf("failed to update port settings: %w", err)
+		return nil, fmt.Errorf("failed to update port settings: %w", err)
 	}
 
-	return nil
+	updatedPort, err := c.GetPort(port.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve updated port state: %w", err)
+	}
+
+	return updatedPort, nil
 }
 
-func (c *HRUIClient) GetTotalPorts() (int, error) {
+// GetValidPorts fetches and returns the list of IDs of all ports available on the system.
+func (c *HRUIClient) GetValidPorts() ([]int, error) {
+	if c == nil {
+		return nil, fmt.Errorf("HRUIClient is nil")
+	}
+
+	// Call ListPorts to fetch all ports.
 	ports, err := c.ListPorts()
 	if err != nil {
-		return 0, fmt.Errorf("failed to get total ports: %w", err)
+		return nil, fmt.Errorf("failed to list ports: %w", err)
 	}
-	return len(ports), nil
+
+	// Collect all valid Port IDs.
+	validPorts := []int{}
+	for _, port := range ports {
+		// Use GetPortByName to resolve the numeric ID for each port name.
+		portID, err := c.GetPortByName(port.ID)
+		portIDNum, err := strconv.Atoi(portID)
+		if err != nil {
+			return nil, fmt.Errorf("invalid port name '%s': %w", port.ID, err)
+		}
+
+		// Append the valid port ID to the list.
+		validPorts = append(validPorts, portIDNum)
+	}
+
+	return validPorts, nil
+}
+
+// GetTotalPorts returns the current number of ports.
+func (c *HRUIClient) GetTotalPorts() (int, error) {
+	if c == nil {
+		return 0, fmt.Errorf("HRUIClient is nil")
+	}
+
+	// Request the trunk group page
+	url := fmt.Sprintf("%s/trunk.cgi?page=group", c.URL)
+	body, err := c.Request("GET", url, nil, nil)
+	if err != nil {
+		return 0, fmt.Errorf("failed to fetch trunk group page: %w", err)
+	}
+
+	// Parse the HTML document
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(body)))
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse trunk group HTML output: %w", err)
+	}
+
+	// Find the <select> element with ID "portsel" and count the number of <option> elements
+	totalPorts := 0
+	doc.Find("select#portsel option").Each(func(i int, s *goquery.Selection) {
+		totalPorts++
+	})
+
+	if totalPorts == 0 {
+		return 0, fmt.Errorf("no ports found in trunk group page")
+	}
+
+	return totalPorts, nil
 }
 
 // GetPortStatistics retrieves port statistics from the switch.
@@ -175,7 +283,7 @@ func (c *HRUIClient) GetPortStatistics() ([]*PortStatistics, error) {
 		return nil, fmt.Errorf("failed to fetch port statistics page: %w", err)
 	}
 
-	// Load the HTML into goquery
+	// Parse the HTML
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse HTML document: %w", err)
@@ -185,71 +293,26 @@ func (c *HRUIClient) GetPortStatistics() ([]*PortStatistics, error) {
 
 	// Select rows in the table, skipping the header rows
 	doc.Find("table tr").Each(func(i int, sel *goquery.Selection) {
-		// Skip header rows
 		if i == 0 {
-			return
+			return // Skip header
 		}
 
-		// Extract columns (td elements)
 		columns := sel.Find("td")
-		if columns.Length() < 7 {
-			// Not enough columns for the statistics table row
-			return
-		}
-
-		// Extract each field from the table row
-		portText := strings.TrimSpace(columns.Eq(0).Text())
-		portNumber, err := strconv.Atoi(strings.TrimPrefix(portText, "Port "))
-		if err != nil {
-			log.Printf("Skipping invalid port number '%s': %v", portText, err)
-			return
-		}
+		port := &PortStatistics{}
+		portID := strings.TrimSpace(columns.Eq(0).Text())
+		port.Port = portID
 
 		stateStr := strings.TrimSpace(columns.Eq(1).Text())
-		state, ok := stateMapping[stateStr]
-		if !ok {
-			log.Printf("Unknown state '%s' for Port %d, defaulting to 'Disable'", stateStr, portNumber)
-			state = 0 // Default to "Disable" if state is not recognized
-		}
+		port.State, _ = stateMapping[stateStr]
+		port.LinkStatus = strings.TrimSpace(columns.Eq(2).Text())
 
-		linkStatus := strings.TrimSpace(columns.Eq(2).Text())
+		port.TxGoodPkt, _ = strconv.ParseInt(strings.TrimSpace(columns.Eq(3).Text()), 10, 64)
+		port.TxBadPkt, _ = strconv.ParseInt(strings.TrimSpace(columns.Eq(4).Text()), 10, 64)
+		port.RxGoodPkt, _ = strconv.ParseInt(strings.TrimSpace(columns.Eq(5).Text()), 10, 64)
+		port.RxBadPkt, _ = strconv.ParseInt(strings.TrimSpace(columns.Eq(6).Text()), 10, 64)
 
-		txGoodPkt, err := strconv.ParseInt(strings.TrimSpace(columns.Eq(3).Text()), 10, 64)
-		if err != nil {
-			txGoodPkt = 0
-			log.Printf("Error parsing TxGoodPkt for Port %d: %v", portNumber, err)
-		}
-
-		txBadPkt, err := strconv.ParseInt(strings.TrimSpace(columns.Eq(4).Text()), 10, 64)
-		if err != nil {
-			txBadPkt = 0
-			log.Printf("Error parsing TxBadPkt for Port %d: %v", portNumber, err)
-		}
-
-		rxGoodPkt, err := strconv.ParseInt(strings.TrimSpace(columns.Eq(5).Text()), 10, 64)
-		if err != nil {
-			rxGoodPkt = 0
-			log.Printf("Error parsing RxGoodPkt for Port %d: %v", portNumber, err)
-		}
-
-		rxBadPkt, err := strconv.ParseInt(strings.TrimSpace(columns.Eq(6).Text()), 10, 64)
-		if err != nil {
-			rxBadPkt = 0
-			log.Printf("Error parsing RxBadPkt for Port %d: %v", portNumber, err)
-		}
-
-		// Append the parsed data as a PortStatistics entry
-		stats = append(stats, &PortStatistics{
-			Port:       portNumber,
-			State:      state,
-			LinkStatus: linkStatus,
-			TxGoodPkt:  txGoodPkt,
-			TxBadPkt:   txBadPkt,
-			RxGoodPkt:  rxGoodPkt,
-			RxBadPkt:   rxBadPkt,
-		})
+		stats = append(stats, port)
 	})
 
-	// Return the list of port statistics
 	return stats, nil
 }

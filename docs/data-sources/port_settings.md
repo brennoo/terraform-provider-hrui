@@ -1,22 +1,18 @@
 ---
 page_title: "hrui_port_settings (Data Source)"
 description: |-
-  
+  Fetches port settings for the HRUI system.
 ---
 
 # hrui_port_settings (Data Source)
 
-
+Fetches port settings for the HRUI system.
 
 ## Example Usage
 
 ```terraform
-data "hrui_port_settings" "port1" {
-  port_id = 1
-}
-
-output "port1_settings" {
-  value = data.hrui_port_settings.port1
+data "hrui_port_settings" "example" {
+  port = "Port 1"
 }
 ```
 
@@ -25,13 +21,12 @@ output "port1_settings" {
 
 ### Required
 
-- `port_id` (Number) The ID of the port to read.
+- `port` (String) The port name or ID (e.g., 'Port 1', 'Trunk1').
 
 ### Read-Only
 
 - `enabled` (Boolean) Whether the port is enabled.
-- `flow_control` (Attributes) Flow control settings of the port. (see [below for nested schema](#nestedatt--flow_control))
-- `id` (String) The ID of the port setting data source.
+- `flow_control` (Attributes) Flow control configuration of the port. (see [below for nested schema](#nestedatt--flow_control))
 - `speed` (Attributes) Speed and duplex settings of the port. (see [below for nested schema](#nestedatt--speed))
 
 <a id="nestedatt--flow_control"></a>
@@ -39,8 +34,8 @@ output "port1_settings" {
 
 Read-Only:
 
-- `actual` (String) Actual flow control setting.
-- `config` (String) Configured flow control setting.
+- `actual` (String) Actual flow control setting returned by the system.
+- `config` (String) Configured flow control setting retrieved from the system.
 
 
 <a id="nestedatt--speed"></a>
@@ -48,7 +43,7 @@ Read-Only:
 
 Read-Only:
 
-- `actual` (String) Actual speed and duplex mode.
-- `config` (String) Configured speed and duplex mode.
+- `actual` (String) Actual speed and duplex mode returned by the system.
+- `config` (String) Configured speed and duplex mode retrieved from the system.
 
 

@@ -6,8 +6,7 @@ import (
 
 // portSettingModel maps the resource and data source schema data.
 type portSettingModel struct {
-	ID          types.String            `tfsdk:"id"`
-	PortID      types.Int64             `tfsdk:"port_id"`
+	Port        types.String            `tfsdk:"port"`
 	Enabled     types.Bool              `tfsdk:"enabled"`
 	Speed       *portSettingSpeed       `tfsdk:"speed"`
 	FlowControl *portSettingFlowControl `tfsdk:"flow_control"`

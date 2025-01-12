@@ -44,7 +44,7 @@ output "ports_with_link_down" {
 Read-Only:
 
 - `link_status` (String) The link status of the port (Up/Down).
-- `port` (Number) The port ID.
+- `port` (String) The port ID (e.g., 'Port 1', 'Trunk1').
 - `rx_packets` (Attributes) Receiver packet statistics (good/bad). (see [below for nested schema](#nestedatt--port_statistics--rx_packets))
 - `state` (String) The state of the port (Enable/Disable).
 - `tx_packets` (Attributes) Transmitter packet statistics (good/bad). (see [below for nested schema](#nestedatt--port_statistics--tx_packets))
