@@ -9,6 +9,7 @@ import (
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/loop_protocol"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/mac_static"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/mac_table"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_mirroring"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_settings"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_statistics"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/qos_port_queue"
@@ -79,5 +80,6 @@ func (p *hruiProvider) Resources(ctx context.Context) []func() resource.Resource
 		igmp_snooping.NewResource,
 		igmp_snooping_static.NewResource,
 		trunk_group.NewResource,
+		port_mirroring.NewResource,
 	}
 }

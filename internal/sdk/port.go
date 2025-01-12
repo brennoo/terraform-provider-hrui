@@ -52,6 +52,12 @@ type PortStatistics struct {
 	RxBadPkt   int64
 }
 
+type PortMirror struct {
+	MirrorDirection string
+	MirroringPort   string
+	MirroredPort    string
+}
+
 func (c *HRUIClient) GetPort(portID string) (*Port, error) {
 	ports, err := c.ListPorts()
 	if err != nil {
@@ -315,4 +321,124 @@ func (c *HRUIClient) GetPortStatistics() ([]*PortStatistics, error) {
 	})
 
 	return stats, nil
+}
+
+// GetPortMirror fetches the current port mirroring configuration (if any).
+func (c *HRUIClient) GetPortMirror() (*PortMirror, error) {
+	// Fetch the mirroring configuration page
+	urlMirror := fmt.Sprintf("%s/port.cgi?page=mirroring", c.URL)
+	respBody, err := c.Request("GET", urlMirror, nil, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch Port Mirror settings: %w", err)
+	}
+
+	// Parse the HTML response using goquery
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse HTML response: %w", err)
+	}
+
+	// Define a PortMirror struct to store the configuration
+	mirror := &PortMirror{}
+	found := false
+
+	// Locate the table in the `<form>` with action `/port.cgi?page=delete_mirror`.
+	doc.Find("form[action='/port.cgi?page=delete_mirror'] table tr").EachWithBreak(func(i int, s *goquery.Selection) bool {
+		if i == 0 { // Skip the header row
+			return true
+		}
+
+		// Extract and clean the table row values
+		direction := strings.TrimSpace(s.Find("td").Eq(0).Text())
+		rawMirroringPort := strings.TrimSpace(s.Find("td").Eq(1).Text())
+		rawMirroredPort := strings.TrimSpace(s.Find("td").Eq(2).Text())
+
+		// Format the values as needed
+		mirroringPort := formatPortValue(rawMirroringPort)
+		mirroredPort := formatPortValue(rawMirroredPort)
+
+		// Populate the PortMirror struct
+		mirror.MirrorDirection = direction
+		mirror.MirroringPort = mirroringPort
+		mirror.MirroredPort = mirroredPort
+		found = true
+		return false // Exit after reading the first match
+	})
+
+	// If no configuration is found, return nil without error
+	if !found {
+		return nil, nil
+	}
+
+	return mirror, nil
+}
+
+// formatPortValue converts raw port values (IDs or Trunk names) to the expected format.
+func formatPortValue(raw string) string {
+	// Check if raw value is a numeric port ID (e.g., "1", "2") and format it
+	if _, err := strconv.Atoi(raw); err == nil {
+		return fmt.Sprintf("Port %s", raw)
+	}
+
+	// If not numeric, assume it's a Trunk name and return as-is
+	return raw
+}
+
+// ConfigurePortMirror sets up or updates port mirroring with the given configuration.
+func (c *HRUIClient) ConfigurePortMirror(p *PortMirror) error {
+	// Construct the URL for configuring port mirroring
+	urlMirror := fmt.Sprintf("%s/port.cgi?page=mirroring", c.URL)
+	form := url.Values{}
+	form.Set("cmd", "mirror")
+
+	// Map the mirror direction to its backend representation
+	mirrorDirs := map[string]string{
+		"Rx":   "1", // RX only
+		"Tx":   "2", // TX only
+		"BOTH": "3", // Both RX and TX
+	}
+
+	// Validate and set the mirror direction
+	if dirValue, exists := mirrorDirs[p.MirrorDirection]; exists {
+		form.Set("mirror_direction", dirValue)
+	} else {
+		return fmt.Errorf("invalid mirror direction '%s'. Valid values: Rx, Tx, BOTH", p.MirrorDirection)
+	}
+
+	// Resolve the mirroring port ID
+	mirroringPortID, err := c.GetPortByName(p.MirroringPort)
+	if err != nil {
+		return fmt.Errorf("failed to resolve mirroring port '%s': %w", p.MirroringPort, err)
+	}
+	form.Set("mirroring_port", mirroringPortID)
+
+	// Ensure the mirrored port is provided
+	if p.MirroredPort == "" {
+		return fmt.Errorf("mirrored port cannot be empty")
+	}
+	form.Set("mirrored_port", p.MirroredPort)
+
+	// Make the request to update port mirroring configuration
+	_, err = c.FormRequest(urlMirror, form)
+	if err != nil {
+		return fmt.Errorf("failed to update port mirror settings: %w", err)
+	}
+
+	return nil
+}
+
+// DeletePortMirror removes the current port mirroring configuration.
+func (c *HRUIClient) DeletePortMirror() error {
+	// Construct the URL for deleting port mirroring configuration
+	urlMirror := fmt.Sprintf("%s/port.cgi?page=delete_mirror", c.URL)
+	form := url.Values{}
+	form.Set("cmd", "del_mirror")
+
+	// Send the form request to delete the configuration
+	_, err := c.FormRequest(urlMirror, form)
+	if err != nil {
+		return fmt.Errorf("failed to delete port mirror settings: %w", err)
+	}
+
+	return nil
 }
