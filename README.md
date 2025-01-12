@@ -1,6 +1,11 @@
 # Terraform Provider for HRUI Switches
 
-This is a hobby project to create a Terraform provider for HRUI switches (www.hruitech.com) that are web-managed. It relies on [goquery](https://github.com/PuerkitoBio/goquery) for interfacing with the web UI.
+This is a hobby project to create a Terraform provider for [HRUI](www.hruitech.com) switches that are web-managed. It relies on [goquery](https://github.com/PuerkitoBio/goquery) for interfacing with the web UI.
+
+Check the documentation at:
+
+- Terraform: [HRUI Provider](https://registry.terraform.io/providers/brennoo/hrui)
+- OpenToFu: [HRUI Provider](https://search.opentofu.org/provider/brennoo/hrui)
 
 ## HRUI ODM/OEM
 
@@ -12,7 +17,8 @@ This provider is developed using a Horaco (ZX-SWTG124AS) switch. Other brands th
 * XikeStor
 * AmpCom
 
-**Note:** Using firmware v1.9.
+> [!NOTE]
+> ## Using firmware v1.9.
 
 ## Getting Started
 
