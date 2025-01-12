@@ -107,7 +107,7 @@ func (c *HRUIClient) GetPortByName(portName string) (string, error) {
 
 // ListPorts retrieves information about all switch ports.
 func (c *HRUIClient) ListPorts() ([]*Port, error) {
-	portURL := fmt.Sprintf("%s/port.cgi?page=static", c.URL)
+	portURL := fmt.Sprintf("%s/port.cgi", c.URL)
 
 	respBody, err := c.Request("GET", portURL, nil, nil)
 	if err != nil {
@@ -213,13 +213,65 @@ func (c *HRUIClient) ConfigurePort(port *Port) (*Port, error) {
 	return updatedPort, nil
 }
 
-// GetTotalPorts returns the current number of ports.
-func (c *HRUIClient) GetTotalPorts() (int, error) {
+// GetValidPorts fetches and returns the list of IDs of all ports available on the system.
+func (c *HRUIClient) GetValidPorts() ([]int, error) {
+	if c == nil {
+		return nil, fmt.Errorf("HRUIClient is nil")
+	}
+
+	// Call ListPorts to fetch all ports.
 	ports, err := c.ListPorts()
 	if err != nil {
-		return 0, fmt.Errorf("failed to get total ports: %w", err)
+		return nil, fmt.Errorf("failed to list ports: %w", err)
 	}
-	return len(ports), nil
+
+	// Collect all valid Port IDs.
+	validPorts := []int{}
+	for _, port := range ports {
+		// Use GetPortByName to resolve the numeric ID for each port name.
+		portID, err := c.GetPortByName(port.ID)
+		portIDNum, err := strconv.Atoi(portID)
+		if err != nil {
+			return nil, fmt.Errorf("invalid port name '%s': %w", port.ID, err)
+		}
+
+		// Append the valid port ID to the list.
+		validPorts = append(validPorts, portIDNum)
+	}
+
+	return validPorts, nil
+}
+
+// GetTotalPorts returns the current number of ports.
+func (c *HRUIClient) GetTotalPorts() (int, error) {
+	if c == nil {
+		return 0, fmt.Errorf("HRUIClient is nil")
+	}
+
+	// Request the trunk group page
+	url := fmt.Sprintf("%s/trunk.cgi?page=group", c.URL)
+	body, err := c.Request("GET", url, nil, nil)
+	if err != nil {
+		return 0, fmt.Errorf("failed to fetch trunk group page: %w", err)
+	}
+
+	// Parse the HTML document
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(body)))
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse trunk group HTML output: %w", err)
+	}
+
+	// Find the <select> element with ID "portsel" and count the number of <option> elements
+	totalPorts := 0
+	doc.Find("select#portsel option").Each(func(i int, s *goquery.Selection) {
+		totalPorts++
+	})
+
+	if totalPorts == 0 {
+		return 0, fmt.Errorf("no ports found in trunk group page")
+	}
+
+	return totalPorts, nil
 }
 
 // GetPortStatistics retrieves port statistics from the switch.

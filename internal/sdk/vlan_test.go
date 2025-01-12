@@ -262,7 +262,37 @@ func TestListPortVLANConfigs(t *testing.T) {
         </html>
     `
 
-	server := mockServerMock(htmlResponse, http.StatusOK)
+	portHTMLResponse := `
+        <html>
+        <body>
+            <form action="/port.cgi" method="get">
+                <select name="portid">
+                    <option value="1">Port 1</option>
+                    <option value="2">Port 2</option>
+                    <option value="3">Port 3</option>
+                    <option value="4">Port 4</option>
+                    <option value="5">Port 5</option>
+                    <option value="6">Port 6</option>
+                </select>
+            </form>
+        </body>
+        </html>
+    `
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.Contains(r.URL.Path, "port.cgi") {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(portHTMLResponse))
+		} else if strings.Contains(r.URL.Path, "vlan.cgi") {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(htmlResponse))
+		} else if strings.Contains(r.URL.Path, "login.cgi") {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`<html><body>Login successful</body></html>`))
+		} else {
+			http.NotFound(w, r)
+		}
+	}))
 	defer server.Close()
 
 	client, _ := NewClient(server.URL, "testuser", "testpass", false)
@@ -282,12 +312,12 @@ func TestListPortVLANConfigs(t *testing.T) {
 
 	// Assert the values for each port
 	expectedConfigs := []*PortVLANConfig{
-		{Port: 1, PVID: 1, AcceptFrameType: "All"},
-		{Port: 2, PVID: 1, AcceptFrameType: "All"},
-		{Port: 3, PVID: 1, AcceptFrameType: "All"},
-		{Port: 4, PVID: 1, AcceptFrameType: "All"},
-		{Port: 5, PVID: 1, AcceptFrameType: "All"},
-		{Port: 6, PVID: 10, AcceptFrameType: "All"},
+		{PortID: 1, Name: "Port 1", PVID: 1, AcceptFrameType: "All"},
+		{PortID: 2, Name: "Port 2", PVID: 1, AcceptFrameType: "All"},
+		{PortID: 3, Name: "Port 3", PVID: 1, AcceptFrameType: "All"},
+		{PortID: 4, Name: "Port 4", PVID: 1, AcceptFrameType: "All"},
+		{PortID: 5, Name: "Port 5", PVID: 1, AcceptFrameType: "All"},
+		{PortID: 6, Name: "Port 6", PVID: 10, AcceptFrameType: "All"},
 	}
 	assert.Equal(t, expectedConfigs, configs)
 }
@@ -346,19 +376,17 @@ func TestListVLANsWithTrunkMembers(t *testing.T) {
 	// Create a mock HTTP server
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.Contains(r.URL.Path, "vlan.cgi") {
-			// Serve VLAN mock HTML
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(vlanHTMLResponse))
 		} else if strings.Contains(r.URL.Path, "port.cgi") {
-			// Serve port.cgi mock HTML
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(portHTMLResponse))
-		} else if strings.Contains(r.URL.Path, "index.cgi") {
-			// Mock the authentication /index.cgi response
+		} else if strings.Contains(r.URL.Path, "login.cgi") {
+			// Mock the login.cgi response
 			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write([]byte(`<html><body>Welcome to HRUI!</body></html>`)) // Simulate authentication success
+			_, _ = w.Write([]byte(`<html><body>Login successful</body></html>`))
 		} else {
-			// Unknown path
+			// For unknown paths, return 404
 			http.NotFound(w, r)
 		}
 	}))

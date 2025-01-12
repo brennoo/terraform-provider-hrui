@@ -3,17 +3,15 @@ package vlan_vid
 import (
 	"context"
 	"fmt"
-
-	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-
-	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/types"
+	"strconv"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -42,9 +40,9 @@ func (r *vlanVIDResource) Metadata(_ context.Context, req resource.MetadataReque
 func (r *vlanVIDResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"port": schema.Int64Attribute{
+			"port": schema.StringAttribute{
 				Required:    true,
-				Description: "Port number.",
+				Description: "The name of the port (e.g., 'Port 1', 'Trunk2').",
 			},
 			"vlan_id": schema.Int64Attribute{
 				Required:    true,
@@ -61,7 +59,7 @@ func (r *vlanVIDResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 	}
 }
 
-// Configure adds the provider configured client to  the resource.
+// Configure adds the provider configured client to the resource.
 func (r *vlanVIDResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
@@ -81,6 +79,21 @@ func (r *vlanVIDResource) Configure(_ context.Context, req resource.ConfigureReq
 	r.client = client
 }
 
+// Helper function to resolve PortID from Port Name.
+func (r *vlanVIDResource) resolvePortID(portName string) (int, error) {
+	portIDStr, err := r.client.GetPortByName(portName)
+	if err != nil {
+		return 0, fmt.Errorf("failed to resolve Port ID for '%s': %w", portName, err)
+	}
+
+	portID, err := strconv.Atoi(portIDStr)
+	if err != nil {
+		return 0, fmt.Errorf("invalid Port ID '%s' for port '%s': %w", portIDStr, portName, err)
+	}
+
+	return portID, nil
+}
+
 // Create configures the port with the given VLAN ID and accepted frame type.
 func (r *vlanVIDResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan vlanVIDModel
@@ -91,23 +104,26 @@ func (r *vlanVIDResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	// Map the accepted frame type string to the corresponding option value
-	acceptFrameTypeMap := map[string]string{
-		"All":      "All",
-		"Tagged":   "Tag-only",
-		"Untagged": "Untag-only",
+	portID, err := r.resolvePortID(plan.Port.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Resolving Port",
+			err.Error(),
+		)
+		return
 	}
 
 	portConfig := &sdk.PortVLANConfig{
-		Port:            int(plan.Port.ValueInt64()),
+		PortID:          portID,
 		PVID:            int(plan.VlanID.ValueInt64()),
-		AcceptFrameType: acceptFrameTypeMap[plan.AcceptFrameType.ValueString()],
+		AcceptFrameType: plan.AcceptFrameType.ValueString(),
 	}
 
-	if err := r.client.SetPortVLANConfig(portConfig); err != nil {
+	err = r.client.SetPortVLANConfig(portConfig)
+	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error creating VLAN VID configuration",
-			"Could not create VLAN VID configuration, unexpected error: "+err.Error(),
+			"Error Creating VLAN VID Configuration",
+			"Failed to configure the port. Details: "+err.Error(),
 		)
 		return
 	}
@@ -126,27 +142,28 @@ func (r *vlanVIDResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	port := int(state.Port.ValueInt64())
+	portID, err := r.resolvePortID(state.Port.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Reading Port",
+			err.Error(),
+		)
+		return
+	}
+
 	configs, err := r.client.ListPortVLANConfigs()
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error reading VLAN VID configuration",
-			"Could not read VLAN VID configuration: "+err.Error(),
+			"Error Reading VLAN Configuration",
+			"Failed to retrieve port VLAN configurations. Details: "+err.Error(),
 		)
 		return
 	}
 
 	for _, config := range configs {
-		if config.Port == port {
+		if config.PortID == portID {
 			state.VlanID = types.Int64Value(int64(config.PVID))
-
-			// Reverse the mapping from SetPortVLANConfig
-			acceptFrameTypeMap := map[string]string{
-				"All":        "All",
-				"Tag-only":   "Tagged",
-				"Untag-only": "Untagged",
-			}
-			state.AcceptFrameType = types.StringValue(acceptFrameTypeMap[config.AcceptFrameType])
+			state.AcceptFrameType = types.StringValue(config.AcceptFrameType)
 			break
 		}
 	}
@@ -157,33 +174,34 @@ func (r *vlanVIDResource) Read(ctx context.Context, req resource.ReadRequest, re
 
 // Update updates the resource and sets the updated Terraform state on success.
 func (r *vlanVIDResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan, state vlanVIDModel
+	var plan vlanVIDModel
 
 	diags := req.Plan.Get(ctx, &plan)
-	resp.Diagnostics.Append(diags...)
-	diags = req.State.Get(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Map the accepted frame type string to the corresponding option value
-	acceptFrameTypeMap := map[string]string{
-		"All":      "All",
-		"Tagged":   "Tag-only",
-		"Untagged": "Untag-only",
+	portID, err := r.resolvePortID(plan.Port.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Resolving Port",
+			err.Error(),
+		)
+		return
 	}
 
 	portConfig := &sdk.PortVLANConfig{
-		Port:            int(plan.Port.ValueInt64()),
+		PortID:          portID,
 		PVID:            int(plan.VlanID.ValueInt64()),
-		AcceptFrameType: acceptFrameTypeMap[plan.AcceptFrameType.ValueString()],
+		AcceptFrameType: plan.AcceptFrameType.ValueString(),
 	}
 
-	if err := r.client.SetPortVLANConfig(portConfig); err != nil {
+	err = r.client.SetPortVLANConfig(portConfig)
+	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error updating VLAN VID configuration",
-			"Could not update VLAN VID configuration, unexpected error: "+err.Error(),
+			"Error Updating VLAN VID Configuration",
+			"Failed to update the port. Details: "+err.Error(),
 		)
 		return
 	}
@@ -202,11 +220,11 @@ func (r *vlanVIDResource) Delete(ctx context.Context, req resource.DeleteRequest
 		return
 	}
 
-	port := int(state.Port.ValueInt64())
+	portName := state.Port.ValueString()
 
 	// Reset the port configuration to default (PVID = 1, AcceptFrameType = "All")
 	portConfig := &sdk.PortVLANConfig{
-		Port:            port,
+		Name:            portName,
 		PVID:            1,
 		AcceptFrameType: "All",
 	}
@@ -216,7 +234,6 @@ func (r *vlanVIDResource) Delete(ctx context.Context, req resource.DeleteRequest
 			"Error resetting VLAN VID configuration",
 			"Could not reset VLAN VID configuration, unexpected error: "+err.Error(),
 		)
-		return
 	}
 }
 

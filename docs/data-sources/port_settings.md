@@ -11,12 +11,8 @@ Fetches port settings for the HRUI system.
 ## Example Usage
 
 ```terraform
-data "hrui_port_settings" "port1" {
-  port_id = 1
-}
-
-output "port1_settings" {
-  value = data.hrui_port_settings.port1
+data "hrui_port_settings" "example" {
+  port = "Port 1"
 }
 ```
 

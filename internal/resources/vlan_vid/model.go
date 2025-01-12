@@ -6,7 +6,7 @@ import (
 
 // vlanVIDModel maps the data source schema data.
 type vlanVIDModel struct {
-	Port            types.Int64  `tfsdk:"port"`
+	Port            types.String `tfsdk:"port"`
 	VlanID          types.Int64  `tfsdk:"vlan_id"`
 	AcceptFrameType types.String `tfsdk:"accept_frame_type"`
 }

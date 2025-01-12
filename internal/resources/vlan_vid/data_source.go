@@ -32,9 +32,9 @@ func (d *vlanVIDDataSource) Metadata(ctx context.Context, req datasource.Metadat
 func (d *vlanVIDDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"port": schema.Int64Attribute{
+			"port": schema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "Port number used to query the VLAN configuration.",
+				MarkdownDescription: "The name of the port (e.g., 'Port 1', 'Trunk2') used to query the VLAN configuration.",
 			},
 			"vlan_id": schema.Int64Attribute{
 				Computed:            true,
@@ -48,6 +48,7 @@ func (d *vlanVIDDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 	}
 }
 
+// Configure initializes the data source with the provided client from the provider.
 func (d *vlanVIDDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
@@ -65,11 +66,11 @@ func (d *vlanVIDDataSource) Configure(ctx context.Context, req datasource.Config
 	d.client = client
 }
 
-// Read refreshes the Terraform state with the latest data.
+// Read queries the VLAN configuration for the specified port.
 func (d *vlanVIDDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var model vlanVIDModel
 
-	// Retrieve the port number from the user request.
+	// Retrieve the port name from the user request.
 	diags := req.Config.Get(ctx, &model)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -78,25 +79,54 @@ func (d *vlanVIDDataSource) Read(ctx context.Context, req datasource.ReadRequest
 
 	// Ensure that the HRUIClient has been initialized
 	if d.client == nil {
-		resp.Diagnostics.AddError("Missing HRUI Client", "The HRUI client has not been properly initialized in the Configure method.")
+		resp.Diagnostics.AddError(
+			"Missing HRUI Client",
+			"The HRUI client has not been properly initialized in the Configure method.",
+		)
 		return
 	}
-	port := int(model.Port.ValueInt64())
-	config, err := d.client.GetPortVLANConfig(port)
+
+	portName := model.Port.ValueString()
+
+	// Query the VLAN configurations for all ports.
+	configs, err := d.client.ListPortVLANConfigs()
 	if err != nil {
-		resp.Diagnostics.AddError("Error fetching VLAN configuration", fmt.Sprintf("Could not fetch VLAN configuration: %s", err.Error()))
+		resp.Diagnostics.AddError(
+			"Error fetching VLAN configuration",
+			fmt.Sprintf("Could not fetch VLAN configuration: %s", err.Error()),
+		)
+		return
+	}
+
+	// Search for the port configuration using the port name.
+	var foundConfig *sdk.PortVLANConfig
+	found := false
+	for _, config := range configs {
+		if config.Name == portName {
+			foundConfig = config
+			found = true
+			break
+		}
+	}
+
+	// Check if the port was found.
+	if !found {
+		resp.Diagnostics.AddError(
+			"Port Not Found",
+			fmt.Sprintf("Could not find any configuration for port: %s", portName),
+		)
 		return
 	}
 
 	// Assign values to the model
-	model.VlanID = types.Int64Value(int64(config.PVID))
+	model.VlanID = types.Int64Value(int64(foundConfig.PVID))
 
 	acceptFrameTypeMap := map[string]string{
 		"All":        "All",
 		"Tag-only":   "Tagged",
 		"Untag-only": "Untagged",
 	}
-	model.AcceptFrameType = types.StringValue(acceptFrameTypeMap[config.AcceptFrameType])
+	model.AcceptFrameType = types.StringValue(acceptFrameTypeMap[foundConfig.AcceptFrameType])
 
 	// Set the updated model back into the Terraform state
 	diags = resp.State.Set(ctx, &model)

@@ -18,7 +18,8 @@ type Vlan struct {
 }
 
 type PortVLANConfig struct {
-	Port            int
+	PortID          int
+	Name            string
 	PVID            int
 	AcceptFrameType string
 }
@@ -42,7 +43,14 @@ func (c *HRUIClient) AddVLAN(vlan *Vlan, totalPorts int) error {
 		} else if contains(vlan.TaggedPorts, port) {
 			formValue = "1" // Tagged
 		}
+
 		form.Set(fmt.Sprintf("vlanPort_%d", port-1), formValue)
+	}
+
+	for _, trunkPort := range vlan.MemberPorts {
+		if trunkPort > totalPorts {
+			form.Set(fmt.Sprintf("vlanPort_%d", trunkPort), "1")
+		}
 	}
 
 	vlanURL := fmt.Sprintf("%s/vlan.cgi?page=static", c.URL)
@@ -183,22 +191,34 @@ func (c *HRUIClient) ListPortVLANConfigs() ([]*PortVLANConfig, error) {
 	rows.Each(func(i int, s *goquery.Selection) {
 		config := &PortVLANConfig{}
 
-		// Extract Port number
-		portText := strings.TrimSpace(s.Find("td:nth-child(1)").Text())
-		var port int
-		_, err := fmt.Sscanf(portText, "Port %d", &port)
-		if err != nil {
-			fmt.Println("Failed to parse port number:", err)
+		// Extract the port name (e.g., "Port 1", "Trunk2").
+		portName := strings.TrimSpace(s.Find("td:nth-child(1)").Text())
+		if portName == "" {
+			fmt.Printf("Skipping row %d due to missing port name\n", i)
 			return
 		}
-		config.Port = port
+		config.Name = portName
+
+		// Use GetPortByName to fetch the numeric PortID for the resolved port name.
+		portID, err := c.GetPortByName(portName)
+		if err != nil {
+			fmt.Printf("Skipping row %d due to PortID resolution error for '%s': %v\n", i, portName, err)
+			return
+		}
+
+		parsedPortID, err := strconv.Atoi(portID)
+		if err != nil {
+			fmt.Printf("Skipping row %d due to PortID parsing error for '%s': %v\n", i, portName, err)
+			return
+		}
+		config.PortID = parsedPortID
 
 		// Extract PVID
 		pvidText := strings.TrimSpace(s.Find("td:nth-child(2)").Text())
 		var pvid int
 		_, err = fmt.Sscanf(pvidText, "%d", &pvid)
 		if err != nil {
-			fmt.Println("Failed to parse PVID:", err)
+			fmt.Printf("Skipping row %d due to PVID parsing error: %v\n", i, err)
 			return
 		}
 		config.PVID = pvid
@@ -221,7 +241,7 @@ func (c *HRUIClient) GetPortVLANConfig(port int) (*PortVLANConfig, error) {
 	}
 
 	for _, config := range configs {
-		if config.Port == port {
+		if config.PortID == port {
 			return config, nil
 		}
 	}
@@ -231,8 +251,40 @@ func (c *HRUIClient) GetPortVLANConfig(port int) (*PortVLANConfig, error) {
 
 // SetPortVLANConfig sets the VLAN configuration for a specific port on the switch.
 func (c *HRUIClient) SetPortVLANConfig(config *PortVLANConfig) error {
+	if c == nil {
+		return fmt.Errorf("HRUIClient is nil")
+	}
+
+	if config == nil {
+		return fmt.Errorf("PortVLANConfig is nil")
+	}
+
+	// Resolve PortID using Name if PortID is invalid
+	if config.PortID < 0 {
+		if config.Name == "" {
+			return fmt.Errorf("invalid configuration: both PortID and Name are missing")
+		}
+
+		portID, err := c.GetPortByName(config.Name)
+		if err != nil {
+			return fmt.Errorf("failed to resolve PortID for Name '%s': %w", config.Name, err)
+		}
+
+		portIDInt, err := strconv.Atoi(portID)
+		if err != nil {
+			return fmt.Errorf("invalid PortID '%s' for port '%s': %w", portID, config.Name, err)
+		}
+
+		config.PortID = portIDInt
+	}
+
+	// Ensure PortID is valid
+	if config.PortID <= 0 {
+		return fmt.Errorf("invalid PortID after resolution: %d", config.PortID)
+	}
+
 	form := url.Values{}
-	form.Set("ports", fmt.Sprintf("%d", config.Port-1))
+	form.Set("ports", fmt.Sprintf("%d", config.PortID))
 	form.Set("pvid", fmt.Sprintf("%d", config.PVID))
 
 	acceptFrameTypeMap := map[string]string{
@@ -241,7 +293,11 @@ func (c *HRUIClient) SetPortVLANConfig(config *PortVLANConfig) error {
 		"Untag-only": "2",
 	}
 
-	form.Set("vlan_accept_frame_type", acceptFrameTypeMap[config.AcceptFrameType])
+	frameTypeValue, ok := acceptFrameTypeMap[config.AcceptFrameType]
+	if !ok {
+		return fmt.Errorf("invalid Accepted Frame Type: %s", config.AcceptFrameType)
+	}
+	form.Set("vlan_accept_frame_type", frameTypeValue)
 
 	// Submit the form
 	portVLANURL := fmt.Sprintf("%s/vlan.cgi?page=port_based", c.URL)

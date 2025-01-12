@@ -11,12 +11,17 @@ Manages port settings for the HRUI system.
 ## Example Usage
 
 ```terraform
-# Configure port 1
 resource "hrui_port_settings" "example" {
-  port         = "Port 1"
-  enabled      = true
-  speed_duplex = "Auto"
-  flow_control = "Off"
+  port    = "Port 1"
+  enabled = true
+
+  speed = {
+    config = "Auto"
+  }
+
+  flow_control = {
+    config = "On"
+  }
 }
 ```
 
