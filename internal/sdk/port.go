@@ -58,6 +58,11 @@ type PortMirror struct {
 	MirroredPort    string
 }
 
+type PortIsolation struct {
+	Port          string
+	IsolationList []string
+}
+
 func (c *HRUIClient) GetPort(portID string) (*Port, error) {
 	ports, err := c.ListPorts()
 	if err != nil {
@@ -438,6 +443,129 @@ func (c *HRUIClient) DeletePortMirror() error {
 	_, err := c.FormRequest(urlMirror, form)
 	if err != nil {
 		return fmt.Errorf("failed to delete port mirror settings: %w", err)
+	}
+
+	return nil
+}
+
+// GetPortIsolation fetches the current port isolation configuration.
+func (c *HRUIClient) GetPortIsolation() ([]PortIsolation, error) {
+	// Fetch the port isolation page from the device
+	url := fmt.Sprintf("%s/port.cgi?page=isolation", c.URL)
+	respBody, err := c.Request("GET", url, nil, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch port isolation page: %w", err)
+	}
+
+	// Parse the HTML response
+	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(respBody))
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse port isolation HTML: %w", err)
+	}
+
+	var isolations []PortIsolation
+
+	// Traverse each row in the isolation table
+	doc.Find("fieldset table").Last().Find("tr").Each(func(i int, row *goquery.Selection) {
+		if i == 0 { // Skip header row
+			return
+		}
+
+		// Extract columns in the current row
+		cols := row.Find("td")
+		if cols.Length() < 2 {
+			return // Skip rows with invalid structure
+		}
+
+		portName := strings.TrimSpace(cols.Eq(0).Text())         // First column: Port name
+		rawIsolationList := strings.TrimSpace(cols.Eq(1).Text()) // Second column: Isolation list
+
+		isolationList := parseIsolationList(rawIsolationList) // Parse the isolation list
+
+		// Append the parsed isolation to the result set
+		isolations = append(isolations, PortIsolation{
+			Port:          portName,
+			IsolationList: isolationList,
+		})
+	})
+
+	return isolations, nil
+}
+
+// parseIsolationList takes a raw isolation list string and parses it into normalized values.
+func parseIsolationList(raw string) []string {
+	if raw == "" {
+		return []string{} // Return an empty slice for empty isolation lists
+	}
+
+	// Split the raw string on commas
+	tokens := strings.Split(raw, ",")
+	var isolationList []string
+
+	for _, token := range tokens {
+		token = strings.TrimSpace(token) // Trim whitespace
+
+		switch {
+		case isNumeric(token): // Numeric port (e.g., "1")
+			isolationList = append(isolationList, fmt.Sprintf("Port %s", token))
+		case strings.HasPrefix(token, "Port "): // Already normalized (e.g., "Port 2")
+			isolationList = append(isolationList, token)
+		default: // Non-numeric, e.g., "Trunk2"
+			isolationList = append(isolationList, token)
+		}
+	}
+
+	return isolationList
+}
+
+// isNumeric checks if a string represents a valid numeric value.
+func isNumeric(s string) bool {
+	_, err := strconv.Atoi(s)
+	return err == nil
+}
+
+func (c *HRUIClient) ConfigurePortIsolation(port string, isolationList []string) error {
+	endpoint := fmt.Sprintf("%s/port.cgi?page=isolation", c.URL)
+
+	formData := url.Values{}
+	formData.Set("cmd", "portisolation")
+	formData.Set("port", port)
+	for _, isolation := range isolationList {
+		formData.Add("isolationlist", isolation)
+	}
+
+	_, err := c.FormRequest(endpoint, formData)
+	if err != nil {
+		return fmt.Errorf("failed to configure port isolation: %w", err)
+	}
+
+	return nil
+}
+
+// DeletePortIsolation resets the isolation list for a specific port.
+func (c *HRUIClient) DeletePortIsolation(port string) error {
+	ports, err := c.ListPorts()
+	if err != nil {
+		return fmt.Errorf("failed to retrieve ports to delete port isolation: %w", err)
+	}
+
+	var allPorts []string
+	for _, p := range ports {
+		allPorts = append(allPorts, p.ID)
+	}
+
+	endpoint := fmt.Sprintf("%s/port.cgi?page=isolation", c.URL)
+
+	formData := url.Values{}
+	formData.Set("cmd", "portisolation")
+	formData.Set("port", port)
+	for _, p := range allPorts {
+		formData.Add("isolationlist", p)
+	}
+
+	_, err = c.FormRequest(endpoint, formData)
+	if err != nil {
+		return fmt.Errorf("failed to delete port isolation for port '%s': %w", port, err)
 	}
 
 	return nil

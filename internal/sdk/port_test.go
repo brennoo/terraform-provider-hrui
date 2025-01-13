@@ -355,3 +355,81 @@ func TestPortMirroring(t *testing.T) {
 	err = client.DeletePortMirror()
 	require.NoError(t, err)
 }
+
+func TestGetPortIsolation(t *testing.T) {
+	// Mock HTML response for port isolation page
+	mockPortIsolationResponse := `
+<html>
+<head>
+<title>Port Isolation</title>
+</head>
+<body>
+<center>
+<fieldset>
+<legend>Port Isolation Setting</legend>
+<table border="1">
+    <tr>
+        <th align="center" width="80">Port</th>
+        <th align="center" width="200">Port Isolation List</th>
+    </tr>
+    <tr>
+        <td align="center">Port 1</td>
+        <td align="center">Port 2,Port 3,Trunk1</td>
+    </tr>
+    <tr>
+        <td align="center">Trunk1</td>
+        <td align="center">Port 1,Port 4</td>
+    </tr>
+    <tr>
+        <td align="center">Port 4</td>
+        <td align="center"></td>
+    </tr>
+</table>
+</fieldset>
+</center>
+</body>
+</html>`
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Respond with mock HTML when port isolation page is requested
+		if r.URL.Path == "/port.cgi" && r.URL.Query().Get("page") == "isolation" {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(mockPortIsolationResponse))
+		} else {
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	// Create new client
+	client := &HRUIClient{
+		URL:        server.URL,
+		HttpClient: server.Client(),
+	}
+
+	// Call GetPortIsolation
+	isolations, err := client.GetPortIsolation()
+	require.NoError(t, err)
+
+	// Assert that the number of isolations matches the number of rows in the mock HTML
+	require.Len(t, isolations, 3)
+
+	// Define the expected result
+	expectedIsolationConfig := []PortIsolation{
+		{
+			Port:          "Port 1",
+			IsolationList: []string{"Port 2", "Port 3", "Trunk1"},
+		},
+		{
+			Port:          "Trunk1",
+			IsolationList: []string{"Port 1", "Port 4"},
+		},
+		{
+			Port:          "Port 4",
+			IsolationList: []string{}, // Empty isolation list
+		},
+	}
+
+	// Assert that the parsed result matches the expected configuration
+	assert.Equal(t, expectedIsolationConfig, isolations)
+}
