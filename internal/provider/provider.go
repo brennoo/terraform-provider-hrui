@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/bandwidth_control"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/igmp_snooping"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/igmp_snooping_static"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/ip_address_settings"
@@ -83,5 +84,6 @@ func (p *hruiProvider) Resources(ctx context.Context) []func() resource.Resource
 		trunk_group.NewResource,
 		port_mirroring.NewResource,
 		port_isolation.NewResource,
+		bandwidth_control.NewResource,
 	}
 }
