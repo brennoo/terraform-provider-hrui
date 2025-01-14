@@ -1,5 +1,9 @@
 # Terraform Provider for HRUI Switches
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2af02dd9c60141b2b9142291693fde15)](https://app.codacy.com/gh/brennoo/terraform-provider-hrui/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![CodeQL](https://github.com/brennoo/terraform-provider-hrui/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/brennoo/terraform-provider-hrui/actions/workflows/github-code-scanning/codeql)
+[![Release](https://github.com/brennoo/terraform-provider-hrui/actions/workflows/release.yml/badge.svg)](https://github.com/brennoo/terraform-provider-hrui/actions/workflows/release.yml)
+
 This is a hobby project to create a Terraform provider for [HRUI](www.hruitech.com) switches that are web-managed. It relies on [goquery](https://github.com/PuerkitoBio/goquery) for interfacing with the web UI.
 
 Check the documentation at:
