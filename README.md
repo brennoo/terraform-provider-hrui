@@ -18,7 +18,7 @@ This provider is developed using a Horaco (ZX-SWTG124AS) switch. Other brands th
 * AmpCom
 
 > [!NOTE]
-> ## Using firmware v1.9.
+> Using firmware v1.9.
 
 ## Getting Started
 
