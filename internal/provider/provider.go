@@ -10,6 +10,7 @@ import (
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/ip_address_settings"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/jumbo_frame"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/loop_protocol"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/mac_limit"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/mac_static"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/mac_table"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_isolation"
@@ -89,5 +90,6 @@ func (p *hruiProvider) Resources(ctx context.Context) []func() resource.Resource
 		bandwidth_control.NewResource,
 		jumbo_frame.NewResource,
 		eee.NewResource,
+		mac_limit.NewResource,
 	}
 }
