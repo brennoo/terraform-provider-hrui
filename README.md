@@ -1,7 +1,7 @@
-[![HRUI Provider](docs/project-logo.png)](#)
 <p align="center" style="font-size: 1.5em;">
+<img src="docs/project-logo.png" alt="HRUI Provider"><br>
     <em>Terraform provider for HRUI switches</em>
-</p>
+</p><br>
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/2af02dd9c60141b2b9142291693fde15)](https://app.codacy.com/gh/brennoo/terraform-provider-hrui/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/2af02dd9c60141b2b9142291693fde15)](https://app.codacy.com/gh/brennoo/terraform-provider-hrui/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
