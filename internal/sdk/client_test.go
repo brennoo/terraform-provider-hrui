@@ -32,6 +32,7 @@ func TestNewClient_SuccessfulAuthentication(t *testing.T) {
 				response := r.FormValue("Response")
 				language := r.FormValue("language")
 				//#nosec G401
+				// nosemgrep use-of-md5
 				expectedResponse := fmt.Sprintf("%x", md5.Sum([]byte("testuser"+"testpass")))
 
 				if username == "testuser" && response == expectedResponse && language == "EN" {
