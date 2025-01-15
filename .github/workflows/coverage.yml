@@ -1,0 +1,26 @@
+name: Coverage
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+        id: go
+      - uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
+      - name: Generate coverage report
+        run: go test -coverprofile=unit.coverage.out ./...
+      - name: Upload report to Codacy 
+        uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699 #v1.3.0
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: unit.coverage.out
+          force-coverage-parser: go
