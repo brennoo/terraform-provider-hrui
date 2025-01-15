@@ -60,14 +60,17 @@ func NewClient(url, username, password string, autosave bool) (*HRUIClient, erro
 func (c *HRUIClient) Login() error {
 	// Generate MD5 hash of the username + password (as per HRUI spec).
 	//#nosec G401
+	// nosemgrep use-of-md5
 	hash := md5.Sum([]byte(c.Username + c.Password))
 	cookieValue := hex.EncodeToString(hash[:])
 
 	// Create authentication cookie
+	// nosemgrep cookie-missing-secure
 	authCookie := &http.Cookie{
-		Name:  "admin",
-		Value: cookieValue,
-		Path:  "/",
+		Name:     "admin",
+		Value:    cookieValue,
+		Path:     "/",
+		HttpOnly: true,
 	}
 
 	// Parse the base URL
