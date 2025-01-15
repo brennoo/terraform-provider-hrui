@@ -1,8 +1,13 @@
-# Terraform Provider for HRUI Switches
+[![HRUI Provider](docs/project-logo.png)](#)
+<p align="center" style="font-size: 1.5em;">
+    <em>Terraform provider for HRUI switches</em>
+</p>
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/2af02dd9c60141b2b9142291693fde15)](https://app.codacy.com/gh/brennoo/terraform-provider-hrui/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/2af02dd9c60141b2b9142291693fde15)](https://app.codacy.com/gh/brennoo/terraform-provider-hrui/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 [![CodeQL](https://github.com/brennoo/terraform-provider-hrui/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/brennoo/terraform-provider-hrui/actions/workflows/github-code-scanning/codeql)
 [![Release](https://github.com/brennoo/terraform-provider-hrui/actions/workflows/release.yml/badge.svg)](https://github.com/brennoo/terraform-provider-hrui/actions/workflows/release.yml)
+---
 
 This is a hobby project to create a Terraform provider for [HRUI](www.hruitech.com) switches that are web-managed. It relies on [goquery](https://github.com/PuerkitoBio/goquery) for interfacing with the web UI.
 
@@ -26,35 +31,6 @@ This provider is developed using a Horaco (ZX-SWTG124AS) switch. Other brands th
 
 ## Getting Started
 
-### Requirements
-
-* Go 1.23 or later
-* Terraform 1.9 or later
-
-### Building the provider
-
-1. Clone the repository:
-
-    ```bash
-    git clone github.com/brennoo/terraform-provider-hrui.git
-    ```
-
-2. Navigate to the provider directory:
-
-    ```bash
-    cd terraform-provider-hrui
-    ```
-
-3. Build the provider:
-
-    ```bash
-    make build
-    ```
-
-    This will create an executable file named `terraform-provider-hrui` in the project directory.
-
-### Using the provider
-
 1.  Configure the provider in your Terraform configuration:
 
     ```terraform
@@ -76,28 +52,10 @@ This provider is developed using a Horaco (ZX-SWTG124AS) switch. Other brands th
 
 2.  Refer to the [examples](examples) folder for usage of available resources and data sources.
 
-### Developing the provider
-
-1.  Set up a development override in your `~/.terraformrc` file:
-
-    ```
-    provider_installation {
-      dev_overrides {
-        "brennoo/hrui" = "/path/to/your/project"
-      }
-      direct {}
-    }
-    ```
-
-    Replace `/path/to/your/project` with the actual path to your provider directory.
-
-2.  Run `terraform init` in your Terraform project directory.
-
 ## Contributing
 
 Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines.
 
 ## License
 
-This provider is licensed under the MPL-2.0 License. See the [LICENSE](LICENSE) file for details.
-
+This provider is licensed under the MPL-2.0 License.
