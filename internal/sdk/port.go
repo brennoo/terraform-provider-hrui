@@ -80,20 +80,20 @@ func (c *HRUIClient) GetPort(portID string) (*Port, error) {
 }
 
 // GetPortByName fetches port.cgi, parses it, and resolves the numeric port ID for a given port name.
-func (c *HRUIClient) GetPortByName(portName string) (string, error) {
+func (c *HRUIClient) GetPortByName(portName string) (int, error) {
 	respBody, err := c.Request("GET", fmt.Sprintf("%s/port.cgi", c.URL), nil, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to fetch port.cgi: %w", err)
+		return 0, fmt.Errorf("failed to fetch port.cgi: %w", err)
 	}
 
 	// Load the HTML body into goquery
 	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(respBody))
 	if err != nil {
-		return "", fmt.Errorf("failed to parse port.cgi HTML: %w", err)
+		return 0, fmt.Errorf("failed to parse port.cgi HTML: %w", err)
 	}
 
 	// Iterate over all <select> elements with name="portid" and extract <option> values
-	var portID string
+	var portIDStr string
 	doc.Find(`select[name="portid"] option`).EachWithBreak(func(i int, s *goquery.Selection) bool {
 		// Extract and sanitize the port name
 		text := strings.TrimSpace(s.Text())
@@ -101,16 +101,22 @@ func (c *HRUIClient) GetPortByName(portName string) (string, error) {
 			// Extract the numeric ID from the `value` attribute
 			id, exists := s.Attr("value")
 			if exists {
-				portID = id
+				portIDStr = id
 				return false
 			}
 		}
 		return true
 	})
 
-	// If portID is still empty, the portName was not found
-	if portID == "" {
-		return "", fmt.Errorf("port name '%s' not found in port.cgi", portName)
+	// If portIDStr is still empty, the portName was not found
+	if portIDStr == "" {
+		return 0, fmt.Errorf("port name '%s' not found in port.cgi", portName)
+	}
+
+	// Convert the portIDStr to an int
+	portID, err := strconv.Atoi(portIDStr)
+	if err != nil {
+		return 0, fmt.Errorf("invalid port ID '%s': %w", portIDStr, err)
 	}
 
 	return portID, nil
@@ -205,7 +211,7 @@ func (c *HRUIClient) ConfigurePort(port *Port) (*Port, error) {
 
 	form := url.Values{}
 	form.Set("cmd", "port")
-	form.Set("portid", portID)
+	form.Set("portid", strconv.Itoa(portID))
 	form.Set("state", strconv.Itoa(port.State))
 	form.Set("speed_duplex", speedDuplexNumeric)
 	form.Set("flow", flowControlNumeric)
@@ -241,13 +247,12 @@ func (c *HRUIClient) GetValidPorts() ([]int, error) {
 	for _, port := range ports {
 		// Use GetPortByName to resolve the numeric ID for each port name.
 		portID, err := c.GetPortByName(port.ID)
-		portIDNum, err := strconv.Atoi(portID)
 		if err != nil {
 			return nil, fmt.Errorf("invalid port name '%s': %w", port.ID, err)
 		}
 
 		// Append the valid port ID to the list.
-		validPorts = append(validPorts, portIDNum)
+		validPorts = append(validPorts, portID)
 	}
 
 	return validPorts, nil
@@ -415,7 +420,7 @@ func (c *HRUIClient) ConfigurePortMirror(p *PortMirror) error {
 	if err != nil {
 		return fmt.Errorf("failed to resolve mirroring port '%s': %w", p.MirroringPort, err)
 	}
-	form.Set("mirroring_port", mirroringPortID)
+	form.Set("mirroring_port", strconv.Itoa(mirroringPortID))
 
 	// Ensure the mirrored port is provided
 	if p.MirroredPort == "" {

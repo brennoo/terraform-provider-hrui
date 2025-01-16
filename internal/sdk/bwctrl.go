@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -67,17 +68,22 @@ func (c *HRUIClient) GetBandwidthControl() ([]BandwidthControl, error) {
 }
 
 // ConfigureBandwidthControl configures ingress or egress bandwidth control for a specific port.
-func (c *HRUIClient) ConfigureBandwidthControl(port string, isIngress, enable bool, rate string) error {
+func (c *HRUIClient) ConfigureBandwidthControl(portName string, isIngress, enable bool, rate string) error {
+	// Resolve the numeric port ID from the port name
+	portID, err := c.GetPortByName(portName)
+	if err != nil {
+		return fmt.Errorf("failed to resolve port '%s': %w", portName, err)
+	}
+
+	return c.configureBandwidthByID(portID, isIngress, enable, rate)
+}
+
+// configureBandwidthByID sets bandwidth control for a port using its numeric ID.
+func (c *HRUIClient) configureBandwidthByID(portID int, isIngress, enable bool, rate string) error {
 	// Determine whether the configuration is for ingress or egress
 	bandwidthType := "1" // Default to Egress
 	if isIngress {
 		bandwidthType = "0" // Ingress
-	}
-
-	// Resolve the numeric port ID from the port name
-	portID, err := c.GetPortByName(port)
-	if err != nil {
-		return fmt.Errorf("failed to resolve port '%s': %w", port, err)
 	}
 
 	// Determine the state (enabled or disabled)
@@ -95,19 +101,19 @@ func (c *HRUIClient) ConfigureBandwidthControl(port string, isIngress, enable bo
 	// Construct the POST form data
 	form := url.Values{}
 	form.Set("cmd", "bandwidthcontrol")
-	form.Set("portid", portID)        // Port ID
-	form.Set("type", bandwidthType)   // Ingress (0) or Egress (1)
-	form.Set("state", state)          // Enable (1) or Disable (0)
-	form.Set("rate", rateValue)       // Bandwidth rate value
-	form.Set("submit", "+++Apply+++") // Form submission button value
+	form.Set("portid", strconv.Itoa(portID)) // Port ID as string
+	form.Set("type", bandwidthType)          // Ingress (0) or Egress (1)
+	form.Set("state", state)                 // Enable (1) or Disable (0)
+	form.Set("rate", rateValue)              // Bandwidth rate value
+	form.Set("submit", "+++Apply+++")        // Form submission button value
 
 	// Construct the POST request endpoint
 	endpoint := fmt.Sprintf("%s/port.cgi?page=bwctrl", c.URL)
 
 	// Send the POST request
-	_, err = c.FormRequest(endpoint, form)
+	_, err := c.FormRequest(endpoint, form)
 	if err != nil {
-		return fmt.Errorf("failed to configure bandwidth control for port '%s': %w", port, err)
+		return fmt.Errorf("failed to configure bandwidth control for port ID '%d': %w", portID, err)
 	}
 
 	return nil

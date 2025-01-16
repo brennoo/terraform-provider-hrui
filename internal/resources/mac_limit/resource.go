@@ -3,9 +3,9 @@ package mac_limit
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -76,6 +76,19 @@ func (r *macLimitResource) Configure(ctx context.Context, req resource.Configure
 	r.client = client
 }
 
+// retrievePortID resolves the port name to a numeric PortID using the SDK.
+func (r *macLimitResource) retrievePortID(portName string, diagnostics *diag.Diagnostics) (int, bool) {
+	portID, err := r.client.GetPortByName(portName)
+	if err != nil {
+		diagnostics.AddError(
+			"Port Resolution Error",
+			fmt.Sprintf("Failed to resolve port name '%s': %s", portName, err),
+		)
+		return 0, false
+	}
+	return portID, true
+}
+
 // Create sets the MAC limit for the specified port.
 func (r *macLimitResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan macLimitModel
@@ -85,22 +98,8 @@ func (r *macLimitResource) Create(ctx context.Context, req resource.CreateReques
 	}
 
 	// Resolve the port name to a numeric PortID.
-	portIDStr, err := r.client.GetPortByName(plan.Port.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Port Resolution Error",
-			fmt.Sprintf("Failed to resolve port name '%s': %s", plan.Port.ValueString(), err),
-		)
-		return
-	}
-
-	// Convert PortID to integer.
-	portID, err := strconv.Atoi(portIDStr)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Port ID Conversion Error",
-			fmt.Sprintf("Failed to convert PortID '%s' to an integer: %s", portIDStr, err),
-		)
+	portID, ok := r.retrievePortID(plan.Port.ValueString(), &resp.Diagnostics)
+	if !ok {
 		return
 	}
 
@@ -112,7 +111,7 @@ func (r *macLimitResource) Create(ctx context.Context, req resource.CreateReques
 	}
 
 	// Call the SDK to set the MAC limit.
-	err = r.client.SetMACLimit(portID, plan.Enabled.ValueBool(), limit)
+	err := r.client.SetMACLimit(portID, plan.Enabled.ValueBool(), limit)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",
@@ -177,22 +176,8 @@ func (r *macLimitResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 
 	// Resolve the port name to a numeric PortID.
-	portIDStr, err := r.client.GetPortByName(plan.Port.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Port Resolution Error",
-			fmt.Sprintf("Failed to resolve port name '%s': %s", plan.Port.ValueString(), err),
-		)
-		return
-	}
-
-	// Convert PortID to integer.
-	portID, err := strconv.Atoi(portIDStr)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Port ID Conversion Error",
-			fmt.Sprintf("Failed to convert PortID '%s' to an integer: %s", portIDStr, err),
-		)
+	portID, ok := r.retrievePortID(plan.Port.ValueString(), &resp.Diagnostics)
+	if !ok {
 		return
 	}
 
@@ -204,7 +189,7 @@ func (r *macLimitResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 
 	// Call the SDK to update the MAC limit.
-	err = r.client.SetMACLimit(portID, plan.Enabled.ValueBool(), limit)
+	err := r.client.SetMACLimit(portID, plan.Enabled.ValueBool(), limit)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",
@@ -226,27 +211,13 @@ func (r *macLimitResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 
 	// Resolve the port name to a numeric PortID.
-	portIDStr, err := r.client.GetPortByName(state.Port.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Port Resolution Error",
-			fmt.Sprintf("Failed to resolve port name '%s': %s", state.Port.ValueString(), err),
-		)
-		return
-	}
-
-	// Convert PortID to integer.
-	portID, err := strconv.Atoi(portIDStr)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Port ID Conversion Error",
-			fmt.Sprintf("Failed to convert PortID '%s' to an integer: %s", portIDStr, err),
-		)
+	portID, ok := r.retrievePortID(state.Port.ValueString(), &resp.Diagnostics)
+	if !ok {
 		return
 	}
 
 	// Call the SDK to disable the MAC limit.
-	err = r.client.SetMACLimit(portID, false, nil)
+	err := r.client.SetMACLimit(portID, false, nil)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",

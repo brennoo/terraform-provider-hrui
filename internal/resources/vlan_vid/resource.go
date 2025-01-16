@@ -3,7 +3,6 @@ package vlan_vid
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -81,14 +80,18 @@ func (r *vlanVIDResource) Configure(_ context.Context, req resource.ConfigureReq
 
 // Helper function to resolve PortID from Port Name.
 func (r *vlanVIDResource) resolvePortID(portName string) (int, error) {
-	portIDStr, err := r.client.GetPortByName(portName)
+	if portName == "" {
+		return 0, fmt.Errorf("port name cannot be empty")
+	}
+
+	portID, err := r.client.GetPortByName(portName)
 	if err != nil {
 		return 0, fmt.Errorf("failed to resolve Port ID for '%s': %w", portName, err)
 	}
 
-	portID, err := strconv.Atoi(portIDStr)
-	if err != nil {
-		return 0, fmt.Errorf("invalid Port ID '%s' for port '%s': %w", portIDStr, portName, err)
+	// Validate PortID
+	if portID <= 0 {
+		return 0, fmt.Errorf("invalid Port ID '%d' resolved for port '%s'", portID, portName)
 	}
 
 	return portID, nil
