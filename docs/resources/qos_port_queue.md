@@ -11,14 +11,9 @@ description: |-
 ## Example Usage
 
 ```terraform
-resource "hrui_qos_port_queue" "port_queue_2" {
-  port_id = 2
-  queue   = 5
-}
-
-resource "hrui_qos_port_queue" "port_queue_4" {
-  port_id = 4
-  queue   = 7
+resource "hrui_qos_port_queue" "example" {
+  port  = "Port 1"
+  queue = 2
 }
 ```
 
@@ -27,7 +22,7 @@ resource "hrui_qos_port_queue" "port_queue_4" {
 
 ### Required
 
-- `port_id` (Number) The port number for which the queue is being configured.
-- `queue` (Number) The QoS queue setting for the specific port.
+- `port` (String) The port name for which the QoS queue is being configured (e.g., 'Port 1', 'Trunk2').
+- `queue` (Number) The QoS queue setting for the specified port.
 
 
