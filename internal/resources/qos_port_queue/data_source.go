@@ -16,12 +16,12 @@ var (
 	_ datasource.DataSourceWithConfigure = &qosPortQueueDataSource{}
 )
 
-// qosPortQueueDataSource is the data source implementation.
+// qosPortQueueDataSource implements the QoS Port Queue data source.
 type qosPortQueueDataSource struct {
 	client *sdk.HRUIClient
 }
 
-// NewDataSource is a helper function to simplify the provider implementation.
+// NewDataSource initializes a new QoS Port Queue data source.
 func NewDataSource() datasource.DataSource {
 	return &qosPortQueueDataSource{}
 }
@@ -35,13 +35,13 @@ func (d *qosPortQueueDataSource) Metadata(_ context.Context, req datasource.Meta
 func (d *qosPortQueueDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"port_id": schema.Int64Attribute{
+			"port": schema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: "The port number for which the queue is being configured.",
+				MarkdownDescription: "The port name for which the QoS queue is being fetched.",
 			},
 			"queue": schema.Int64Attribute{
 				Computed:            true,
-				MarkdownDescription: "The QoS queue setting for the specific port.",
+				MarkdownDescription: "The QoS queue setting for the specified port.",
 			},
 		},
 	}
@@ -49,16 +49,13 @@ func (d *qosPortQueueDataSource) Schema(_ context.Context, _ datasource.SchemaRe
 
 // Configure adds the provider configured client to the data source.
 func (d *qosPortQueueDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
+	if req.ProviderData != nil {
+		d.client = req.ProviderData.(*sdk.HRUIClient)
 	}
-
-	d.client = req.ProviderData.(*sdk.HRUIClient)
 }
 
-// Read refreshes the Terraform state with the latest data.
+// Read fetches the latest data for the QoS Port Queue data source.
 func (d *qosPortQueueDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	// Use the shared qosPortQueueModel.
 	var state qosPortQueueModel
 
 	// Get config.
@@ -68,23 +65,29 @@ func (d *qosPortQueueDataSource) Read(ctx context.Context, req datasource.ReadRe
 		return
 	}
 
-	// Get the port ID from the configuration.
-	portID := int(state.PortID.ValueInt64())
+	// Validate the port string from the state.
+	portName := state.Port.ValueString()
+	if portName == "" {
+		resp.Diagnostics.AddError("Invalid Port", "The provided port name cannot be empty.")
+		return
+	}
 
-	// Fetch the specific QoS port queue data from the API using the SDK.
+	// Resolve the port name to its numeric port ID
+	portID, err := d.client.GetPortByName(portName)
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to resolve port name '%s' to a port ID: %s", portName, err))
+		return
+	}
+
+	// Fetch the QoS Port Queue data for the resolved port ID.
 	portQueue, err := d.client.GetQoSPortQueue(portID)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to fetch QoS Port Queue for port %d: %s", portID, err))
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to fetch QoS Port Queue for port '%s': %s", portName, err))
 		return
 	}
 
-	// Update the state with the data fetched from the API.
+	// Update and set the state with the fetched data.
 	state.Queue = types.Int64Value(int64(portQueue.Queue))
-
-	// Set state.
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
 }
