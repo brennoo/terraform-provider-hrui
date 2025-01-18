@@ -9,7 +9,7 @@
 [![Release](https://github.com/brennoo/terraform-provider-hrui/actions/workflows/release.yml/badge.svg)](https://github.com/brennoo/terraform-provider-hrui/actions/workflows/release.yml)
 ---
 
-This is a hobby project to create a Terraform provider for [HRUI](www.hruitech.com) switches that are web-managed. It relies on [goquery](https://github.com/PuerkitoBio/goquery) for interfacing with the web UI.
+This is a hobby project to create a Terraform provider for [HRUI](https://www.hruitech.com) switches that are web-managed. It relies on [goquery](https://github.com/PuerkitoBio/goquery) for interfacing with the web UI.
 
 Check the documentation at:
 
