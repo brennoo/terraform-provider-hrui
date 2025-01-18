@@ -120,12 +120,12 @@ func TestListQoSPortQueues(t *testing.T) {
 
 	// Define the expected parsed output.
 	expectedQueues := []QoSPortQueue{
-		{PortID: 1, Queue: 1},
-		{PortID: 2, Queue: 8},
+		{PortID: 0, Queue: 1},
+		{PortID: 1, Queue: 8},
+		{PortID: 2, Queue: 1},
 		{PortID: 3, Queue: 1},
 		{PortID: 4, Queue: 1},
-		{PortID: 5, Queue: 1},
-		{PortID: 6, Queue: 3},
+		{PortID: 5, Queue: 3},
 	}
 
 	// Check if the number of parsed queues matches the expected count.

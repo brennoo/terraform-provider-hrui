@@ -5,6 +5,6 @@ import (
 )
 
 type igmpSnoopingStaticModel struct {
-	Port    types.Int64 `tfsdk:"port"`
-	Enabled types.Bool  `tfsdk:"enabled"`
+	Port    types.String `tfsdk:"port"`
+	Enabled types.Bool   `tfsdk:"enabled"`
 }
