@@ -11,9 +11,8 @@ Manages IGMP snooping static settings for a specific port.
 ## Example Usage
 
 ```terraform
-# Enable static IGMP snooping for port 2
-resource "hrui_igmp_snooping_static" "port_2" {
-  port    = 2
+resource "hrui_igmp_snooping_static" "example" {
+  port    = "Port 1"
   enabled = true
 }
 ```
@@ -24,6 +23,6 @@ resource "hrui_igmp_snooping_static" "port_2" {
 ### Required
 
 - `enabled` (Boolean) Specifies whether IGMP snooping is enabled (true) or disabled (false) for the given port.
-- `port` (Number) The port for which IGMP snooping static configuration is managed.
+- `port` (String) The port name for which IGMP snooping static configuration is managed.
 
 
