@@ -40,8 +40,8 @@ func (d *macStaticDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Description: "Filter results by a specific VLAN ID.",
 				Optional:    true,
 			},
-			"port": schema.Int64Attribute{
-				Description: "Filter results by a specific port.",
+			"port": schema.StringAttribute{
+				Description: "Filter results by a specific port (e.g., 'Port 1' or 'Trunk2').",
 				Optional:    true,
 			},
 			"entries": schema.ListNestedAttribute{
@@ -57,8 +57,8 @@ func (d *macStaticDataSource) Schema(ctx context.Context, req datasource.SchemaR
 							Description: "The VLAN ID associated with the MAC address.",
 							Computed:    true,
 						},
-						"port": schema.Int64Attribute{
-							Description: "The port associated with the MAC address.",
+						"port": schema.StringAttribute{
+							Description: "The port associated with the MAC address (e.g., 'Port 1' or 'Trunk2').",
 							Computed:    true,
 						},
 					},
@@ -111,7 +111,7 @@ func (d *macStaticDataSource) Read(ctx context.Context, req datasource.ReadReque
 		}
 
 		// Check if Port filter is set and doesn't match
-		if !filters.Port.IsNull() && filters.Port.ValueInt64() != int64(entry.Port) {
+		if !filters.Port.IsNull() && filters.Port.ValueString() != entry.Port {
 			continue
 		}
 
@@ -119,7 +119,7 @@ func (d *macStaticDataSource) Read(ctx context.Context, req datasource.ReadReque
 		matchingEntries = append(matchingEntries, macStaticEntryModel{
 			MACAddress: types.StringValue(entry.MACAddress),
 			VLANID:     types.Int64Value(int64(entry.VLANID)),
-			Port:       types.Int64Value(int64(entry.Port)),
+			Port:       types.StringValue(entry.Port),
 		})
 	}
 

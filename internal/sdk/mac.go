@@ -15,7 +15,7 @@ type MACAddressEntry struct {
 	MAC    string // MAC address in the format xx:xx:xx:xx:xx:xx
 	VLANID int    // VLAN ID associated with the MAC address
 	Type   string // Type of the entry (e.g., "dynamic" or "static")
-	Port   int    // Port number associated with the MAC address
+	Port   string // Port name associated with the MAC address (e.g., "Port 1" or "Trunk2")
 }
 
 // StaticMACEntry represents a single entry in the static MAC address table.
@@ -23,7 +23,16 @@ type StaticMACEntry struct {
 	ID         int
 	MACAddress string
 	VLANID     int
-	Port       int
+	Port       string
+}
+
+// Utility function to format port string properly.
+func formatPort(rawPort string) string {
+	rawPort = strings.TrimSpace(rawPort)
+	if _, err := strconv.Atoi(rawPort); err == nil {
+		return "Port " + rawPort
+	}
+	return rawPort
 }
 
 // GetMACAddressTable fetches and parses the MAC table from the switch.
@@ -60,7 +69,7 @@ func (c *HRUIClient) GetMACAddressTable() ([]MACAddressEntry, error) {
 		mac := strings.TrimSpace(tds.Eq(1).Text())
 		vlanID, _ := strconv.Atoi(strings.TrimSpace(tds.Eq(2).Text()))
 		entryType := strings.ToLower(strings.TrimSpace(tds.Eq(3).Text()))
-		port, _ := strconv.Atoi(strings.TrimSpace(tds.Eq(4).Text()))
+		port := formatPort(strings.TrimSpace(tds.Eq(4).Text()))
 
 		// Append the entry
 		entries = append(entries, MACAddressEntry{
@@ -106,7 +115,7 @@ func (c *HRUIClient) GetStaticMACAddressTable() ([]StaticMACEntry, error) {
 			id, _ := strconv.Atoi(strings.TrimSpace(columns.Eq(0).Text()))
 			mac := strings.TrimSpace(columns.Eq(1).Text())
 			vlan, _ := strconv.Atoi(strings.TrimSpace(columns.Eq(2).Text()))
-			port, _ := strconv.Atoi(strings.TrimSpace(columns.Eq(3).Text()))
+			port := formatPort(strings.TrimSpace(columns.Eq(3).Text()))
 
 			// Append to the entries slice
 			entries = append(entries, StaticMACEntry{
@@ -122,15 +131,20 @@ func (c *HRUIClient) GetStaticMACAddressTable() ([]StaticMACEntry, error) {
 }
 
 // AddStaticMACEntry adds a new static MAC address entry by sending a POST request.
-func (c *HRUIClient) AddStaticMACEntry(mac string, vlanID int, port int) error {
+func (c *HRUIClient) AddStaticMACEntry(mac string, vlanID int, portName string) error {
+	portID, err := c.GetPortByName(portName)
+	if err != nil {
+		return fmt.Errorf("failed to resolve port name '%s': %w", portName, err)
+	}
+
 	formData := url.Values{
 		"mac":  {mac},
 		"vlan": {strconv.Itoa(vlanID)},
-		"src":  {strconv.Itoa(port)},
+		"src":  {strconv.Itoa(portID)},
 		"cmd":  {"macstatic"},
 	}
 
-	_, err := c.FormRequest(c.URL+"/mac.cgi?page=static", formData)
+	_, err = c.FormRequest(c.URL+"/mac.cgi?page=static", formData)
 	if err != nil {
 		return fmt.Errorf("error adding static MAC address: %w", err)
 	}

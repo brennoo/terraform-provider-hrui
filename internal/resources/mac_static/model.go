@@ -7,14 +7,14 @@ type macStaticModel struct {
 	ID         types.String `tfsdk:"id"`
 	MACAddress types.String `tfsdk:"mac_address"`
 	VLANID     types.Int64  `tfsdk:"vlan_id"`
-	Port       types.Int64  `tfsdk:"port"`
+	Port       types.String `tfsdk:"port"`
 }
 
 // macStaticDataSourceModel represents the filter inputs and computed outputs for the data source.
 type macStaticDataSourceModel struct {
 	MACAddress types.String          `tfsdk:"mac_address"`
 	VLANID     types.Int64           `tfsdk:"vlan_id"`
-	Port       types.Int64           `tfsdk:"port"`
+	Port       types.String          `tfsdk:"port"`
 	Entries    []macStaticEntryModel `tfsdk:"entries"`
 }
 
@@ -22,5 +22,5 @@ type macStaticDataSourceModel struct {
 type macStaticEntryModel struct {
 	MACAddress types.String `tfsdk:"mac_address"`
 	VLANID     types.Int64  `tfsdk:"vlan_id"`
-	Port       types.Int64  `tfsdk:"port"`
+	Port       types.String `tfsdk:"port"`
 }

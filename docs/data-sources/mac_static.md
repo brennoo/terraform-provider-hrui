@@ -37,7 +37,7 @@ output "filtered_static_mac_entries" {
 ### Optional
 
 - `mac_address` (String) Filter results by a specific MAC address in the format xx:xx:xx:xx:xx:xx.
-- `port` (Number) Filter results by a specific port.
+- `port` (String) Filter results by a specific port (e.g., 'Port 1' or 'Trunk2').
 - `vlan_id` (Number) Filter results by a specific VLAN ID.
 
 ### Read-Only
@@ -50,7 +50,7 @@ output "filtered_static_mac_entries" {
 Read-Only:
 
 - `mac_address` (String) The MAC address.
-- `port` (Number) The port associated with the MAC address.
+- `port` (String) The port associated with the MAC address (e.g., 'Port 1' or 'Trunk2').
 - `vlan_id` (Number) The VLAN ID associated with the MAC address.
 
 

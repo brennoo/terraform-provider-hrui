@@ -9,6 +9,9 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+// Ensure `macTableDataSource` implements the `datasource.DataSource` interface.
+var _ datasource.DataSource = &macTableDataSource{}
+
 // macTableDataSource defines the structure of the MAC table data source.
 type macTableDataSource struct {
 	client *sdk.HRUIClient
@@ -27,15 +30,15 @@ func (d *macTableDataSource) Metadata(_ context.Context, req datasource.Metadata
 // Schema defines the schema for the MAC table data source.
 func (d *macTableDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Data source to fetch the MAC address table from the switch.",
+		Description: "Data source for retrieving the static MAC address table from the HRUI device.",
 		Attributes: map[string]schema.Attribute{
 			"mac_table": schema.ListNestedAttribute{
-				Description: "List of MAC table entries retrieved from the switch.",
+				Description: "List of static MAC table entries.",
 				Computed:    true,
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"id": schema.Int64Attribute{
-							Description: "The sequence number of the entry.",
+							Description: "Unique identifier of the MAC table entry.",
 							Computed:    true,
 						},
 						"mac_address": schema.StringAttribute{
@@ -50,8 +53,8 @@ func (d *macTableDataSource) Schema(_ context.Context, _ datasource.SchemaReques
 							Description: "The type of the MAC address entry (e.g., dynamic or static).",
 							Computed:    true,
 						},
-						"port": schema.Int64Attribute{
-							Description: "The port number where the MAC address is located.",
+						"port": schema.StringAttribute{
+							Description: "The port associated with the MAC address.",
 							Computed:    true,
 						},
 					},
@@ -76,28 +79,25 @@ func (d *macTableDataSource) Configure(ctx context.Context, req datasource.Confi
 // Read fetches the MAC address table data from the switch.
 func (d *macTableDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	// Call the SDK to fetch the MAC address table
-	macTableEntries, err := d.client.GetMACAddressTable()
+	macTable, err := d.client.GetStaticMACAddressTable()
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to fetch MAC address table", err.Error())
+		resp.Diagnostics.AddError("Failed to fetch static MAC table", err.Error())
 		return
 	}
 
 	// Transform the fetched data into Terraform state representation
-	macTable := make([]macTableModel, len(macTableEntries))
-	for i, entry := range macTableEntries {
-		macTable[i] = macTableModel{
+	var state macTableDataSourceModel
+	for _, entry := range macTable {
+		state.MacTable = append(state.MacTable, macTableModel{
 			ID:         types.Int64Value(int64(entry.ID)),
-			MACAddress: types.StringValue(entry.MAC),
+			MACAddress: types.StringValue(entry.MACAddress),
 			VLANID:     types.Int64Value(int64(entry.VLANID)),
-			Type:       types.StringValue(entry.Type),
-			Port:       types.Int64Value(int64(entry.Port)),
-		}
+			Type:       types.StringValue("static"),
+			Port:       types.StringValue(entry.Port),
+		})
 	}
 
-	// Set the state with the retrieved MAC table
-	state := macTableDataSourceModel{
-		MacTable: macTable,
-	}
+	// Assign the final state to the response.
 	diags := resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {

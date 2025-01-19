@@ -1,12 +1,12 @@
 ---
 page_title: "hrui_mac_table (Data Source)"
 description: |-
-  Data source to fetch the MAC address table from the switch.
+  Data source for retrieving the static MAC address table from the HRUI device.
 ---
 
 # hrui_mac_table (Data Source)
 
-Data source to fetch the MAC address table from the switch.
+Data source for retrieving the static MAC address table from the HRUI device.
 
 ## Example Usage
 
@@ -32,16 +32,16 @@ output "filtered_mac_entry" {
 
 ### Read-Only
 
-- `mac_table` (Attributes List) List of MAC table entries retrieved from the switch. (see [below for nested schema](#nestedatt--mac_table))
+- `mac_table` (Attributes List) List of static MAC table entries. (see [below for nested schema](#nestedatt--mac_table))
 
 <a id="nestedatt--mac_table"></a>
 ### Nested Schema for `mac_table`
 
 Read-Only:
 
-- `id` (Number) The sequence number of the entry.
+- `id` (Number) Unique identifier of the MAC table entry.
 - `mac_address` (String) The MAC address in the format xx:xx:xx:xx:xx:xx.
-- `port` (Number) The port number where the MAC address is located.
+- `port` (String) The port associated with the MAC address.
 - `type` (String) The type of the MAC address entry (e.g., dynamic or static).
 - `vlan_id` (Number) The VLAN ID associated with the MAC address.
 

@@ -46,8 +46,8 @@ func (r *macStaticResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Description: "The VLAN ID to associate with the MAC address.",
 				Required:    true,
 			},
-			"port": schema.Int64Attribute{
-				Description: "The port to associate with the MAC address.",
+			"port": schema.StringAttribute{
+				Description: "The port to associate with the MAC address (e.g., 'Port 1', 'Trunk2').",
 				Required:    true,
 			},
 		},
@@ -77,7 +77,7 @@ func (r *macStaticResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	// Use the SDK to add the static MAC entry
-	err := r.client.AddStaticMACEntry(data.MACAddress.ValueString(), int(data.VLANID.ValueInt64()), int(data.Port.ValueInt64()))
+	err := r.client.AddStaticMACEntry(data.MACAddress.ValueString(), int(data.VLANID.ValueInt64()), data.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to create static MAC entry", err.Error())
 		return
@@ -123,7 +123,7 @@ func (r *macStaticResource) Read(ctx context.Context, req resource.ReadRequest, 
 		if entry.MACAddress == macAddress && fmt.Sprintf("%d", entry.VLANID) == vlanID {
 			state.MACAddress = types.StringValue(entry.MACAddress)
 			state.VLANID = types.Int64Value(int64(entry.VLANID))
-			state.Port = types.Int64Value(int64(entry.Port))
+			state.Port = types.StringValue(entry.Port)
 
 			// Update the state
 			diags = resp.State.Set(ctx, &state)
@@ -157,7 +157,7 @@ func (r *macStaticResource) Update(ctx context.Context, req resource.UpdateReque
 	// Check if attributes have changed
 	if state.MACAddress.ValueString() != plan.MACAddress.ValueString() ||
 		state.VLANID.ValueInt64() != plan.VLANID.ValueInt64() ||
-		state.Port.ValueInt64() != plan.Port.ValueInt64() {
+		state.Port.ValueString() != plan.Port.ValueString() {
 		// Delete the existing entry
 		err := r.client.RemoveStaticMACEntries([]sdk.StaticMACEntry{
 			{
@@ -171,7 +171,7 @@ func (r *macStaticResource) Update(ctx context.Context, req resource.UpdateReque
 		}
 
 		// Add the updated entry
-		err = r.client.AddStaticMACEntry(plan.MACAddress.ValueString(), int(plan.VLANID.ValueInt64()), int(plan.Port.ValueInt64()))
+		err = r.client.AddStaticMACEntry(plan.MACAddress.ValueString(), int(plan.VLANID.ValueInt64()), plan.Port.ValueString())
 		if err != nil {
 			resp.Diagnostics.AddError("Failed to create updated static MAC entry", err.Error())
 			return
