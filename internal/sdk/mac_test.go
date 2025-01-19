@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -131,8 +132,41 @@ func TestGetStaticMACAddressTable(t *testing.T) {
 }
 
 func TestAddStaticMACEntry(t *testing.T) {
-	// Use the mock server to simulate POST response
-	mock := mockServerMock("OK", http.StatusOK)
+	// Mock HTML response for port.cgi
+	portHTMLResponse := `
+    <html>
+    <body>
+        <form action="/port.cgi" method="get">
+            <select name="portid">
+                <option value="1">Port 1</option>
+                <option value="2">Port 2</option>
+                <option value="3">Port 3</option>
+                <option value="4">Port 4</option>
+                <option value="5">Port 5</option>
+                <option value="6">Port 6</option>
+            </select>
+        </form>
+    </body>
+    </html>
+    `
+
+	// Use a conditional handler as it also calls GetPortByName
+	mock := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/port.cgi" {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(portHTMLResponse))
+			return
+		}
+
+		if r.URL.Path == "/mac.cgi" && r.Method == http.MethodPost {
+			// Handle POST request for adding the static MAC entry
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte("OK"))
+			return
+		}
+
+		http.NotFound(w, r)
+	}))
 	defer mock.Close()
 
 	// Create client pointing to the mock server
@@ -143,7 +177,11 @@ func TestAddStaticMACEntry(t *testing.T) {
 
 	// Test the `AddStaticMACEntry` method
 	err := client.AddStaticMACEntry("01:23:45:67:89:AB", 10, "Port 1")
-	assert.NoError(t, err)
+	assert.NoError(t, err, "AddStaticMACEntry should succeed for a valid port name")
+
+	// Test with another port name
+	err = client.AddStaticMACEntry("01:23:45:67:89:AC", 20, "Port 6")
+	assert.NoError(t, err, "AddStaticMACEntry should succeed for a valid port name")
 }
 
 func TestRemoveStaticMACEntries(t *testing.T) {
