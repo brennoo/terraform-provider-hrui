@@ -32,14 +32,14 @@ func TestGetMACAddressTable(t *testing.T) {
 			<td>11:22:33:44:55:66</td>
 			<td>1</td>
 			<td>dynamic</td>
-			<td>1</td>
+			<td>2</td>
 		</tr>
 		<tr>
 			<td>3</td>
 			<td>77:88:99:AA:BB:CC</td>
 			<td>1</td>
 			<td>dynamic</td>
-			<td>1</td>
+			<td>Trunk1</td>
 		</tr>
 		<tr>
 			<td>4</td>
@@ -53,7 +53,6 @@ func TestGetMACAddressTable(t *testing.T) {
 	</html>`
 
 	mock := mockServerMock(htmlResponse, http.StatusOK)
-
 	defer mock.Close()
 
 	// Create an HRUIClient pointing to the mock server
@@ -67,10 +66,10 @@ func TestGetMACAddressTable(t *testing.T) {
 
 	// Validate results with anonymized expected MAC addresses
 	expected := []MACAddressEntry{
-		{ID: 1, MAC: "AA:BB:CC:DD:EE:FF", VLANID: 1, Type: "dynamic", Port: 1},
-		{ID: 2, MAC: "11:22:33:44:55:66", VLANID: 1, Type: "dynamic", Port: 1},
-		{ID: 3, MAC: "77:88:99:AA:BB:CC", VLANID: 1, Type: "dynamic", Port: 1},
-		{ID: 4, MAC: "00:11:22:33:44:55", VLANID: 1, Type: "static", Port: 6},
+		{ID: 1, MAC: "AA:BB:CC:DD:EE:FF", VLANID: 1, Type: "dynamic", Port: "Port 1"},
+		{ID: 2, MAC: "11:22:33:44:55:66", VLANID: 1, Type: "dynamic", Port: "Port 2"},
+		{ID: 3, MAC: "77:88:99:AA:BB:CC", VLANID: 1, Type: "dynamic", Port: "Trunk1"},
+		{ID: 4, MAC: "00:11:22:33:44:55", VLANID: 1, Type: "static", Port: "Port 6"},
 	}
 	assert.Equal(t, expected, macTable)
 }
@@ -97,6 +96,13 @@ func TestGetStaticMACAddressTable(t *testing.T) {
 						<td>6</td>
 						<td><input type="checkbox" name="del" value="A8:80:55:59:E9:72_1"></td>
 					</tr>
+					<tr>
+						<td>2</td>
+						<td>BB:44:55:66:77:88</td>
+						<td>2</td>
+						<td>Trunk2</td>
+						<td><input type="checkbox" name="del" value="BB:44:55:66:77:88_2"></td>
+					</tr>
 				</table>
 			</form>
 		</body>
@@ -114,16 +120,14 @@ func TestGetStaticMACAddressTable(t *testing.T) {
 	// Test the `GetStaticMACAddressTable` method
 	entries, err := client.GetStaticMACAddressTable()
 	assert.NoError(t, err)
-	assert.Len(t, entries, 1)
+	assert.Len(t, entries, 2)
 
-	// Validate the parsed entry
-	expectedEntry := StaticMACEntry{
-		ID:         1,
-		MACAddress: "A8:80:55:59:E9:72",
-		VLANID:     1,
-		Port:       6,
+	// Validate the parsed entries
+	expected := []StaticMACEntry{
+		{ID: 1, MACAddress: "A8:80:55:59:E9:72", VLANID: 1, Port: "Port 6"},
+		{ID: 2, MACAddress: "BB:44:55:66:77:88", VLANID: 2, Port: "Trunk2"},
 	}
-	assert.Equal(t, expectedEntry, entries[0])
+	assert.Equal(t, expected, entries)
 }
 
 func TestAddStaticMACEntry(t *testing.T) {
@@ -138,7 +142,7 @@ func TestAddStaticMACEntry(t *testing.T) {
 	}
 
 	// Test the `AddStaticMACEntry` method
-	err := client.AddStaticMACEntry("01:23:45:67:89:AB", 10, 1)
+	err := client.AddStaticMACEntry("01:23:45:67:89:AB", 10, "Port 1")
 	assert.NoError(t, err)
 }
 
@@ -155,8 +159,8 @@ func TestRemoveStaticMACEntries(t *testing.T) {
 
 	// Test `RemoveStaticMACEntries` with two entries
 	entries := []StaticMACEntry{
-		{MACAddress: "01:23:45:67:89:AB", VLANID: 10},
-		{MACAddress: "02:33:44:55:66:77", VLANID: 20},
+		{MACAddress: "01:23:45:67:89:AB", VLANID: 10, Port: "Port 1"},
+		{MACAddress: "02:33:44:55:66:77", VLANID: 20, Port: "Trunk3"},
 	}
 
 	err := client.RemoveStaticMACEntries(entries)

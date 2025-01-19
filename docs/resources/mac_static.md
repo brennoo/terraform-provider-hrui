@@ -14,16 +14,7 @@ Resource for managing static MAC addresses on the HRUI device.
 resource "hrui_mac_static" "example" {
   mac_address = "AA:BB:CC:DD:EE:FF"
   vlan_id     = 100
-  port        = 2
-}
-
-output "mac_static_resource" {
-  value = {
-    id          = hrui_mac_static.example.id
-    mac_address = hrui_mac_static.example.mac_address
-    vlan_id     = hrui_mac_static.example.vlan_id
-    port        = hrui_mac_static.example.port
-  }
+  port        = "Port 1"
 }
 ```
 
@@ -33,7 +24,7 @@ output "mac_static_resource" {
 ### Required
 
 - `mac_address` (String) The MAC address in the format xx:xx:xx:xx:xx:xx.
-- `port` (Number) The port to associate with the MAC address.
+- `port` (String) The port to associate with the MAC address (e.g., 'Port 1', 'Trunk2').
 - `vlan_id` (Number) The VLAN ID to associate with the MAC address.
 
 ### Read-Only

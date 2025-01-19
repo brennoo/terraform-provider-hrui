@@ -8,7 +8,7 @@ type macTableModel struct {
 	MACAddress types.String `tfsdk:"mac_address"`
 	VLANID     types.Int64  `tfsdk:"vlan_id"`
 	Type       types.String `tfsdk:"type"`
-	Port       types.Int64  `tfsdk:"port"`
+	Port       types.String `tfsdk:"port"`
 }
 
 // macTableDataSourceModel represents the entire MAC table data source for Terraform's state.
