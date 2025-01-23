@@ -12,10 +12,10 @@ Resource for managing storm control settings on HRUI devices.
 
 ```terraform
 resource "hrui_storm_control" "example" {
-  port       = 4
+  port       = "Port 1"
   storm_type = "Broadcast"
   state      = true
-  rate       = 2490000
+  rate       = 100000
 }
 ```
 
@@ -24,7 +24,7 @@ resource "hrui_storm_control" "example" {
 
 ### Required
 
-- `port` (Number) The port number to enable storm control on. Changing this will recreate the resource.
+- `port` (String) The port name to enable storm control on. Changing this will recreate the resource.
 - `state` (Boolean) Whether storm control is enabled (`true`) or disabled (`false`).
 - `storm_type` (String) The type of traffic to control. Options: Broadcast, Known Multicast, Unknown Unicast, Unknown Multicast.
 

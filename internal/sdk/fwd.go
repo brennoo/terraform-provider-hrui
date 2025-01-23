@@ -13,11 +13,11 @@ import (
 
 // StormControlEntry represents the configuration for a specific port.
 type StormControlEntry struct {
-	Port                     int  `json:"port"`                        // Port number as an integer
-	BroadcastRateKbps        *int `json:"broadcast_rate_kbps"`         // Broadcast rate in kbps, nil if "Off"
-	KnownMulticastRateKbps   *int `json:"known_multicast_rate_kbps"`   // Known Multicast, nil if "Off"
-	UnknownUnicastRateKbps   *int `json:"unknown_unicast_rate_kbps"`   // Unknown Unicast, nil if "Off"
-	UnknownMulticastRateKbps *int `json:"unknown_multicast_rate_kbps"` // Unknown Multicast, nil if "Off"
+	Port                     string `json:"port"`                        // Port name as a string
+	BroadcastRateKbps        *int   `json:"broadcast_rate_kbps"`         // Broadcast rate in kbps, nil if "Off"
+	KnownMulticastRateKbps   *int   `json:"known_multicast_rate_kbps"`   // Known Multicast, nil if "Off"
+	UnknownUnicastRateKbps   *int   `json:"unknown_unicast_rate_kbps"`   // Unknown Unicast, nil if "Off"
+	UnknownMulticastRateKbps *int   `json:"unknown_multicast_rate_kbps"` // Unknown Multicast, nil if "Off"
 }
 
 // StormControlConfig represents all the storm control entries in the table.
@@ -66,9 +66,8 @@ func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
 			return // Skip rows that don't have all 5 fields
 		}
 
-		portString := strings.TrimSpace(cols.Eq(0).Text())
-		port := parseInt(portString, WithTrimPrefix("Port "))
-		if port == nil {
+		port := strings.TrimSpace(cols.Eq(0).Text())
+		if port == "" {
 			return // Skip invalid port entries
 		}
 
@@ -78,7 +77,7 @@ func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
 		unknownMulticast := parseInt(strings.TrimSpace(cols.Eq(4).Text()), parseRateOptions()...)
 
 		entry := StormControlEntry{
-			Port:                     *port,
+			Port:                     port,
 			BroadcastRateKbps:        broadcast,
 			KnownMulticastRateKbps:   knownMulticast,
 			UnknownUnicastRateKbps:   unknownUnicast,
@@ -95,16 +94,10 @@ func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
 // SetStormControlConfig updates the storm control settings for specific ports.
 func (c *HRUIClient) SetStormControlConfig(
 	stormType string, // Type of storm control: "Broadcast", "Known Multicast", etc.
-	ports []int, // Ports to apply settings to, as integers.
+	ports []string, // Ports to apply settings to, as strings
 	state bool, // Whether to enable or disable storm control.
 	rate *int64, // Rate in kbps, or nil if disabling.
 ) error {
-	// Convert integer ports to backend's string format
-	var backendPorts []string
-	for _, port := range ports {
-		backendPorts = append(backendPorts, intToBackendPort(port))
-	}
-
 	// Determine state value ("On" -> 1, "Off" -> 0)
 	stateValue := "0"
 	if state {
@@ -117,13 +110,17 @@ func (c *HRUIClient) SetStormControlConfig(
 	formData.Set("action", stateValue)
 	formData.Set("cmd", "storm")
 
+	// Add each port as a separate "portid" key in the form data.
+	for _, portName := range ports {
+		// Replace spaces with "+" to make it URL-safe.
+		encodedPortName := strings.ReplaceAll(portName, " ", "+")
+		formData.Add("portid", encodedPortName)
+	}
+
 	// Set rate only if the state is enabled
 	if state && rate != nil {
 		formData.Set("rate", strconv.FormatInt(*rate, 10))
 	}
-
-	// Add ports
-	formData.Set("portid", strings.Join(backendPorts, ","))
 
 	respBody, err := c.FormRequest(c.URL+"/fwd.cgi?page=storm_ctrl", formData)
 	if err != nil {
@@ -151,10 +148,9 @@ func (c *HRUIClient) SetStormControlConfig(
 }
 
 // GetPortMaxRate retrieves the maximum allowed traffic rate (kbps) for a specific port
-// from the "Rate (kbps)" column in the storm control HTML page.
-func (c *HRUIClient) GetPortMaxRate(port int) (int64, error) {
-	portString := intToBackendPort(port)
-
+// using the provided human-readable port name (e.g., "Port 1") rather than port ID.
+func (c *HRUIClient) GetPortMaxRate(portName string) (int64, error) {
+	// Fetch the storm control HTML page.
 	respBody, err := c.Request("GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
 	if err != nil {
 		return 0, fmt.Errorf("failed to fetch storm control page: %w", err)
@@ -166,28 +162,63 @@ func (c *HRUIClient) GetPortMaxRate(port int) (int64, error) {
 		return 0, fmt.Errorf("error parsing storm control page: %w", err)
 	}
 
-	// Look for the row corresponding to the given port
-	var rateText string
-	doc.Find("tr").Each(func(i int, s *goquery.Selection) {
-		// Check if this row contains the specified port string
-		if strings.Contains(s.Text(), portString) {
-			// Look for a cell with the Rate (kbps) info (e.g., "(1-2500000)(kbps)")
-			s.Find("td").Each(func(j int, td *goquery.Selection) {
-				if strings.Contains(td.Text(), "(kbps)") {
-					rateText = td.Text()
-				}
-			})
-		}
-	})
-
-	// Handle cases where the port or rate was not found
-	if rateText == "" {
-		return 0, fmt.Errorf("could not find rate information for port '%s'", portString)
+	// Locate the table row for the specified port name and extract the rate column's text.
+	rateText, err := findRateText(doc, portName)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get rate text for port '%s': %w", portName, err)
 	}
 
-	// Extract the max rate from the text using regex
-	re := regexp.MustCompile(`1-(\d+).*kbps`) // Match the "1-XXXXXX" structure and extract XXXXXX
+	// Extract the maximum rate from the rate text.
+	maxRate, err := extractMaxRate(rateText)
+	if err != nil {
+		return 0, fmt.Errorf("failed to extract max rate for port '%s': %w", portName, err)
+	}
+
+	return maxRate, nil
+}
+
+// findRateText locates the rate text (e.g., "1-10000000(kbps)") for the specified port name.
+func findRateText(doc *goquery.Document, portName string) (string, error) {
+	var rateText string
+	found := false
+
+	// Iterate over table rows to find the port's row.
+	doc.Find("tr").EachWithBreak(func(i int, row *goquery.Selection) bool {
+		// Check if this row contains the specified port name.
+		if strings.Contains(row.Text(), portName) {
+			// Locate the cell containing "(kbps)" text.
+			row.Find("td").EachWithBreak(func(j int, cell *goquery.Selection) bool {
+				if strings.Contains(cell.Text(), "(kbps)") {
+					rateText = strings.TrimSpace(cell.Text())
+					found = true
+					return false // Stop iterating over cells.
+				}
+				return true // Continue searching cells.
+			})
+			return false // Stop iterating over rows.
+		}
+		return true // Continue searching rows.
+	})
+
+	// If the rate text was not found, return an error.
+	if !found {
+		return "", fmt.Errorf("rate information not found for port '%s'", portName)
+	}
+
+	return rateText, nil
+}
+
+// extractMaxRate parses and extracts the maximum rate value (e.g., 2500000)
+// from a rate string like "(1-2500000)(kbps)".
+func extractMaxRate(rateText string) (int64, error) {
+	// Normalize the input to remove unexpected spaces.
+	rateText = strings.TrimSpace(rateText)
+
+	// Update the regex to match "(1-XXXXXX)(kbps)"
+	re := regexp.MustCompile(`\(?1-(\d+)\)?\(kbps\)`)
+
 	matches := re.FindStringSubmatch(rateText)
+
 	if len(matches) < 2 {
 		return 0, fmt.Errorf("failed to extract rate information from text: %s", rateText)
 	}
@@ -215,10 +246,6 @@ func stormTypeToID(stormType string) string {
 	default:
 		return "3" // Default to "Broadcast"
 	}
-}
-
-func intToBackendPort(port int) string {
-	return fmt.Sprintf("Port %d", port)
 }
 
 // GetJumboFrame retrieves the current Jumbo Frame configuration from the HTML page.
