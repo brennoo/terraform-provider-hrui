@@ -4,7 +4,7 @@ import "github.com/hashicorp/terraform-plugin-framework/types"
 
 // stormControlModel represents the resource's state.
 type stormControlModel struct {
-	Port      types.Int64  `tfsdk:"port"`
+	Port      types.String `tfsdk:"port"`
 	StormType types.String `tfsdk:"storm_type"`
 	State     types.Bool   `tfsdk:"state"`
 	Rate      types.Int64  `tfsdk:"rate"`

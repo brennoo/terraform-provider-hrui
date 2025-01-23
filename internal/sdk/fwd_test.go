@@ -8,6 +8,7 @@ import (
 )
 
 func TestGetStormControlStatus(t *testing.T) {
+	// Mock storm control table response
 	mockHTML := `
 		<table border="1">
 			<tr>
@@ -21,35 +22,58 @@ func TestGetStormControlStatus(t *testing.T) {
 				<td align="center">Port 1</td><td align="center">Off</td><td align="center">25000</td><td align="center">25000</td><td align="center">Off</td>
 			</tr>
 			<tr>
-				<td align="center">Port 4</td><td align="center">2490000</td><td align="center">Off</td><td align="center">Off</td><td align="center">Off</td>
+				<td align="center">Trunk1</td><td align="center">2490000</td><td align="center">Off</td><td align="center">Off</td><td align="center">Off</td>
 			</tr>
 		</table>`
 
+	// Mock port.cgi HTML response
+	mockPortHTMLResponse := `
+		<html>
+		<body>
+			<form action="/port.cgi" method="get">
+				<select name="portid">
+					<option value="1">Port 1</option>
+					<option value="2">Port 2</option>
+					<option value="3">Trunk1</option>
+				</select>
+			</form>
+		</body>
+		</html>`
+
+	// Mock server with conditional response
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/port.cgi" {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(mockPortHTMLResponse))
+			return
+		}
 		if _, err := w.Write([]byte(mockHTML)); err != nil {
 			t.Fatalf("failed to write mock HTML response: %v", err)
 		}
 	}))
-
 	defer server.Close()
 
+	// Create the test client
 	client := &HRUIClient{HttpClient: server.Client(), URL: server.URL}
+
+	// Test GetStormControlStatus
 	config, err := client.GetStormControlStatus()
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
+	// Expected values
 	expected := StormControlConfig{
 		Entries: []StormControlEntry{
 			{
-				Port:                     1,
+				Port:                     "Port 1", // Using name as string
 				BroadcastRateKbps:        nil,
 				KnownMulticastRateKbps:   intPointer(25000),
 				UnknownUnicastRateKbps:   intPointer(25000),
 				UnknownMulticastRateKbps: nil,
 			},
 			{
-				Port:                     4,
+				Port:                     "Trunk1", // Using name as string
 				BroadcastRateKbps:        intPointer(2490000),
 				KnownMulticastRateKbps:   nil,
 				UnknownUnicastRateKbps:   nil,
@@ -58,7 +82,7 @@ func TestGetStormControlStatus(t *testing.T) {
 		},
 	}
 
-	// Fixing comparison using helper to dereference pointers
+	// Ensure entries match expected values
 	for i, entry := range config.Entries {
 		if !compareStormControlEntry(entry, expected.Entries[i]) {
 			t.Errorf("entry %d: expected %+v, got %+v", i, expected.Entries[i], entry)
@@ -68,30 +92,70 @@ func TestGetStormControlStatus(t *testing.T) {
 
 func TestGetPortMaxRate(t *testing.T) {
 	mockHTML := `
-		<table border="1">
-			<tr>
-				<td align="center">Port 1</td>
-				<td align="center">(1-2500000)(kbps)</td>
-			</tr>
-		</table>`
+    <html>
+    <body>
+        <table border="1">
+            <tr>
+                <th align="center">Port</th>
+                <th align="center">Broadcast (kbps)</th>
+                <th align="center">Known Multicast (kbps)</th>
+                <th align="center">Unknown Unicast (kbps)</th>
+                <th align="center">Unknown Multicast (kbps)</th>
+            </tr>
+            <tr>
+                <td align="center">Port 1</td>
+                <td align="center">(1-2500000)(kbps)</td>
+                <td align="center">(1-25000)(kbps)</td>
+                <td align="center">(1-50000)(kbps)</td>
+                <td align="center">(1-100000)(kbps)</td>
+            </tr>
+            <tr>
+                <td align="center">Port 2</td>
+                <td align="center">(1-2490000)(kbps)</td>
+                <td align="center">Off</td>
+                <td align="center">Off</td>
+                <td align="center">(1-50000)(kbps)</td>
+            </tr>
+        </table>
+    </body>
+    </html>`
 
+	// Mock HTTP server to serve the HTML
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if _, err := w.Write([]byte(mockHTML)); err != nil {
-			t.Fatalf("failed to write mock HTML response: %v", err)
+		_, err := w.Write([]byte(mockHTML))
+		if err != nil {
+			t.Errorf("failed to write response: %v", err)
 		}
 	}))
-
 	defer server.Close()
 
 	client := &HRUIClient{HttpClient: server.Client(), URL: server.URL}
-	maxRate, err := client.GetPortMaxRate(1)
+
+	// Test case: Valid port (Port 1)
+	rate, err := client.GetPortMaxRate("Port 1")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
+	if rate != 2500000 {
+		t.Errorf("expected rate 2500000, got %d", rate)
+	}
 
-	expectedRate := int64(2500000)
-	if maxRate != expectedRate {
-		t.Errorf("expected max rate %d, got %d", expectedRate, maxRate)
+	// Test case: Valid port (Port 2)
+	rate, err = client.GetPortMaxRate("Port 2")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if rate != 2490000 {
+		t.Errorf("expected rate 2490000, got %d", rate)
+	}
+
+	// Test case: Non-existent port (Port 3)
+	_, err = client.GetPortMaxRate("Port 3")
+	if err == nil {
+		t.Fatal("expected an error, received none")
+	}
+	if !strings.Contains(err.Error(), "rate information not found for port 'Port 3'") {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 
@@ -109,6 +173,7 @@ func compareStormControlEntry(a, b StormControlEntry) bool {
 		comparePointers(a.UnknownMulticastRateKbps, b.UnknownMulticastRateKbps)
 }
 
+// Helper function to compare int pointers.
 func comparePointers(a, b *int) bool {
 	if a == nil && b == nil {
 		return true

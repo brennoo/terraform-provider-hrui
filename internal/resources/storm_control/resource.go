@@ -8,8 +8,8 @@ import (
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -50,16 +50,19 @@ func (r *stormControlResource) Schema(_ context.Context, _ resource.SchemaReques
 	resp.Schema = schema.Schema{
 		Description: "Resource for managing storm control settings on HRUI devices.",
 		Attributes: map[string]schema.Attribute{
-			"port": schema.Int64Attribute{
-				Description: "The port number to enable storm control on. Changing this will recreate the resource.",
+			"port": schema.StringAttribute{
+				Description: "The port name to enable storm control on. Changing this will recreate the resource.",
 				Required:    true,
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.RequiresReplace(),
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"storm_type": schema.StringAttribute{
 				Description: fmt.Sprintf("The type of traffic to control. Options: %v.", strings.Join(validStormTypes, ", ")),
 				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"state": schema.BoolAttribute{
 				Description: "Whether storm control is enabled (`true`) or disabled (`false`).",
@@ -89,14 +92,12 @@ func (r *stormControlResource) Configure(ctx context.Context, req resource.Confi
 func (r *stormControlResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data stormControlModel
 	diags := req.Plan.Get(ctx, &data)
-	if diags != nil {
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
-	maxRate, err := r.client.GetPortMaxRate(int(data.Port.ValueInt64()))
+	maxRate, err := r.client.GetPortMaxRate(data.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to fetch maximum rate", err.Error())
 		return
@@ -109,7 +110,7 @@ func (r *stormControlResource) Create(ctx context.Context, req resource.CreateRe
 
 	err = r.client.SetStormControlConfig(
 		data.StormType.ValueString(),
-		[]int{int(data.Port.ValueInt64())},
+		[]string{data.Port.ValueString()},
 		data.State.ValueBool(),
 		toIntPointer(data.Rate),
 	)
@@ -125,11 +126,9 @@ func (r *stormControlResource) Create(ctx context.Context, req resource.CreateRe
 func (r *stormControlResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var state stormControlModel
 	diags := req.State.Get(ctx, &state)
-	if diags != nil {
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
 	config, err := r.client.GetStormControlStatus()
@@ -138,7 +137,7 @@ func (r *stormControlResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
-	maxRate, err := r.client.GetPortMaxRate(int(state.Port.ValueInt64()))
+	maxRate, err := r.client.GetPortMaxRate(state.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to fetch max rate for port", err.Error())
 		return
@@ -148,7 +147,7 @@ func (r *stormControlResource) Read(ctx context.Context, req resource.ReadReques
 	isEntryFound := false
 
 	for _, entry := range config.Entries {
-		if entry.Port == int(state.Port.ValueInt64()) {
+		if entry.Port == state.Port.ValueString() {
 			isEntryFound = true
 			switch strings.ToLower(state.StormType.ValueString()) {
 			case stormTypeBroadcast:
@@ -164,7 +163,6 @@ func (r *stormControlResource) Read(ctx context.Context, req resource.ReadReques
 		}
 	}
 
-	// Check if we found a matching entry and handle nil matchingRate
 	if !isEntryFound || matchingRate == nil || isStormControlDisabled(matchingRate, maxRate) {
 		state.State = types.BoolValue(false)
 		state.Rate = types.Int64Null()
@@ -180,14 +178,12 @@ func (r *stormControlResource) Read(ctx context.Context, req resource.ReadReques
 func (r *stormControlResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var plan stormControlModel
 	diags := req.Plan.Get(ctx, &plan)
-	if diags != nil {
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
-	maxRate, err := r.client.GetPortMaxRate(int(plan.Port.ValueInt64()))
+	maxRate, err := r.client.GetPortMaxRate(plan.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to fetch maximum rate", err.Error())
 		return
@@ -200,7 +196,7 @@ func (r *stormControlResource) Update(ctx context.Context, req resource.UpdateRe
 
 	err = r.client.SetStormControlConfig(
 		plan.StormType.ValueString(),
-		[]int{int(plan.Port.ValueInt64())},
+		[]string{plan.Port.ValueString()},
 		plan.State.ValueBool(),
 		toIntPointer(plan.Rate),
 	)
@@ -216,25 +212,32 @@ func (r *stormControlResource) Update(ctx context.Context, req resource.UpdateRe
 func (r *stormControlResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var state stormControlModel
 	diags := req.State.Get(ctx, &state)
-	if diags != nil {
-		resp.Diagnostics.Append(diags...)
-		if resp.Diagnostics.HasError() {
-			return
-		}
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
 	}
 
 	err := r.client.SetStormControlConfig(
 		state.StormType.ValueString(),
-		[]int{int(state.Port.ValueInt64())},
-		false, // Disable storm control
-		nil,   // Reset to default (rate not provided)
+		[]string{state.Port.ValueString()},
+		false,
+		nil,
 	)
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to reset storm control configuration", err.Error())
 	}
 }
 
-// Validate Storm Control Rate.
+// toIntPointer converts a types.Int64 to *int64.
+func toIntPointer(value types.Int64) *int64 {
+	if !value.IsNull() {
+		v := value.ValueInt64()
+		return &v
+	}
+	return nil
+}
+
+// validateStormControlRate validates the rate for storm control.
 func validateStormControlRate(rate int64, maxRate int64) error {
 	if rate == 0 || rate == maxRate {
 		return fmt.Errorf(
@@ -249,12 +252,4 @@ func validateStormControlRate(rate int64, maxRate int64) error {
 
 func isStormControlDisabled(rate *int, maxRate int64) bool {
 	return rate == nil || int64(*rate) == 0 || int64(*rate) == maxRate
-}
-
-func toIntPointer(value types.Int64) *int64 {
-	if !value.IsNull() {
-		v := value.ValueInt64()
-		return &v
-	}
-	return nil
 }
