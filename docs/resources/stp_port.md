@@ -1,31 +1,21 @@
 ---
 page_title: "hrui_stp_port (Resource)"
 description: |-
-  Manages STP Port configuration
+  Manages STP Port configuration.
 ---
 
 # hrui_stp_port (Resource)
 
-Manages STP Port configuration
+Manages STP Port configuration.
 
 ## Example Usage
 
 ```terraform
-# Example usage of the stp_port resource
 resource "stp_port" "example" {
-  # The port ID for the physical switch port
-  port = 10
-
-  # Desired STP path cost for the port
+  port      = "Port 1"
   path_cost = 200
-
-  # The STP port priority
-  priority = 128
-
-  # STP Edge port configuration
-  edge = "False"
-
-  # Other attributes like `state`, and `role` are computed
+  priority  = 128
+  edge      = "False"
 }
 ```
 
@@ -36,7 +26,7 @@ resource "stp_port" "example" {
 
 - `edge` (String) Edge port setting, used to designate whether the port connects to an end device ('True') or another switch ('False').
 - `path_cost` (Number) The desired STP path cost for the port.
-- `port` (Number) Port ID representing the physical switch port.
+- `port` (String) The port name to configure STP. Changing this will recreate the resource.
 - `priority` (Number) The STP port priority, affecting the port's contribution to the spanning-tree root bridge decision.
 
 ### Read-Only

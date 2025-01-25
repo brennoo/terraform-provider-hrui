@@ -5,8 +5,11 @@ import (
 	"fmt"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -33,11 +36,14 @@ func (r *stpPortResource) Metadata(_ context.Context, req resource.MetadataReque
 // Schema returns the schema definition for the resource.
 func (r *stpPortResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages STP Port configuration",
+		Description: "Manages STP Port configuration.",
 		Attributes: map[string]schema.Attribute{
-			"port": schema.Int64Attribute{
-				Description: "Port ID representing the physical switch port.",
+			"port": schema.StringAttribute{
+				Description: "The port name to configure STP. Changing this will recreate the resource.",
 				Required:    true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"path_cost": schema.Int64Attribute{
 				Description: "The desired STP path cost for the port.",
@@ -99,7 +105,7 @@ func (r *stpPortResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	err := r.client.SetSTPPortSettings(
-		int(plan.Port.ValueInt64()),
+		plan.Port.ValueString(),
 		int(plan.PathCost.ValueInt64()),
 		int(plan.Priority.ValueInt64()),
 		plan.P2P.ValueString(),
@@ -108,27 +114,15 @@ func (r *stpPortResource) Create(ctx context.Context, req resource.CreateRequest
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Creating STP Port",
-			fmt.Sprintf("Failed to create/update port %d: %v", plan.Port.ValueInt64(), err),
+			fmt.Sprintf("Failed to configure STP settings for port %s: %v", plan.Port.ValueString(), err),
 		)
 		return
 	}
 
-	stpPort, err := r.client.GetSTPPort(int(plan.Port.ValueInt64()))
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Reading STP Port",
-			fmt.Sprintf("Failed to retrieve port %d after creation: %v", plan.Port.ValueInt64(), err),
-		)
-		return
-	}
+	// Fetch and set the state
+	r.readPortState(plan.Port.ValueString(), &plan, &resp.Diagnostics)
 
-	plan.State = types.StringValue(stpPort.State)
-	plan.Role = types.StringValue(stpPort.Role)
-	plan.PathCost = types.Int64Value(int64(stpPort.PathCostConfig))
-	plan.Priority = types.Int64Value(int64(stpPort.Priority))
-	plan.P2P = types.StringValue(stpPort.P2PConfig)
-	plan.Edge = types.StringValue(stpPort.EdgeConfig)
-
+	// Update the state
 	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 }
@@ -143,22 +137,10 @@ func (r *stpPortResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	stpPort, err := r.client.GetSTPPort(int(state.Port.ValueInt64()))
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Reading STP Port",
-			fmt.Sprintf("Failed to read port %d from backend: %v", state.Port.ValueInt64(), err),
-		)
-		return
-	}
+	// Fetch and set the updated state
+	r.readPortState(state.Port.ValueString(), &state, &resp.Diagnostics)
 
-	state.State = types.StringValue(stpPort.State)
-	state.Role = types.StringValue(stpPort.Role)
-	state.PathCost = types.Int64Value(int64(stpPort.PathCostConfig))
-	state.Priority = types.Int64Value(int64(stpPort.Priority))
-	state.P2P = types.StringValue(stpPort.P2PConfig)
-	state.Edge = types.StringValue(stpPort.EdgeConfig)
-
+	// Write the updated state back to Terraform
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 }
@@ -173,7 +155,7 @@ func (r *stpPortResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 
 	err := r.client.SetSTPPortSettings(
-		int(plan.Port.ValueInt64()),
+		plan.Port.ValueString(),
 		int(plan.PathCost.ValueInt64()),
 		int(plan.Priority.ValueInt64()),
 		plan.P2P.ValueString(),
@@ -182,27 +164,15 @@ func (r *stpPortResource) Update(ctx context.Context, req resource.UpdateRequest
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating STP Port",
-			fmt.Sprintf("Failed to update port %d: %v", plan.Port.ValueInt64(), err),
+			fmt.Sprintf("Failed to update STP settings for port %s: %v", plan.Port.ValueString(), err),
 		)
 		return
 	}
 
-	stpPort, err := r.client.GetSTPPort(int(plan.Port.ValueInt64()))
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Reading STP Port",
-			fmt.Sprintf("Failed to retrieve port %d after update: %v", plan.Port.ValueInt64(), err),
-		)
-		return
-	}
+	// Fetch and set the updated state
+	r.readPortState(plan.Port.ValueString(), &plan, &resp.Diagnostics)
 
-	plan.State = types.StringValue(stpPort.State)
-	plan.Role = types.StringValue(stpPort.Role)
-	plan.PathCost = types.Int64Value(int64(stpPort.PathCostConfig))
-	plan.Priority = types.Int64Value(int64(stpPort.Priority))
-	plan.P2P = types.StringValue(stpPort.P2PConfig)
-	plan.Edge = types.StringValue(stpPort.EdgeConfig)
-
+	// Update the state
 	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 }
@@ -217,7 +187,7 @@ func (r *stpPortResource) Delete(ctx context.Context, req resource.DeleteRequest
 	}
 
 	err := r.client.SetSTPPortSettings(
-		int(state.Port.ValueInt64()),
+		state.Port.ValueString(),
 		20000, // Default path cost
 		128,   // Default priority
 		"Auto",
@@ -226,10 +196,29 @@ func (r *stpPortResource) Delete(ctx context.Context, req resource.DeleteRequest
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Resetting STP Port",
-			fmt.Sprintf("Failed to reset STP port %d: %v", state.Port.ValueInt64(), err),
+			fmt.Sprintf("Failed to reset STP settings for port %s: %v", state.Port.ValueString(), err),
 		)
 		return
 	}
 
 	resp.State.RemoveResource(ctx)
+}
+
+// Helper function to fetch the port state and set it in the model.
+func (r *stpPortResource) readPortState(portName string, model *stpPortModel, diagnostics *diag.Diagnostics) {
+	stpPort, err := r.client.GetSTPPort(portName)
+	if err != nil {
+		diagnostics.AddError(
+			"Error Reading STP Port",
+			fmt.Sprintf("Failed to retrieve STP settings for port %s: %v", portName, err),
+		)
+		return
+	}
+
+	model.State = types.StringValue(stpPort.State)
+	model.Role = types.StringValue(stpPort.Role)
+	model.PathCost = types.Int64Value(int64(stpPort.PathCostConfig))
+	model.Priority = types.Int64Value(int64(stpPort.Priority))
+	model.P2P = types.StringValue(stpPort.P2PConfig)
+	model.Edge = types.StringValue(stpPort.EdgeConfig)
 }
