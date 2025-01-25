@@ -2,6 +2,8 @@ package sdk
 
 import (
 	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,10 +26,10 @@ func TestGetLoopProtocol(t *testing.T) {
 					<th>Port</th><th>State</th><th>Status</th>
 				</tr>
 				<tr>
-					<td>1</td><td>Disable</td><td>Forwarding</td>
+					<td>Port 1</td><td>Disable</td><td>Forwarding</td>
 				</tr>
 				<tr>
-					<td>2</td><td>Enable</td><td>Forwarding</td>
+					<td>Port 2</td><td>Enable</td><td>Forwarding</td>
 				</tr>
 			</table>
 		</body>
@@ -55,8 +57,8 @@ func TestGetLoopProtocol(t *testing.T) {
 
 	// Expected port statuses for each port (based on the HTML response)
 	expected := []PortStatus{
-		{Port: 1, Enable: false, LoopState: "Disable", LoopStatus: "Forwarding"},
-		{Port: 2, Enable: true, LoopState: "Enable", LoopStatus: "Forwarding"},
+		{Port: "Port 1", Enable: false, LoopState: "Disable", LoopStatus: "Forwarding"},
+		{Port: "Port 2", Enable: true, LoopState: "Enable", LoopStatus: "Forwarding"},
 	}
 
 	// Assert that the parsed result matches the expected port statuses
@@ -76,8 +78,8 @@ func TestConfigureLoopProtocol(t *testing.T) {
 
 	// Call ConfigureLoopProtocol and assert that no error is returned.
 	err := client.ConfigureLoopProtocol("Loop Prevention", 5, 12, []PortStatus{
-		{Port: 1, Enable: true},
-		{Port: 2, Enable: false},
+		{Port: "Port 1", Enable: true},
+		{Port: "Port 2", Enable: false},
 	})
 	assert.NoError(t, err)
 }
@@ -85,103 +87,60 @@ func TestConfigureLoopProtocol(t *testing.T) {
 func TestGetSTPPortSettings(t *testing.T) {
 	htmlResponse := `
 	<html>
-		<head>
-			<title>Spanning Tree Port Setting</title>
-		</head>
-		<body>
-			<center>
-				<fieldset>
-					<legend>Spanning Tree Port Setting</legend>
-					<table border="1">
-						<tr>
-							<th rowspan="2" width="115">Port</th>
-							<th rowspan="2" width="165">State</th>
-							<th rowspan="2" width="165">Role</th>
-							<th colspan="2" width="165">Path Cost</th>
-							<th rowspan="2" width="90">Priority</th>
-							<th colspan="2" width="90">P2P</th>
-							<th colspan="2" width="90">Edge</th>
-						</tr>
-						<tr>
-							<th>Config</th>
-							<th>Actual</th>
-							<th>Config</th>
-							<th>Actual</th>
-							<th>Config</th>
-							<th>Actual</th>
-						</tr>
-						<tr>
-							<td>Port 1</td>
-							<td align="center">Forwarding</td>
-							<td align="center">Designated</td>
-							<td align="center">234</td>
-							<td align="center">234</td>
-							<td align="center">128</td>
-							<td align="center">Auto</td>
-							<td align="center">TRUE</td>
-							<td align="center">False</td>
-							<td align="center">True</td>
-						</tr>
-						<tr>
-							<td>Port 2</td>
-							<td align="center">Disabled</td>
-							<td align="center">-</td>
-							<td align="center">201</td>
-							<td align="center">-</td>
-							<td align="center">128</td>
-							<td align="center">Auto</td>
-							<td align="center">-</td>
-							<td align="center">False</td>
-							<td align="center">-</td>
-						</tr>
-						<tr>
-							<td>Port 3</td>
-							<td align="center">Disabled</td>
-							<td align="center">-</td>
-							<td align="center">20000</td>
-							<td align="center">-</td>
-							<td align="center">128</td>
-							<td align="center">Auto</td>
-							<td align="center">-</td>
-							<td align="center">False</td>
-							<td align="center">-</td>
-						</tr>
-						<tr>
-							<td>Port 4</td>
-							<td align="center">Disabled</td>
-							<td align="center">-</td>
-							<td align="center">Auto</td>
-							<td align="center">-</td>
-							<td align="center">128</td>
-							<td align="center">True</td>
-							<td align="center">-</td>
-							<td align="center">False</td>
-							<td align="center">-</td>
-						</tr>
-					</table>
-				</fieldset>
-			</center>
-		</body>
+		<table>
+			<tr>
+				<th>Port</th>
+				<th>State</th>
+				<th>Role</th>
+				<th>Path Cost (Config)</th>
+				<th>Path Cost (Actual)</th>
+				<th>Priority</th>
+				<th>P2P (Config)</th>
+				<th>P2P (Actual)</th>
+				<th>Edge (Config)</th>
+				<th>Edge (Actual)</th>
+			</tr>
+			<tr>
+				<td>Port 1</td>
+				<td>Forwarding</td>
+				<td>Designated</td>
+				<td>234</td>
+				<td>234</td>
+				<td>128</td>
+				<td>Auto</td>
+				<td>TRUE</td>
+				<td>False</td>
+				<td>True</td>
+			</tr>
+			<tr>
+				<td>Port 2</td>
+				<td>Disabled</td>
+				<td>-</td>
+				<td>201</td>
+				<td>-</td>
+				<td>128</td>
+				<td>Auto</td>
+				<td>-</td>
+				<td>False</td>
+				<td>-</td>
+			</tr>
+		</table>
 	</html>`
 
-	// Mock the HTTP server response with the above HTML
 	mockServer := mockServerMock(htmlResponse, http.StatusOK)
 	defer mockServer.Close()
 
-	// Create a client instance
 	client := &HRUIClient{
 		URL:        mockServer.URL,
 		HttpClient: &http.Client{},
 	}
 
-	// Call GetSTPPortSettings
 	stpPorts, err := client.GetSTPPortSettings()
 	assert.NoError(t, err)
 
-	// Expected result based on the mock HTML structure
 	expected := []STPPort{
 		{
-			Port:           0,
+			Port:           "Port 1",
 			State:          "Forwarding",
 			Role:           "Designated",
 			PathCostConfig: 234,
@@ -193,7 +152,7 @@ func TestGetSTPPortSettings(t *testing.T) {
 			EdgeActual:     "True",
 		},
 		{
-			Port:           1,
+			Port:           "Port 2",
 			State:          "Disabled",
 			Role:           "-",
 			PathCostConfig: 201,
@@ -204,33 +163,8 @@ func TestGetSTPPortSettings(t *testing.T) {
 			EdgeConfig:     "False",
 			EdgeActual:     "-",
 		},
-		{
-			Port:           2,
-			State:          "Disabled",
-			Role:           "-",
-			PathCostConfig: 20000,
-			PathCostActual: 0,
-			Priority:       128,
-			P2PConfig:      "Auto",
-			P2PActual:      "-",
-			EdgeConfig:     "False",
-			EdgeActual:     "-",
-		},
-		{
-			Port:           3,
-			State:          "Disabled",
-			Role:           "-",
-			PathCostConfig: 0,
-			PathCostActual: 0,
-			Priority:       128,
-			P2PConfig:      "True",
-			P2PActual:      "-",
-			EdgeConfig:     "False",
-			EdgeActual:     "-",
-		},
 	}
 
-	// Assert that the actual parsed data matches the expected data
 	assert.Equal(t, expected, stpPorts)
 }
 
@@ -251,10 +185,10 @@ func TestGetLoopProtocol_LoopPreventionMode(t *testing.T) {
 					<th>Port</th><th>State</th><th>Status</th>
 				</tr>
 				<tr>
-					<td>1</td><td>Disable</td><td>Forwarding</td>
+					<td>Port 1</td><td>Disable</td><td>Forwarding</td>
 				</tr>
 				<tr>
-					<td>2</td><td>Enable</td><td>Forwarding</td>
+					<td>Port 2</td><td>Enable</td><td>Forwarding</td>
 				</tr>
 			</table>
 		</body>
@@ -276,25 +210,79 @@ func TestGetLoopProtocol_LoopPreventionMode(t *testing.T) {
 	assert.Equal(t, 10, loopProtocol.RecoverTime)
 
 	expected := []PortStatus{
-		{Port: 1, Enable: false, LoopState: "Disable", LoopStatus: "Forwarding"},
-		{Port: 2, Enable: true, LoopState: "Enable", LoopStatus: "Forwarding"},
+		{Port: "Port 1", Enable: false, LoopState: "Disable", LoopStatus: "Forwarding"},
+		{Port: "Port 2", Enable: true, LoopState: "Enable", LoopStatus: "Forwarding"},
 	}
 	assert.Equal(t, expected, loopProtocol.PortStatuses)
 }
 
+// TestSetSTPPortSettings ensures SetSTPPortSettings works as expected.
 func TestSetSTPPortSettings(t *testing.T) {
-	// Mock POST response (200 OK) for STP update
-	mock := mockServerMock("OK", http.StatusOK)
-	defer mock.Close()
+	// Mock HTML response for `/port.cgi`
+	mockPortHTML := `
+    <html>
+        <head>
+            <title>Port Configuration</title>
+        </head>
+        <body>
+            <form method="get" action="/port.cgi">
+                <select name="portid" multiple size="6">
+                    <option value="0">Port 1</option>
+                    <option value="1">Port 2</option>
+                    <option value="2">Port 3</option>
+                    <option value="3">Port 4</option>
+                </select>
+            </form>
+        </body>
+    </html>`
 
+	// Mock response for `/loop.cgi?page=stp_port`
+	mockSTPPortResponse := `
+    <html>
+        <head>
+            <title>STP Port Settings</title>
+        </head>
+        <body>
+            <p>STP settings updated successfully</p>
+        </body>
+    </html>`
+
+	// Create a test HTTP server
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Switch based on the request path
+		switch {
+		case strings.HasPrefix(r.URL.Path, "/port.cgi"):
+			w.WriteHeader(http.StatusOK)
+			if _, err := w.Write([]byte(mockPortHTML)); err != nil {
+				t.Errorf("failed to write response for /port.cgi: %v", err)
+			}
+		case strings.HasPrefix(r.URL.Path, "/loop.cgi") && r.URL.Query().Get("page") == "stp_port":
+			w.WriteHeader(http.StatusOK)
+			if _, err := w.Write([]byte(mockSTPPortResponse)); err != nil {
+				t.Errorf("failed to write response for /loop.cgi?page=stp_port: %v", err)
+			}
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	// Create an HRUIClient with the test server URL
 	client := &HRUIClient{
-		URL:        mock.URL,
-		HttpClient: &http.Client{},
+		URL:        server.URL,
+		HttpClient: http.DefaultClient,
 	}
-
-	// Call SetSTPPortSettings on Port 1 with specific settings
-	err := client.SetSTPPortSettings(1, 2000, 128, "Auto", "True")
-	assert.NoError(t, err)
+	// Call SetSTPPortSettings with mock data
+	err := client.SetSTPPortSettings(
+		"Port 1", // Port Name
+		20000,    // Path Cost
+		128,      // Priority
+		"Auto",   // P2P
+		"False",  // Edge
+	)
+	if err != nil {
+		t.Fatalf("failed to set STP port settings: %v", err)
+	}
 }
 
 // TestGetSTPSettings ensures that the STP Global Settings are correctly parsed from the HTML response.

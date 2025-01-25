@@ -6,7 +6,7 @@ import (
 
 // stpPortModel represents the configuration for a spanning tree protocol (STP) port.
 type stpPortModel struct {
-	Port     types.Int64  `tfsdk:"port"`
+	Port     types.String `tfsdk:"port"`
 	PathCost types.Int64  `tfsdk:"path_cost"`
 	Priority types.Int64  `tfsdk:"priority"`
 	P2P      types.String `tfsdk:"p2p"`

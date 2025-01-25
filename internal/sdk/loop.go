@@ -30,7 +30,7 @@ type LoopProtocol struct {
 
 // PortStatus represents the status of a port under Loop Protocol control.
 type PortStatus struct {
-	Port       int    // Port number
+	Port       string // Port name
 	Enable     bool   // Whether Loop Prevention is enabled on this port
 	LoopState  string // Loop state ("Enable", "Disable")
 	LoopStatus string // Loop operation status ("Forwarding", "Blocked", etc.)
@@ -55,7 +55,7 @@ type STPGlobalSettings struct {
 
 // STPPort represents a switch port's STP settings.
 type STPPort struct {
-	Port           int    // Port ID
+	Port           string // Port name
 	State          string // Port operational state (e.g., Disabled, Forwarding)
 	Role           string // Port role in STP (e.g., Designated, Alternate)
 	PathCostConfig int    // Configured Path Cost
@@ -207,15 +207,12 @@ func (c *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 		return nil, fmt.Errorf("failed to parse HTML: %w", err)
 	}
 
-	// Parsing options for STP integers (without offset)
+	// Parsing options for STP integers
 	parseSTPIntOptions := []ParseOption{
 		WithDefaultValue(0),
 		WithSpecialCases("Auto", "-"),
 		WithLogging(),
 	}
-
-	// Parsing options for port number (with offset)
-	parsePortOptions := append(parseSTPIntOptions, WithOffset(-1))
 
 	// Target the last table (STP settings table)
 	table := doc.Find("table").Last()
@@ -224,8 +221,9 @@ func (c *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 	rows := table.Find("tr")
 	var stpPorts []STPPort
 	rows.Each(func(i int, row *goquery.Selection) {
-		// Skip the header rows (first two rows)
-		if i < 2 {
+		// Dynamically detect and skip header rows
+		if row.Find("th").Length() > 0 {
+			log.Printf("[DEBUG] Skipping header row %d", i)
 			return
 		}
 
@@ -237,12 +235,9 @@ func (c *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 		}
 
 		// Parse the STP Port entry
-		portText := tds.Eq(0).Text()
-		portStr := strings.TrimPrefix(portText, "Port ")
-		port := parseInt(portStr, parsePortOptions...)
-
+		port := strings.TrimSpace(tds.Eq(0).Text())
 		stpPort := STPPort{
-			Port:           *port,
+			Port:           port,
 			State:          strings.TrimSpace(tds.Eq(1).Text()),
 			Role:           strings.TrimSpace(tds.Eq(2).Text()),
 			PathCostConfig: *parseInt(tds.Eq(3).Text(), parseSTPIntOptions...),
@@ -253,6 +248,8 @@ func (c *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 			EdgeConfig:     normalizeBoolString(tds.Eq(8).Text()),
 			EdgeActual:     normalizeBoolString(tds.Eq(9).Text()),
 		}
+
+		log.Printf("[DEBUG] Parsed Port: %+v", stpPort)
 		stpPorts = append(stpPorts, stpPort)
 	})
 
@@ -263,9 +260,17 @@ func (c *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 	return stpPorts, nil
 }
 
-// SetSTPPortSettings updates the STP settings for a specific port.
-func (c *HRUIClient) SetSTPPortSettings(portID, pathCost, priority int, p2p, edge string) error {
+// SetSTPPortSettings updates the STP settings for a specific port by its name.
+func (c *HRUIClient) SetSTPPortSettings(portName string, pathCost, priority int, p2p, edge string) error {
+	portID, err := c.GetPortByName(portName)
+	if err != nil {
+		return fmt.Errorf("failed to resolve port ID for port '%s': %w", portName, err)
+	}
+
+	// Construct the STP settings URL
 	stpURL := c.URL + "/loop.cgi?page=stp_port"
+
+	// Prepare the form data
 	formData := url.Values{
 		"cmd":      {"stp_port"},
 		"portid":   {strconv.Itoa(portID)},
@@ -276,28 +281,29 @@ func (c *HRUIClient) SetSTPPortSettings(portID, pathCost, priority int, p2p, edg
 		"submit":   {"+++Apply+++"},
 	}
 
-	_, err := c.FormRequest(stpURL, formData)
+	// Send the request to update STP settings
+	_, err = c.FormRequest(stpURL, formData)
 	if err != nil {
-		return fmt.Errorf("failed to update STP port settings: %w", err)
+		return fmt.Errorf("failed to update STP port settings for port '%s': %w", portName, err)
 	}
 
 	return nil
 }
 
 // GetSTPPort fetches a single STP port by its ID from the backend.
-func (c *HRUIClient) GetSTPPort(portID int) (*STPPort, error) {
+func (c *HRUIClient) GetSTPPort(portName string) (*STPPort, error) {
 	ports, err := c.GetSTPPortSettings()
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch STP port settings: %w", err)
 	}
 
 	for _, port := range ports {
-		if port.Port == portID {
+		if port.Port == portName {
 			return &port, nil
 		}
 	}
 
-	return nil, fmt.Errorf("port with ID %d not found", portID)
+	return nil, fmt.Errorf("port with name '%s' not found", portName)
 }
 
 func parsePortStatuses(doc *goquery.Document) []PortStatus {
@@ -313,15 +319,15 @@ func parsePortStatuses(doc *goquery.Document) []PortStatus {
 			return
 		}
 
-		portStr := strings.TrimSpace(tds.Eq(0).Text())
-		port := parseInt(portStr)
+		port := strings.TrimSpace(tds.Eq(0).Text())
 
+		// Extract other fields
 		loopState := strings.TrimSpace(tds.Eq(1).Text())
 		loopStatus := strings.TrimSpace(tds.Eq(2).Text())
 		enable := loopState == "Enable"
 
 		portStatuses = append(portStatuses, PortStatus{
-			Port:       *port,
+			Port:       port,
 			Enable:     enable,
 			LoopState:  loopState,
 			LoopStatus: loopStatus,
