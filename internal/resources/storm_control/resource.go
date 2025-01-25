@@ -163,7 +163,17 @@ func (r *stormControlResource) Read(ctx context.Context, req resource.ReadReques
 		}
 	}
 
-	if !isEntryFound || matchingRate == nil || isStormControlDisabled(matchingRate, maxRate) {
+	if !isEntryFound {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
+	if matchingRate == nil {
+		if state.Rate.IsNull() || state.Rate.IsUnknown() {
+			state.State = types.BoolValue(false)
+			state.Rate = types.Int64Null()
+		}
+	} else if isStormControlDisabled(matchingRate, maxRate) {
 		state.State = types.BoolValue(false)
 		state.Rate = types.Int64Null()
 	} else {
