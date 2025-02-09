@@ -102,7 +102,7 @@ func (d *vlanVIDDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	var foundConfig *sdk.PortVLANConfig
 	found := false
 	for _, config := range configs {
-		if config.Name == portName {
+		if config.PortName == portName {
 			foundConfig = config
 			found = true
 			break

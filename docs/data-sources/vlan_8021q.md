@@ -25,9 +25,9 @@ data "hrui_vlan_8021q" "example" {
 
 ### Read-Only
 
-- `member_ports` (List of Number) List of all member ports for the queried VLAN.
+- `member_ports` (List of String) List of all member ports for the queried VLAN.
 - `name` (String) The name of the queried VLAN.
-- `tagged_ports` (List of Number) List of tagged ports for the queried VLAN.
-- `untagged_ports` (List of Number) List of untagged ports for the queried VLAN.
+- `tagged_ports` (List of String) List of tagged ports for the queried VLAN.
+- `untagged_ports` (List of String) List of untagged ports for the queried VLAN.
 
 

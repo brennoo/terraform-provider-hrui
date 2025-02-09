@@ -227,7 +227,7 @@ func (r *vlanVIDResource) Delete(ctx context.Context, req resource.DeleteRequest
 
 	// Reset the port configuration to default (PVID = 1, AcceptFrameType = "All")
 	portConfig := &sdk.PortVLANConfig{
-		Name:            portName,
+		PortName:        portName,
 		PVID:            1,
 		AcceptFrameType: "All",
 	}

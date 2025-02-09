@@ -3,7 +3,7 @@ resource "hrui_vlan_8021q" "example" {
   vlan_id = 10
   name    = "vlan10"
 
-  untagged_ports = [2, 3]
-  tagged_ports   = [4, 5]
+  untagged_ports = ["Port 1", "Port 2"]
+  tagged_ports   = ["Trunk1"]
 
 }
