@@ -12,51 +12,47 @@ import (
 type Vlan struct {
 	VlanID        int
 	Name          string
-	UntaggedPorts []int
-	TaggedPorts   []int
-	MemberPorts   []int
+	UntaggedPorts []string
+	TaggedPorts   []string
+	MemberPorts   []string
 }
 
 type PortVLANConfig struct {
 	PortID          int
-	Name            string
+	PortName        string
 	PVID            int
 	AcceptFrameType string
 }
 
-// AddVLAN creates or updates a VLAN on the switch, computing NotMemberPorts if needed.
-func (c *HRUIClient) AddVLAN(vlan *Vlan, totalPorts int) error {
+// AddVLAN creates or updates a VLAN on the switch.
+func (c *HRUIClient) AddVLAN(vlan *Vlan) error {
 	if c == nil {
 		return fmt.Errorf("HRUIClient is nil")
 	}
 
-	// Build the form data
+	portConfigs, err := c.ListPortVLANConfigs()
+	if err != nil {
+		return fmt.Errorf("failed to get port VLAN configurations: %w", err)
+	}
+
 	form := url.Values{}
 	form.Set("vid", fmt.Sprintf("%d", vlan.VlanID))
 	form.Set("name", vlan.Name)
 
-	// Set untagged, tagged or not member ports
-	for port := 1; port <= totalPorts; port++ {
-		formValue := "2" // Default: Not Member
-		if contains(vlan.UntaggedPorts, port) {
-			formValue = "0" // Untagged
-		} else if contains(vlan.TaggedPorts, port) {
-			formValue = "1" // Tagged
+	for _, portConfig := range portConfigs {
+		formValue := "2"
+
+		if containsString(vlan.UntaggedPorts, portConfig.PortName) {
+			formValue = "0"
+		} else if containsString(vlan.TaggedPorts, portConfig.PortName) {
+			formValue = "1"
 		}
 
-		form.Set(fmt.Sprintf("vlanPort_%d", port-1), formValue)
-	}
-
-	// Add additional MemberPorts if they are outside the total port range
-	for _, trunkPort := range vlan.MemberPorts {
-		if trunkPort > totalPorts {
-			form.Set(fmt.Sprintf("vlanPort_%d", trunkPort), "1")
-		}
+		form.Set(fmt.Sprintf("vlanPort_%d", portConfig.PortID), formValue)
 	}
 
 	vlanURL := fmt.Sprintf("%s/vlan.cgi?page=static", c.URL)
-
-	_, err := c.FormRequest(vlanURL, form)
+	_, err = c.FormRequest(vlanURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to create/update VLAN: %w", err)
 	}
@@ -64,8 +60,8 @@ func (c *HRUIClient) AddVLAN(vlan *Vlan, totalPorts int) error {
 	return nil
 }
 
-// Helper function to check if a slice contains an integer.
-func contains(slice []int, value int) bool {
+// Helper function to check if a slice contains a string.
+func containsString(slice []string, value string) bool {
 	for _, v := range slice {
 		if v == value {
 			return true
@@ -74,14 +70,13 @@ func contains(slice []int, value int) bool {
 	return false
 }
 
-// GetVLAN fetches a single VLAN by its VLAN ID by filtering results from ListVLANs.
+// GetVLAN fetches a single VLAN by its VLAN ID.
 func (c *HRUIClient) GetVLAN(vlanID int) (*Vlan, error) {
 	vlans, err := c.ListVLANs()
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch VLANs: %w", err)
 	}
 
-	// Search for the VLAN with the specified ID in the list of VLANs retrieved
 	for _, vlan := range vlans {
 		if vlan.VlanID == vlanID {
 			return vlan, nil
@@ -91,15 +86,13 @@ func (c *HRUIClient) GetVLAN(vlanID int) (*Vlan, error) {
 	return nil, fmt.Errorf("VLAN with ID %d not found", vlanID)
 }
 
-// ListVLANs fetches the list of VLANs, setting member ports directly instead of notmember ports.
+// ListVLANs fetches the list of VLANs using port names.
 func (c *HRUIClient) ListVLANs() ([]*Vlan, error) {
 	if c == nil {
 		return nil, fmt.Errorf("HRUIClient is nil")
 	}
 
-	// URL for VLAN page
 	vlanURL := fmt.Sprintf("%s/vlan.cgi?page=static", c.URL)
-
 	respBody, err := c.Request("GET", vlanURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch VLAN configuration from HRUI: %w", err)
@@ -112,30 +105,34 @@ func (c *HRUIClient) ListVLANs() ([]*Vlan, error) {
 
 	var vlans []*Vlan
 
-	// Select the table within the form with name "formVlanStatus"
 	doc.Find("form[name='formVlanStatus'] table tr").Each(func(i int, s *goquery.Selection) {
-		if i == 0 {
-			// Skip header row
+		if i == 0 { // Skip table header row
 			return
 		}
 
 		vlan := &Vlan{}
 
-		// Extract VLAN ID
-		vlanIDText := strings.TrimSpace(s.Find("td:nth-child(1)").Text())
+		// Extract VLAN ID from the <a> tag in the first table cell
+		vlanIDText := strings.TrimSpace(s.Find("td:nth-child(1) a").Text())
+		if vlanIDText == "" {
+			fmt.Println("Skipping row: VLAN ID not found")
+			return
+		}
+
 		vlanID, err := strconv.Atoi(vlanIDText)
 		if err != nil {
-			fmt.Printf("Error parsing VLAN ID: %v\n", err)
+			fmt.Printf("Error parsing VLAN ID (%s): %v\n", vlanIDText, err)
 			return
 		}
 		vlan.VlanID = vlanID
 
-		// Extract VLAN name
+		// Extract VLAN Name
 		vlan.Name = strings.TrimSpace(s.Find("td:nth-child(2)").Text())
-		// Extract port ranges
-		vlan.MemberPorts = c.parsePortRange(strings.TrimSpace(s.Find("td:nth-child(3)").Text()))
-		vlan.TaggedPorts = c.parsePortRange(strings.TrimSpace(s.Find("td:nth-child(4)").Text()))
-		vlan.UntaggedPorts = c.parsePortRange(strings.TrimSpace(s.Find("td:nth-child(5)").Text()))
+
+		// Extract port configurations
+		vlan.MemberPorts = c.ParsePortRange(strings.TrimSpace(s.Find("td:nth-child(3)").Text()))
+		vlan.TaggedPorts = c.ParsePortRange(strings.TrimSpace(s.Find("td:nth-child(4)").Text()))
+		vlan.UntaggedPorts = c.ParsePortRange(strings.TrimSpace(s.Find("td:nth-child(5)").Text()))
 
 		vlans = append(vlans, vlan)
 	})
@@ -162,7 +159,7 @@ func (c *HRUIClient) RemoveVLAN(vlanID int) error {
 	return nil
 }
 
-// ListPortVLANConfigs fetches the VLAN configuration for all ports on the switch.
+// ListPortVLANConfigs fetches the VLAN configuration for all ports.
 func (c *HRUIClient) ListPortVLANConfigs() ([]*PortVLANConfig, error) {
 	if c == nil {
 		return nil, fmt.Errorf("HRUIClient is nil")
@@ -188,7 +185,6 @@ func (c *HRUIClient) ListPortVLANConfigs() ([]*PortVLANConfig, error) {
 
 	rows := doc.Find("table").Last().Find("tr").Slice(1, goquery.ToEnd)
 
-	// Iterate over each row and extract the VLAN configuration
 	rows.Each(func(i int, s *goquery.Selection) {
 		config := &PortVLANConfig{}
 
@@ -198,9 +194,8 @@ func (c *HRUIClient) ListPortVLANConfigs() ([]*PortVLANConfig, error) {
 			fmt.Printf("Skipping row %d due to missing port name\n", i)
 			return
 		}
-		config.Name = portName
+		config.PortName = portName
 
-		// Use GetPortByName to fetch the numeric PortID for the resolved port name.
 		portID, err := c.GetPortByName(portName)
 		if err != nil {
 			fmt.Printf("Skipping row %d due to PortID resolution error for '%s': %v\n", i, portName, err)
@@ -208,7 +203,6 @@ func (c *HRUIClient) ListPortVLANConfigs() ([]*PortVLANConfig, error) {
 		}
 		config.PortID = portID
 
-		// Extract PVID
 		pvidText := strings.TrimSpace(s.Find("td:nth-child(2)").Text())
 		var pvid int
 		_, err = fmt.Sscanf(pvidText, "%d", &pvid)
@@ -218,10 +212,8 @@ func (c *HRUIClient) ListPortVLANConfigs() ([]*PortVLANConfig, error) {
 		}
 		config.PVID = pvid
 
-		// Extract Accepted Frame Type
 		config.AcceptFrameType = strings.TrimSpace(s.Find("td:nth-child(3)").Text())
 
-		// Append the parsed configuration to the slice
 		configs = append(configs, config)
 	})
 
@@ -256,13 +248,13 @@ func (c *HRUIClient) SetPortVLANConfig(config *PortVLANConfig) error {
 
 	// Resolve PortID if it's invalid or missing
 	if config.PortID <= 0 {
-		if config.Name == "" {
+		if config.PortName == "" {
 			return fmt.Errorf("invalid configuration: both PortID and Name are missing")
 		}
 
-		portID, err := c.GetPortByName(config.Name)
+		portID, err := c.GetPortByName(config.PortName)
 		if err != nil {
-			return fmt.Errorf("failed to resolve PortID for Name '%s': %w", config.Name, err)
+			return fmt.Errorf("failed to resolve PortID for Name '%s': %w", config.PortName, err)
 		}
 
 		config.PortID = portID
@@ -301,45 +293,37 @@ func (c *HRUIClient) SetPortVLANConfig(config *PortVLANConfig) error {
 	return nil
 }
 
-// parsePortRange dynamically resolves ports or ranges and maps them to integers.
-func (c *HRUIClient) parsePortRange(portRange string) []int {
-	if portRange == "-" || portRange == "" {
-		return []int{}
-	}
+func (c *HRUIClient) ParsePortRange(portStr string) []string {
+	ports := []string{}
+	entries := strings.Split(portStr, ",")
 
-	var result []int
-	for _, part := range strings.Split(portRange, ",") {
-		subParts := strings.TrimSpace(part)
+	for _, entry := range entries {
+		entry = strings.TrimSpace(entry)
 
-		// Check if the part is a trunk port (e.g., "Trunk1")
-		if strings.HasPrefix(subParts, "Trunk") {
-			// Retrieve trunk port ID dynamically
-			trunkPort, err := c.GetPortByName(subParts)
-			if err != nil {
-				// Skip this trunk port if resolution fails
-				fmt.Printf("Error resolving trunk port %s: %v\n", subParts, err)
-				continue
-			}
-			result = append(result, trunkPort)
+		if entry == "-" || entry == "" {
 			continue
 		}
 
-		// Parse ranges or single numbers
-		rangeParts := strings.Split(subParts, "-")
-		if len(rangeParts) == 2 { // It's a range, e.g., "1-3"
-			start, err1 := strconv.Atoi(rangeParts[0])
-			end, err2 := strconv.Atoi(rangeParts[1])
-			if err1 == nil && err2 == nil {
-				for i := start; i <= end; i++ {
-					result = append(result, i)
+		if strings.Contains(entry, "-") {
+			rangeParts := strings.Split(entry, "-")
+			if len(rangeParts) == 2 {
+				start, err1 := strconv.Atoi(rangeParts[0])
+				end, err2 := strconv.Atoi(rangeParts[1])
+				if err1 == nil && err2 == nil {
+					for i := start; i <= end; i++ {
+						ports = append(ports, fmt.Sprintf("Port %d", i))
+					}
 				}
 			}
-		} else if len(rangeParts) == 1 { // Single number
-			port, err := strconv.Atoi(rangeParts[0])
-			if err == nil {
-				result = append(result, port)
+		} else if strings.HasPrefix(entry, "Trunk") {
+			// Keep named ports like "Trunk2"
+			ports = append(ports, entry)
+		} else {
+			// Handle individual ports (e.g., "2" → "Port 2")
+			if num, err := strconv.Atoi(entry); err == nil {
+				ports = append(ports, fmt.Sprintf("Port %d", num))
 			}
 		}
 	}
-	return result
+	return ports
 }

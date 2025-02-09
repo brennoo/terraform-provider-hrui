@@ -16,8 +16,8 @@ resource "hrui_vlan_8021q" "example" {
   vlan_id = 10
   name    = "vlan10"
 
-  untagged_ports = [2, 3]
-  tagged_ports   = [4, 5]
+  untagged_ports = ["Port 1", "Port 2"]
+  tagged_ports   = ["Trunk1"]
 
 }
 ```
@@ -27,13 +27,13 @@ resource "hrui_vlan_8021q" "example" {
 
 ### Required
 
-- `name` (String) The VLAN name assigned to the given VLAN ID.
-- `tagged_ports` (List of Number) The list of tagged ports assigned to the VLAN.
-- `untagged_ports` (List of Number) The list of untagged ports assigned to the VLAN.
-- `vlan_id` (Number) VLAN ID (1-4094). The unique identifier for the VLAN to be created or managed.
+- `name` (String) The VLAN name assigned to the VLAN ID.
+- `tagged_ports` (List of String) The list of tagged ports assigned to the VLAN.
+- `untagged_ports` (List of String) The list of untagged ports assigned to the VLAN (e.g., 'Port 1', 'Trunk1').
+- `vlan_id` (Number) VLAN ID (1-4094). The unique identifier for the VLAN.
 
 ### Read-Only
 
-- `member_ports` (List of Number) The list of all ports assigned to the VLAN.
+- `member_ports` (List of String) The list of all ports assigned to the VLAN.
 
 

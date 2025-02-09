@@ -43,17 +43,17 @@ func (d *vlan8021qDataSource) Schema(ctx context.Context, req datasource.SchemaR
 			},
 			"untagged_ports": schema.ListAttribute{
 				Computed:            true,
-				ElementType:         types.Int64Type,
+				ElementType:         types.StringType,
 				MarkdownDescription: "List of untagged ports for the queried VLAN.",
 			},
 			"tagged_ports": schema.ListAttribute{
 				Computed:            true,
-				ElementType:         types.Int64Type,
+				ElementType:         types.StringType,
 				MarkdownDescription: "List of tagged ports for the queried VLAN.",
 			},
 			"member_ports": schema.ListAttribute{
 				Computed:            true,
-				ElementType:         types.Int64Type,
+				ElementType:         types.StringType,
 				MarkdownDescription: "List of all member ports for the queried VLAN.",
 			},
 		},
@@ -108,13 +108,13 @@ func (d *vlan8021qDataSource) Read(ctx context.Context, req datasource.ReadReque
 	model.Name = types.StringValue(vlan.Name)
 
 	// Convert untagged_ports and tagged_ports to types.List.
-	model.UntaggedPorts, diags = types.ListValueFrom(ctx, types.Int64Type, vlan.UntaggedPorts)
+	model.UntaggedPorts, diags = types.ListValueFrom(ctx, types.StringType, vlan.UntaggedPorts)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	model.TaggedPorts, diags = types.ListValueFrom(ctx, types.Int64Type, vlan.TaggedPorts)
+	model.TaggedPorts, diags = types.ListValueFrom(ctx, types.StringType, vlan.TaggedPorts)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
@@ -122,7 +122,7 @@ func (d *vlan8021qDataSource) Read(ctx context.Context, req datasource.ReadReque
 
 	// Concatenate tagged_ports and untagged_ports directly to form member_ports.
 	allPorts := append(vlan.TaggedPorts, vlan.UntaggedPorts...)
-	model.MemberPorts, diags = types.ListValueFrom(ctx, types.Int64Type, allPorts)
+	model.MemberPorts, diags = types.ListValueFrom(ctx, types.StringType, allPorts)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
