@@ -34,7 +34,7 @@ func (r *igmpSnoopingResource) Metadata(_ context.Context, req resource.Metadata
 // Schema defines the configuration schema for the resource.
 func (r *igmpSnoopingResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages global IGMP Snooping configuration on the network switch.",
+		Description: "Manages global IGMP Snooping configuration.",
 		Attributes: map[string]schema.Attribute{
 			"enabled": schema.BoolAttribute{
 				Description: "Specifies whether IGMP snooping is enabled or disabled globally.",

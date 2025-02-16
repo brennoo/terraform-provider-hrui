@@ -40,18 +40,18 @@ func (r *qosQueueWeightResource) Metadata(ctx context.Context, req resource.Meta
 // Schema defines the attributes for this resource.
 func (r *qosQueueWeightResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Configures QoS queue weight settings.",
 		Attributes: map[string]schema.Attribute{
 			"queue_id": schema.Int64Attribute{
 				Required:            true,
 				MarkdownDescription: "The queue ID for which the weight is being configured.",
-				// Plan Modifier to trigger recreation when queue_id changes
 				PlanModifiers: []planmodifier.Int64{
 					int64planmodifier.RequiresReplace(),
 				},
 			},
 			"weight": schema.StringAttribute{
 				Required:            true,
-				MarkdownDescription: `The weight for the queue. Can be a numerical weight like "1", "2", ... or the string value "Strict priority".`,
+				MarkdownDescription: `The weight for the queue. Can be a numerical weight from "1" to "15" or the string value "Strict priority".`,
 				Validators: []validator.String{
 					NewWeightValidator(),
 				},

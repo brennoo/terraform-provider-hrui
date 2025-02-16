@@ -34,7 +34,7 @@ func (r *jumboFrameResource) Metadata(ctx context.Context, req resource.Metadata
 // Schema defines the schema for the Jumbo Frame resource.
 func (r *jumboFrameResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages Jumbo Frame settings for the HRUI system.",
+		Description: "Configures jumbo frame settings.",
 		Attributes: map[string]schema.Attribute{
 			"size": schema.Int64Attribute{
 				Required:    true,

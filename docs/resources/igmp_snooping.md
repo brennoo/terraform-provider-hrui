@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_igmp_snooping (Resource)"
 description: |-
-  Manages global IGMP Snooping configuration on the network switch.
+  Manages global IGMP Snooping configuration.
 ---
 
 # hrui_igmp_snooping (Resource)
 
-Manages global IGMP Snooping configuration on the network switch.
+Manages global IGMP Snooping configuration.
+
+## Introduction
+
+This resource allows you to manage the global Internet Group Management Protocol (IGMP) snooping configuration on your network switch. IGMP snooping is a feature that allows the switch to listen in on the IGMP traffic between hosts and multicast routers. By "snooping" on this traffic, the switch learns which ports need to receive specific multicast traffic and forwards it only to those ports, rather than flooding the entire network. This significantly reduces unnecessary bandwidth consumption and improves network performance.
 
 ## Example Usage
 

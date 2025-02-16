@@ -1,12 +1,18 @@
 ---
 page_title: "hrui_bandwidth_control (Resource)"
 description: |-
-  Resource for configuring bandwidth control on a specific port in the device.
+  Configures bandwidth control on a specific port.
 ---
 
 # hrui_bandwidth_control (Resource)
 
-Resource for configuring bandwidth control on a specific port in the device.
+Configures bandwidth control on a specific port.
+
+## Introduction
+
+Bandwidth control enables you to limit the rate of incoming (ingress) and outgoing (egress) traffic on a given port, measured in kilobits per second (kbps).  This can be useful for managing network congestion, prioritizing certain types of traffic, or ensuring fair bandwidth allocation.
+
+Using this resource, you can specify separate ingress and egress rates for a port.  You have the option to set a specific bandwidth limit in kbps, or disable rate limiting altogether by setting the rate to either "0" or "Unlimited".  This allows for flexible configuration depending on your network requirements.  You must specify the port on which you wish to apply the bandwidth control.  For example, you can limit the bandwidth on a physical port like "Port 1" or a logical interface such as "Trunk2".
 
 ## Example Usage
 

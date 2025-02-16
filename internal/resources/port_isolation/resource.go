@@ -31,6 +31,7 @@ func (r *portIsolationResource) Metadata(_ context.Context, req resource.Metadat
 // Schema defines the schema for the resource.
 func (r *portIsolationResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Configures port isolation settings.",
 		Attributes: map[string]schema.Attribute{
 			"port": schema.StringAttribute{
 				Required:    true,

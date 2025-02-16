@@ -28,7 +28,7 @@ func NewDataSource() datasource.DataSource {
 
 func (d *portSettingDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Fetches port settings for the HRUI system.",
+		Description: "Data source for retrieving port settings.",
 		Attributes: map[string]schema.Attribute{
 			"port": schema.StringAttribute{
 				Required:            true,

@@ -1,12 +1,12 @@
 ---
 page_title: "hrui_vlan_8021q (Data Source)"
 description: |-
-  
+  Data source for retrieving 802.1Q VLAN settings.
 ---
 
 # hrui_vlan_8021q (Data Source)
 
-
+Data source for retrieving 802.1Q VLAN settings.
 
 ## Example Usage
 

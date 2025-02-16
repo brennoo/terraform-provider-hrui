@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_mac_static (Resource)"
 description: |-
-  Resource for managing static MAC addresses on the HRUI device.
+  Manages static MAC address entries.
 ---
 
 # hrui_mac_static (Resource)
 
-Resource for managing static MAC addresses on the HRUI device.
+Manages static MAC address entries.
+
+## Introduction
+
+Static MAC addresses are manually configured entries that associate a specific MAC address with a particular port and VLAN.  Unlike dynamically learned MAC addresses, static entries remain in the MAC address table even if the associated device disconnects, ensuring that traffic destined for that MAC address is always forwarded to the specified port and VLAN. This can be useful for connecting devices with fixed MAC addresses, such as servers or critical infrastructure, and ensures consistent network connectivity.
 
 ## Example Usage
 

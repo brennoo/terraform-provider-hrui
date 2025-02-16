@@ -8,6 +8,10 @@ description: |-
 
 Manages IGMP snooping static settings for a specific port.
 
+## Introduction
+
+This resource allows you to manage static IGMP snooping settings for a specific port on the managed network switch.  While IGMP snooping dynamically learns which ports should receive multicast traffic, you can use static entries to explicitly configure specific multicast groups to be forwarded to a port, regardless of whether a host on that port has joined the group. This can be useful for scenarios where a device on the port needs to receive multicast traffic even if it hasn't sent an IGMP join message.
+
 ## Example Usage
 
 ```terraform

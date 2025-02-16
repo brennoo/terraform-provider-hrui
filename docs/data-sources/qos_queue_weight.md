@@ -1,12 +1,12 @@
 ---
 page_title: "hrui_qos_queue_weight (Data Source)"
 description: |-
-  Data source to fetch the weight of a specific QoS queue by its ID.
+  Data source to fetch a specific QoS queue by its ID.
 ---
 
 # hrui_qos_queue_weight (Data Source)
 
-Data source to fetch the weight of a specific QoS queue by its ID.
+Data source to fetch a specific QoS queue by its ID.
 
 ## Example Usage
 

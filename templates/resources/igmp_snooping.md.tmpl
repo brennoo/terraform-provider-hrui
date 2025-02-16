@@ -1,0 +1,33 @@
+---
+page_title: "{{.Name}} ({{.Type}})"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Introduction
+
+This resource allows you to manage the global Internet Group Management Protocol (IGMP) snooping configuration on your network switch. IGMP snooping is a feature that allows the switch to listen in on the IGMP traffic between hosts and multicast routers. By "snooping" on this traffic, the switch learns which ports need to receive specific multicast traffic and forwards it only to those ports, rather than flooding the entire network. This significantly reduces unnecessary bandwidth consumption and improves network performance.
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ printf "{{codefile \"shell\" %q}}" .ImportFile }}
+
+{{- end }}

@@ -27,16 +27,15 @@ func (d *qosQueueWeightDataSource) Metadata(_ context.Context, req datasource.Me
 // Schema defines the schema for the data source of a single queue.
 func (d *qosQueueWeightDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		// Single queue schema, where queue_id is an input and weight is the output
-		Description: "Data source to fetch the weight of a specific QoS queue by its ID.",
+		Description: "Data source to fetch a specific QoS queue by its ID.",
 		Attributes: map[string]schema.Attribute{
 			"queue_id": schema.Int64Attribute{
 				Description: "The ID of the queue.",
-				Required:    true, // This is required since we're fetching a single queue by its ID
+				Required:    true,
 			},
 			"weight": schema.StringAttribute{
 				Description: "The weight of the queue. Can be a numerical value or 'Strict priority'.",
-				Computed:    true, // This is computed based on the retrieved data
+				Computed:    true,
 			},
 		},
 	}

@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_stp_global (Resource)"
 description: |-
-  Manages STP Global settings configuration.
+  Manages global STP settings.
 ---
 
 # hrui_stp_global (Resource)
 
-Manages STP Global settings configuration.
+Manages global STP settings.
+
+## Introduction
+
+Spanning Tree Protocol (STP) is a network protocol that prevents loops in a network topology by blocking redundant paths. Critically, STP also provides network recovery in the event of a topology change or failure. When a link or switch fails, STP recalculates the network topology and unblocks alternative paths to restore connectivity. This resource allows you to configure global STP parameters, including the `force_version` (`STP` or `RSTP`), `priority` of the bridge, and timing parameters like `max_age`, `hello_time`, and `forward_delay`. These settings influence how STP calculates the network topology and prevents loops, as well as how quickly it can recover from failures. The resource also provides read-only attributes to display the current STP status, root bridge MAC address, root path cost, and root port.
 
 ## Example Usage
 

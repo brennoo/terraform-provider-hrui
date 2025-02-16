@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_eee (Resource)"
 description: |-
-  Manages the Energy Efficient Ethernet (EEE) settings for the HRUI system.
+  Manages the Energy Efficient Ethernet (EEE) settings.
 ---
 
 # hrui_eee (Resource)
 
-Manages the Energy Efficient Ethernet (EEE) settings for the HRUI system.
+Manages the Energy Efficient Ethernet (EEE) settings.
+
+## Introduction
+
+EEE, also known as Green Ethernet, is a technology defined in the IEEE 802.3az standard, designed to reduce power consumption in network devices during periods of low link utilization. By enabling EEE, the system can dynamically switch network interfaces to a low-power state when there is little or no traffic. This resource provides a simple way to enable or disable EEE on the entire system.
 
 ## Example Usage
 

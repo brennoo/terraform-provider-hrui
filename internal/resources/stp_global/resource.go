@@ -35,7 +35,7 @@ func (r *stpGlobalResource) Metadata(_ context.Context, req resource.MetadataReq
 // Schema defines the attributes for STP Global configuration.
 func (r *stpGlobalResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages STP Global settings configuration.",
+		Description: "Manages global STP settings.",
 		Attributes: map[string]schema.Attribute{
 			"stp_status": schema.StringAttribute{
 				Description: "Specifies whether STP is enabled or disabled. This is read-only.",

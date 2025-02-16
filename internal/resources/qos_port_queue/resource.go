@@ -37,6 +37,7 @@ func (r *qosPortQueueResource) Metadata(ctx context.Context, req resource.Metada
 // Schema defines the schema for the resource.
 func (r *qosPortQueueResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Configures QoS port queue settings.",
 		Attributes: map[string]schema.Attribute{
 			"port": schema.StringAttribute{
 				Required:            true,

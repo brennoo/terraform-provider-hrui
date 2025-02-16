@@ -32,7 +32,7 @@ func (r *bandwidthControlResource) Metadata(_ context.Context, req resource.Meta
 // Schema defines the schema for the bandwidth control resource.
 func (r *bandwidthControlResource) Schema(_ context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Resource for configuring bandwidth control on a specific port in the device.",
+		Description: "Configures bandwidth control on a specific port.",
 		Attributes: map[string]schema.Attribute{
 			"port": schema.StringAttribute{
 				Description: "Port where bandwidth control is configured (e.g., 'Port 1', 'Trunk2').",

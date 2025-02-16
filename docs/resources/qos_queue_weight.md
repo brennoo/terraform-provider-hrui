@@ -1,18 +1,21 @@
 ---
 page_title: "hrui_qos_queue_weight (Resource)"
 description: |-
-  
+  Configures QoS queue weight settings.
 ---
 
 # hrui_qos_queue_weight (Resource)
 
+Configures QoS queue weight settings.
 
+## Introduction
+
+QoS uses queues to manage different types of network traffic, and the weight assigned to a queue determines its relative priority in accessing network resources. You can assign a numerical `weight` to a queue from 1 to 15, which uses a Weighted Round Robin (WRR) scheduling algorithm. Higher numerical weights generally indicate higher priority within the WRR scheme. Alternatively, you can assign the string value "Strict priority", which is equivalent to Strict Priority (SP) scheduling, giving the queue the highest possible priority. You must specify the `queue_id` for which you are configuring the weight. This resource enables you to fine-tune how bandwidth is allocated among different traffic types to meet your specific application requirements, using either WRR for weighted prioritization or SP for strict prioritization.
 
 ## Example Usage
 
 ```terraform
-# Resource to set the weight of a specific QoS queue (e.g., Queue 2)
-resource "hrui_qos_queue_weight" "queue_2" {
+resource "hrui_qos_queue_weight" "example" {
   queue_id = 2
   weight   = 10
 }
@@ -24,6 +27,6 @@ resource "hrui_qos_queue_weight" "queue_2" {
 ### Required
 
 - `queue_id` (Number) The queue ID for which the weight is being configured.
-- `weight` (String) The weight for the queue. Can be a numerical weight like "1", "2", ... or the string value "Strict priority".
+- `weight` (String) The weight for the queue. Can be a numerical weight from "1" to "15" or the string value "Strict priority".
 
 

@@ -1,12 +1,12 @@
 ---
 page_title: "hrui_vlan_vid (Data Source)"
 description: |-
-  
+  Data source for retrieving VLAN ID settings.
 ---
 
 # hrui_vlan_vid (Data Source)
 
-
+Data source for retrieving VLAN ID settings.
 
 ## Example Usage
 

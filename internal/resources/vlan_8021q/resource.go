@@ -35,6 +35,7 @@ func (r *vlan8021qResource) Metadata(_ context.Context, req resource.MetadataReq
 
 func (r *vlan8021qResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Configures 802.1Q VLAN settings.",
 		Attributes: map[string]schema.Attribute{
 			"vlan_id": schema.Int64Attribute{
 				Required:            true,

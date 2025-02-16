@@ -9,8 +9,9 @@ import (
 
 func (d *systemInfoDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Data source to retrieve the system information.",
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{ // Added the 'id' attribute
+			"id": schema.StringAttribute{
 				Computed:    true,
 				Description: "The ID of the system info resource.",
 			},

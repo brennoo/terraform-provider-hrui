@@ -34,6 +34,7 @@ func (d *qosPortQueueDataSource) Metadata(_ context.Context, req datasource.Meta
 // Schema defines the schema for the data source.
 func (d *qosPortQueueDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Data source for retrieving QoS port queue settings.",
 		Attributes: map[string]schema.Attribute{
 			"port": schema.StringAttribute{
 				Required:            true,

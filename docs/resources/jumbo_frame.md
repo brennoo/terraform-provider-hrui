@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_jumbo_frame (Resource)"
 description: |-
-  Manages Jumbo Frame settings for the HRUI system.
+  Configures jumbo frame settings.
 ---
 
 # hrui_jumbo_frame (Resource)
 
-Manages Jumbo Frame settings for the HRUI system.
+Configures jumbo frame settings.
+
+## Introduction
+
+Jumbo frames are Ethernet frames with a payload larger than the standard maximum transmission unit (MTU) of 1500 bytes, extending the capabilities defined in the IEEE 802.3 Ethernet standard. Using jumbo frames can improve network performance by reducing the overhead associated with processing a large number of smaller frames, especially in environments with high bandwidth requirements or large data transfers.
 
 ## Example Usage
 

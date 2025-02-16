@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_trunk_group (Resource)"
 description: |-
-  Resource for managing trunk groups on the HRUI device.
+  Manages trunk group settings.
 ---
 
 # hrui_trunk_group (Resource)
 
-Resource for managing trunk groups on the HRUI device.
+Manages trunk group settings.
+
+## Introduction
+
+Trunk groups, also known as link aggregation groups (LAGs) or port channels, combine multiple physical ports into a single logical link, increasing bandwidth and providing link redundancy. This resource enables you to create and manage trunk groups, specifying the `id` of the group (`1` or `2`), the `type` of aggregation (either `static` or using the Link Aggregation Control Protocol `LACP`), and the list of `ports` that belong to the trunk group.  Using trunk groups can significantly improve network performance and resilience.
 
 ## Example Usage
 

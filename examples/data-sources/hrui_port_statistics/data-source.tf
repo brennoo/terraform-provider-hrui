@@ -1,11 +1,4 @@
-# Fetch port statistics from the switch
 data "hrui_port_statistics" "ports" {}
-
-# Outputs
-output "port_statistics" {
-  description = "List of all port statistics retrieved from the system"
-  value       = data.hrui_port_statistics.ports.port_statistics
-}
 
 output "enabled_ports" {
   description = "Port statistics for enabled ports"

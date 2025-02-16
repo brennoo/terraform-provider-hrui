@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_vlan_vid (Resource)"
 description: |-
-  
+  Configures VLAN ID settings.
 ---
 
 # hrui_vlan_vid (Resource)
 
+Configures VLAN ID settings.
 
+## Introduction
+
+This resource allows you to configure VLAN IDs for specific ports on the HRUI device, particularly in the context of tagged ports (like trunk ports). It defines which VLANs are allowed to pass through a given port. You specify the port, the `vlan_id` you want to configure for that port, and the `accept_frame_type`, which determines whether the port accepts all frames, only tagged, or only untagged frames. This allows you to control which VLAN traffic is permitted on each port, enabling fine-grained control over network segmentation.
 
 ## Example Usage
 

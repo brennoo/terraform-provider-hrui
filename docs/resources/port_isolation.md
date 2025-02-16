@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_port_isolation (Resource)"
 description: |-
-  
+  Configures port isolation settings.
 ---
 
 # hrui_port_isolation (Resource)
 
+Configures port isolation settings.
 
+## Introduction
+
+Broadcast and multicast messages can flood every port on a switch, even when communication between certain ports isn't required. This can lead to unnecessary network traffic and potential performance issues. Port isolation addresses this by separating traffic between ports. This resource allows you to define which ports can communicate with each other, effectively preventing the flooding of broadcast and multicast traffic to ports where it's not needed. You specify the `port` and the `isolation_list`. The Isolation List defines the members of an interworking group. Traffic between the specified `port` and any port **not listed** in the `isolation_list` will be blocked. This allows you to create isolated groups of ports on your switch, optimizing network traffic and enhancing security.
 
 ## Example Usage
 

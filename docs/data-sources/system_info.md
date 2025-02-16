@@ -1,12 +1,12 @@
 ---
 page_title: "hrui_system_info (Data Source)"
 description: |-
-  
+  Data source to retrieve the system information.
 ---
 
 # hrui_system_info (Data Source)
 
-
+Data source to retrieve the system information.
 
 ## Example Usage
 

@@ -30,7 +30,7 @@ func (d *macTableDataSource) Metadata(_ context.Context, req datasource.Metadata
 // Schema defines the schema for the MAC table data source.
 func (d *macTableDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Data source for retrieving the static MAC address table from the HRUI device.",
+		Description: "Data source for retrieving the static MAC address table.",
 		Attributes: map[string]schema.Attribute{
 			"mac_table": schema.ListNestedAttribute{
 				Description: "List of static MAC table entries.",

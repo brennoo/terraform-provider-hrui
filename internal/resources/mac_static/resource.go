@@ -32,7 +32,7 @@ func (r *macStaticResource) Metadata(_ context.Context, req resource.MetadataReq
 // Schema defines the schema for the resource.
 func (r *macStaticResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Resource for managing static MAC addresses on the HRUI device.",
+		Description: "Manages static MAC address entries.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.StringAttribute{
 				Description: "Unique identifier of the resource, used internally. Format: mac_address_vlan_id",

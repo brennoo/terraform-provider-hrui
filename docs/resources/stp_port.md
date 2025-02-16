@@ -1,12 +1,12 @@
 ---
 page_title: "hrui_stp_port (Resource)"
 description: |-
-  Manages STP Port configuration.
+  Manages STP port settings.
 ---
 
 # hrui_stp_port (Resource)
 
-Manages STP Port configuration.
+Manages STP port settings.
 
 ## Example Usage
 
