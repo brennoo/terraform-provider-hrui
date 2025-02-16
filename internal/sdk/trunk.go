@@ -105,26 +105,45 @@ func (c *HRUIClient) GetTrunk(id int) (*TrunkConfig, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, err
 	}
-	entry := doc.Find(fmt.Sprintf("td:contains('Trunk%d')", id)).Parent()
-	if entry.Length() == 0 {
+
+	// Find the row containing the trunk information
+	var trunk *TrunkConfig
+	doc.Find("form[action='/trunk.cgi?page=group_remove'] table tr").Each(func(i int, s *goquery.Selection) {
+		if i == 0 {
+			return
+		}
+
+		trunkIDText := strings.TrimSpace(s.Find("td").Eq(0).Text())
+		if trunkIDText != fmt.Sprintf("Trunk%d", id) {
+			return
+		}
+
+		trunkType := strings.TrimSpace(s.Find("td").Eq(1).Text())
+		portsText := strings.TrimSpace(s.Find("td").Eq(2).Text())
+
+		var ports []int
+		for _, p := range strings.Split(portsText, ",") {
+			port := parseInt(p, WithDefaultValue(0))
+			ports = append(ports, *port)
+		}
+
+		trunk = &TrunkConfig{
+			ID:    id,
+			Type:  trunkType,
+			Ports: ports,
+		}
+	})
+
+	if trunk == nil {
 		return nil, errors.New("trunk not found")
 	}
-	var ports []int
-	portText := entry.Find("td").Eq(2).Text()
-	splitPorts := strings.Split(portText, "-")
-	for _, p := range splitPorts {
-		port := parseInt(p, WithDefaultValue(0))
-		ports = append(ports, *port)
-	}
-	return &TrunkConfig{
-		ID:    id,
-		Type:  strings.TrimSpace(entry.Find("td").Eq(1).Text()),
-		Ports: ports,
-	}, nil
+
+	return trunk, nil
 }
 
 // ListConfiguredTrunks fetches configured Trunks from the device.
@@ -134,46 +153,36 @@ func (c *HRUIClient) ListConfiguredTrunks() ([]TrunkConfig, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, err
 	}
+
 	var trunkConfigs []TrunkConfig
 	doc.Find("form[action='/trunk.cgi?page=group_remove'] table tr").Each(func(i int, s *goquery.Selection) {
 		if i == 0 {
 			return
 		}
-		idText := s.Find("td").Eq(0).Text()
+
+		idText := strings.TrimSpace(s.Find("td").Eq(0).Text())
 		id := parseInt(idText, WithTrimPrefix("Trunk"), WithDefaultValue(0))
 
+		trunkType := strings.TrimSpace(s.Find("td").Eq(1).Text())
+		portsText := strings.TrimSpace(s.Find("td").Eq(2).Text())
+
 		var ports []int
-		portText := s.Find("td").Eq(2).Text()
-		splitPorts := strings.Split(portText, "-")
-		for _, p := range splitPorts {
+		for _, p := range strings.Split(portsText, ",") {
 			port := parseInt(p, WithDefaultValue(0))
 			ports = append(ports, *port)
 		}
+
 		trunkConfigs = append(trunkConfigs, TrunkConfig{
 			ID:    *id,
-			Type:  strings.TrimSpace(s.Find("td").Eq(1).Text()),
+			Type:  trunkType,
 			Ports: ports,
 		})
 	})
+
 	return trunkConfigs, nil
-}
-
-// GetTrunkByID fetches details of a configured Trunk by its ID.
-func (c *HRUIClient) GetTrunkByID(id int) (*TrunkConfig, error) {
-	trunks, err := c.ListConfiguredTrunks()
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch configured trunks: %w", err)
-	}
-
-	for _, trunk := range trunks {
-		if trunk.ID == id {
-			return &trunk, nil
-		}
-	}
-
-	return nil, fmt.Errorf("trunk with id %d not found", id)
 }
