@@ -34,7 +34,7 @@ func (r *eeeResource) Metadata(ctx context.Context, req resource.MetadataRequest
 // Schema defines the schema for the EEE resource.
 func (r *eeeResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages the Energy Efficient Ethernet (EEE) settings for the HRUI system.",
+		Description: "Manages the Energy Efficient Ethernet (EEE) settings.",
 		Attributes: map[string]schema.Attribute{
 			"enabled": schema.BoolAttribute{
 				Required:    true,

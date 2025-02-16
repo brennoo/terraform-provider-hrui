@@ -1,0 +1,33 @@
+---
+page_title: "{{.Name}} ({{.Type}})"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Introduction
+
+Jumbo frames are Ethernet frames with a payload larger than the standard maximum transmission unit (MTU) of 1500 bytes, extending the capabilities defined in the IEEE 802.3 Ethernet standard. Using jumbo frames can improve network performance by reducing the overhead associated with processing a large number of smaller frames, especially in environments with high bandwidth requirements or large data transfers.
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ printf "{{codefile \"shell\" %q}}" .ImportFile }}
+
+{{- end }}

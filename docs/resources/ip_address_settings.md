@@ -1,12 +1,18 @@
 ---
 page_title: "hrui_ip_address_settings (Resource)"
 description: |-
-  
+  Configures IP address settings.
 ---
 
 # hrui_ip_address_settings (Resource)
 
+Configures IP address settings.
 
+## Introduction
+
+This resource allows you to configure the IP address settings for the HRUI system. You can choose to enable Dynamic Host Configuration Protocol (DHCP) to automatically obtain an IP address, netmask, and gateway, or you can manually configure these settings by disabling DHCP and specifying a static IP address, netmask, and gateway.  If DHCP is enabled, the system will attempt to acquire network settings from a DHCP server. If DHCP is disabled, you must provide the `ip_address`, `netmask`, and `gateway` values.
+
+**Important:** Changing the IP address of the HRUI system can cause the Terraform provider to lose connectivity and potentially time out. To avoid this, it is strongly recommended to reserve a static IP address for the switch within your DHCP server's configuration, even if you are using DHCP.
 
 ## Example Usage
 

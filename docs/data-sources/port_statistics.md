@@ -1,24 +1,17 @@
 ---
 page_title: "hrui_port_statistics (Data Source)"
 description: |-
-  Data source to fetch port statistics from the switch.
+  Data source for retrieving port statistics.
 ---
 
 # hrui_port_statistics (Data Source)
 
-Data source to fetch port statistics from the switch.
+Data source for retrieving port statistics.
 
 ## Example Usage
 
 ```terraform
-# Fetch port statistics from the switch
 data "hrui_port_statistics" "ports" {}
-
-# Outputs
-output "port_statistics" {
-  description = "List of all port statistics retrieved from the system"
-  value       = data.hrui_port_statistics.ports.port_statistics
-}
 
 output "enabled_ports" {
   description = "Port statistics for enabled ports"

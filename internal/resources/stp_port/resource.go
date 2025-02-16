@@ -36,7 +36,7 @@ func (r *stpPortResource) Metadata(_ context.Context, req resource.MetadataReque
 // Schema returns the schema definition for the resource.
 func (r *stpPortResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages STP Port configuration.",
+		Description: "Manages STP port settings.",
 		Attributes: map[string]schema.Attribute{
 			"port": schema.StringAttribute{
 				Description: "The port name to configure STP. Changing this will recreate the resource.",

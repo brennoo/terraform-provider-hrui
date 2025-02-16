@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_port_settings (Resource)"
 description: |-
-  Manages port settings for the HRUI system.
+  Manages port settings.
 ---
 
 # hrui_port_settings (Resource)
 
-Manages port settings for the HRUI system.
+Manages port settings.
+
+## Introduction
+
+This resource allows you to configure various settings for a specific port on the managed switch. You can enable or disable the port using the `enabled` attribute. Additionally, you can configure the port's speed and duplex settings, as well as its flow control settings. The `speed` block allows you to set the desired speed and duplex mode. Supported speeds include `Auto`, `10M/Half`, `10M/Full`, `100M/Half`, `100M/Full`, `1000M/Full`, `2500M/Full`, and `10G/Full`. The `flow_control` block allows you to configure flow control. For both `speed` and `flow_control`, you can specify the desired config, and the system will report the actual settings being used. The port attribute specifies the port you wish to configure.
 
 ## Example Usage
 

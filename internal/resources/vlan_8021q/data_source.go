@@ -32,6 +32,7 @@ func (d *vlan8021qDataSource) Metadata(ctx context.Context, req datasource.Metad
 // Schema defines the schema for the data source.
 func (d *vlan8021qDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Data source for retrieving 802.1Q VLAN settings.",
 		Attributes: map[string]schema.Attribute{
 			"vlan_id": schema.Int64Attribute{
 				Required:            true,

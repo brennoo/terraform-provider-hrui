@@ -1,12 +1,12 @@
 ---
 page_title: "hrui_port_settings (Data Source)"
 description: |-
-  Fetches port settings for the HRUI system.
+  Data source for retrieving port settings.
 ---
 
 # hrui_port_settings (Data Source)
 
-Fetches port settings for the HRUI system.
+Data source for retrieving port settings.
 
 ## Example Usage
 

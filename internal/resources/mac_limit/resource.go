@@ -37,7 +37,7 @@ func (r *macLimitResource) Metadata(ctx context.Context, req resource.MetadataRe
 // Schema defines the schema for the MAC Limit resource.
 func (r *macLimitResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages MAC entry limits for specific ports on the HRUI system.",
+		Description: "Manages MAC address entry limits for specific ports.",
 		Attributes: map[string]schema.Attribute{
 			"port": schema.StringAttribute{
 				Required:    true,

@@ -32,7 +32,7 @@ func NewResource() resource.Resource {
 
 func (r *portSettingResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages port settings for the HRUI system.",
+		Description: "Manages port settings.",
 		Attributes: map[string]schema.Attribute{
 			"port": schema.StringAttribute{
 				Required:    true,

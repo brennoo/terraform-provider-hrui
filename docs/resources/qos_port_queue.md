@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_qos_port_queue (Resource)"
 description: |-
-  
+  Configures QoS port queue settings.
 ---
 
 # hrui_qos_port_queue (Resource)
 
+Configures QoS port queue settings.
 
+## Introduction
+
+QoS allows you to prioritize different types of network traffic, ensuring that critical applications receive the necessary bandwidth and low latency. This resource focuses on configuring the QoS settings for a specific queue on a given port. You must specify the `port` and the `queue` number you wish to configure.  Different queues can be assigned different priorities and bandwidth allocations, allowing you to fine-tune network performance based on your specific needs.
 
 ## Example Usage
 

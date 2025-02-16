@@ -33,7 +33,7 @@ func (r *trunkGroupResource) Metadata(_ context.Context, req resource.MetadataRe
 // Schema defines the schema for the resource.
 func (r *trunkGroupResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Resource for managing trunk groups on the HRUI device.",
+		Description: "Manages trunk group settings.",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Description: "The trunk group ID. Must match one of the available trunk group IDs on the device.",

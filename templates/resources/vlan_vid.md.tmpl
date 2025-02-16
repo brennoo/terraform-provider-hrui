@@ -1,0 +1,33 @@
+---
+page_title: "{{.Name}} ({{.Type}})"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Introduction
+
+This resource allows you to configure VLAN IDs for specific ports on the HRUI device, particularly in the context of tagged ports (like trunk ports). It defines which VLANs are allowed to pass through a given port. You specify the port, the `vlan_id` you want to configure for that port, and the `accept_frame_type`, which determines whether the port accepts all frames, only tagged, or only untagged frames. This allows you to control which VLAN traffic is permitted on each port, enabling fine-grained control over network segmentation.
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ printf "{{codefile \"shell\" %q}}" .ImportFile }}
+
+{{- end }}

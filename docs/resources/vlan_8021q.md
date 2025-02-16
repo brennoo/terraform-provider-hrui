@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_vlan_8021q (Resource)"
 description: |-
-  
+  Configures 802.1Q VLAN settings.
 ---
 
 # hrui_vlan_8021q (Resource)
 
+Configures 802.1Q VLAN settings.
 
+## Introduction
+
+IEEE 802.1Q, often referred to as Dot1q, is the networking standard that supports virtual local area networking (VLANs) on an IEEE 802.3 Ethernet network. 802.1Q VLANs allow you to segment a physical network into multiple logical networks, improving security and network organization. This resource enables you to create and manage VLANs, specifying the `vlan_id` (a unique identifier between 1 and 4094), a descriptive `name` for the VLAN, and the list of `untagged_ports` and `tagged_ports` that belong to the VLAN. Untagged ports carry traffic for only one VLAN, while tagged ports carry traffic for multiple VLANs using 802.1Q tagging. The resource also provides a read-only attribute, `member_ports`, which lists all ports associated with the VLAN, regardless of whether they are tagged or untagged.
 
 ## Example Usage
 

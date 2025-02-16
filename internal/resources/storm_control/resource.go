@@ -48,7 +48,7 @@ func (r *stormControlResource) Metadata(_ context.Context, req resource.Metadata
 // Schema defines the schema for the resource.
 func (r *stormControlResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Resource for managing storm control settings on HRUI devices.",
+		Description: "Manages storm control settings.",
 		Attributes: map[string]schema.Attribute{
 			"port": schema.StringAttribute{
 				Description: "The port name to enable storm control on. Changing this will recreate the resource.",

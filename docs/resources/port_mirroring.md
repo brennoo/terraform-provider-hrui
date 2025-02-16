@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_port_mirroring (Resource)"
 description: |-
-  
+  Configures port mirroring settings.
 ---
 
 # hrui_port_mirroring (Resource)
 
+Configures port mirroring settings.
 
+## Introduction
+
+Port mirroring, also known as port spanning, allows you to copy network traffic from one port (the mirrored port) to another port (the mirroring port). This is useful for network monitoring, troubleshooting, and security analysis. You can specify the direction of the mirrored traffic using the `mirror_direction` attribute, choosing from `Rx` (receive), `Tx` (transmit), or `BOTH`.  The `mirrored_port` is the port whose traffic you want to copy, and the `mirroring_port` is the port where the copied traffic will be sent.  This allows you to analyze the traffic passing through the mirrored port without disrupting the normal flow of network data.
 
 ## Example Usage
 

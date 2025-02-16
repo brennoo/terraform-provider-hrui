@@ -1,0 +1,33 @@
+---
+page_title: "{{.Name}} ({{.Type}})"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Introduction
+
+Loop protocols are crucial for preventing network loops, which can occur when there are multiple paths between network devices. These loops can lead to broadcast storms and network outages. This resource allows you to configure different loop prevention mechanisms. You can disable loop protection entirely by setting `loop_function` to "Off". Alternatively, you can enable "Loop Detection" to identify loops in the network, "Loop Prevention" to actively block ports to prevent loops, or configure "Spanning Tree" (STP), a well-established protocol for managing redundant paths in a network as defined in IEEE 802.1D.  STP and its related protocols, such as Rapid Spanning Tree Protocol (RSTP) defined in IEEE 802.1w, are commonly used for loop prevention. Depending on the chosen `loop_function`, you may need to configure additional settings such as `interval_time` and `recover_time` (for detection and prevention). These settings control the frequency of checks and the time it takes for the system to recover from a detected loop.
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ printf "{{codefile \"shell\" %q}}" .ImportFile }}
+
+{{- end }}

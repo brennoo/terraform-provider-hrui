@@ -43,7 +43,7 @@ func isTimingRelevant(loopFunction string) bool {
 // Schema defines the attributes and schema for the resource.
 func (r *loopProtocolResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Manages configuration of the Loop Protocol settings.",
+		Description: "Manages loop protocol settings.",
 		Attributes: map[string]schema.Attribute{
 			"loop_function": schema.StringAttribute{
 				Description: "Specifies the loop function mode. Valid options are 'Off', 'Loop Detection', 'Loop Prevention', and 'Spanning Tree'.",

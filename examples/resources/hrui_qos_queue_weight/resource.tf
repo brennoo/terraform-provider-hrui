@@ -1,5 +1,4 @@
-# Resource to set the weight of a specific QoS queue (e.g., Queue 2)
-resource "hrui_qos_queue_weight" "queue_2" {
+resource "hrui_qos_queue_weight" "example" {
   queue_id = 2
   weight   = 10
 }

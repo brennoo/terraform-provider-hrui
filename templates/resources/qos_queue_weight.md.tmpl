@@ -1,0 +1,33 @@
+---
+page_title: "{{.Name}} ({{.Type}})"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Introduction
+
+QoS uses queues to manage different types of network traffic, and the weight assigned to a queue determines its relative priority in accessing network resources. You can assign a numerical `weight` to a queue from 1 to 15, which uses a Weighted Round Robin (WRR) scheduling algorithm. Higher numerical weights generally indicate higher priority within the WRR scheme. Alternatively, you can assign the string value "Strict priority", which is equivalent to Strict Priority (SP) scheduling, giving the queue the highest possible priority. You must specify the `queue_id` for which you are configuring the weight. This resource enables you to fine-tune how bandwidth is allocated among different traffic types to meet your specific application requirements, using either WRR for weighted prioritization or SP for strict prioritization.
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ printf "{{codefile \"shell\" %q}}" .ImportFile }}
+
+{{- end }}

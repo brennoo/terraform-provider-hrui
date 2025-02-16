@@ -30,7 +30,7 @@ func (d *macStaticDataSource) Metadata(_ context.Context, req datasource.Metadat
 // Schema defines the schema for the data source.
 func (d *macStaticDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Data source for querying static MAC addresses from the HRUI device.",
+		Description: "Data source for querying static MAC addresses.",
 		Attributes: map[string]schema.Attribute{
 			"mac_address": schema.StringAttribute{
 				Description: "Filter results by a specific MAC address in the format xx:xx:xx:xx:xx:xx.",

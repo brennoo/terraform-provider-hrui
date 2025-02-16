@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_mac_limit (Resource)"
 description: |-
-  Manages MAC entry limits for specific ports on the HRUI system.
+  Manages MAC address entry limits for specific ports.
 ---
 
 # hrui_mac_limit (Resource)
 
-Manages MAC entry limits for specific ports on the HRUI system.
+Manages MAC address entry limits for specific ports.
+
+## Introduction
+
+Limiting the number of MAC addresses that can be learned on a port provides a security mechanism to prevent MAC address flooding attacks and helps control network access.  By enabling a MAC limit on a port, you restrict the number of devices that can connect to that port.
 
 ## Example Usage
 

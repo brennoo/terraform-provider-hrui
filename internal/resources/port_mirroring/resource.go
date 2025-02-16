@@ -32,6 +32,7 @@ func (r *portMirroringResource) Metadata(_ context.Context, req resource.Metadat
 // Schema defines the schema for the resource, specifying required and optional attributes.
 func (r *portMirroringResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "Configures port mirroring settings.",
 		Attributes: map[string]schema.Attribute{
 			"mirror_direction": schema.StringAttribute{
 				Required:    true,

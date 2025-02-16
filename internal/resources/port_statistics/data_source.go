@@ -33,7 +33,7 @@ func (d *portStatisticsDataSource) Metadata(_ context.Context, req datasource.Me
 // Schema defines the schema for the Port Statistics data source.
 func (d *portStatisticsDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Data source to fetch port statistics from the switch.",
+		Description: "Data source for retrieving port statistics.",
 		Attributes: map[string]schema.Attribute{
 			"port_statistics": schema.ListNestedAttribute{
 				Description: "List of port statistics retrieved from the switch.",

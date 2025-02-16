@@ -1,12 +1,16 @@
 ---
 page_title: "hrui_storm_control (Resource)"
 description: |-
-  Resource for managing storm control settings on HRUI devices.
+  Manages storm control settings.
 ---
 
 # hrui_storm_control (Resource)
 
-Resource for managing storm control settings on HRUI devices.
+Manages storm control settings.
+
+## Introduction
+
+Storm control is a mechanism to limit the amount of broadcast, multicast, or unknown unicast traffic on a port, preventing excessive traffic from overwhelming the network. This helps protect the network from broadcast storms or other traffic floods. You must specify the `port` on which to enable storm control, the `storm_type` (`Broadcast`, `Known Multicast`, `Unknown Unicast`, or `Unknown Multicast`) that you wish to control, and the `state` (`enabled` or `disabled`). When `enabled`, you can also specify the `rate` in kbps, which defines the maximum allowed rate for the specified traffic type on the port.  Exceeding this rate will result in the excess traffic being dropped.
 
 ## Example Usage
 

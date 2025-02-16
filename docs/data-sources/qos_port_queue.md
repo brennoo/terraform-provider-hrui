@@ -1,12 +1,12 @@
 ---
 page_title: "hrui_qos_port_queue (Data Source)"
 description: |-
-  
+  Data source for retrieving QoS port queue settings.
 ---
 
 # hrui_qos_port_queue (Data Source)
 
-
+Data source for retrieving QoS port queue settings.
 
 ## Example Usage
 

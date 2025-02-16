@@ -1,0 +1,33 @@
+---
+page_title: "{{.Name}} ({{.Type}})"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Introduction
+
+Storm control is a mechanism to limit the amount of broadcast, multicast, or unknown unicast traffic on a port, preventing excessive traffic from overwhelming the network. This helps protect the network from broadcast storms or other traffic floods. You must specify the `port` on which to enable storm control, the `storm_type` (`Broadcast`, `Known Multicast`, `Unknown Unicast`, or `Unknown Multicast`) that you wish to control, and the `state` (`enabled` or `disabled`). When `enabled`, you can also specify the `rate` in kbps, which defines the maximum allowed rate for the specified traffic type on the port.  Exceeding this rate will result in the excess traffic being dropped.
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ printf "{{codefile \"shell\" %q}}" .ImportFile }}
+
+{{- end }}

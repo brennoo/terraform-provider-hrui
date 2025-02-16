@@ -1,0 +1,33 @@
+---
+page_title: "{{.Name}} ({{.Type}})"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Introduction
+
+QoS allows you to prioritize different types of network traffic, ensuring that critical applications receive the necessary bandwidth and low latency. This resource focuses on configuring the QoS settings for a specific queue on a given port. You must specify the `port` and the `queue` number you wish to configure.  Different queues can be assigned different priorities and bandwidth allocations, allowing you to fine-tune network performance based on your specific needs.
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{ printf "{{codefile \"shell\" %q}}" .ImportFile }}
+
+{{- end }}
