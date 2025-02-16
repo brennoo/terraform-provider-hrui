@@ -9,25 +9,29 @@ import (
 
 // Mocked HTML Response.
 const mockHTML = `
-<form action='/trunk.cgi?page=group_remove' method='post'>
-	<table align='center' class='mid' width='100'>
-                <tr>
-                    <td>Header1</td>
-                    <td>Header2</td>
-                    <td>Header3</td>
-                </tr>
-		<tr bgcolor='#d4d0c8'>
-			<td>Trunk1</td>
-			<td>static</td>
-			<td>3-4</td>
-		</tr>
-		<tr bgcolor='#d4d0c8'>
-			<td>Trunk2</td>
-			<td>LACP</td>
-			<td>5-6</td>
-		</tr>
-	</table>
-</form>`
+<form method="post" action="/trunk.cgi?page=group_remove">
+<table>
+	<tr>
+		<th style="width:80px;">Group ID</th>
+		<th style="width:80px;">Type</th>
+		<th style="width:150px;">Member port</th>
+		<th style="width:150px;">Aggregated Port</th>
+		<th style="width:80px;">Select</th>
+	</tr>
+	<tr>
+		<td >Trunk2</td>
+		<td >static</td>
+		<td>2,6</td>
+		<td>2,6</td>
+		<td><input type="checkbox" name="remove_1" id=trunk_0></td>
+	</tr>
+  </table>
+<br style="line-height:50%">
+<input type="submit" name="Remove" value="    Delete    ">
+<input type="button" value=" Select All " onclick="trunk_selAll(1)">
+<input type="hidden" name="cmd" value="group_remove">
+</form>
+`
 
 func TestGetTrunk(t *testing.T) {
 	// Mock the HTTP server response with the above HTML
@@ -41,14 +45,14 @@ func TestGetTrunk(t *testing.T) {
 	}
 
 	// Call GetTrunk
-	trunk, err := client.GetTrunk(1)
+	trunk, err := client.GetTrunk(2)
 	assert.NoError(t, err)
 
 	// Expected trunk
 	expected := &TrunkConfig{
-		ID:    1,
+		ID:    2,
 		Type:  "static",
-		Ports: []int{3, 4},
+		Ports: []int{2, 6},
 	}
 
 	// Assert that the actual parsed data matches the expected data
@@ -73,14 +77,9 @@ func TestListConfiguredTrunks(t *testing.T) {
 	// Expected trunks.
 	expected := []TrunkConfig{
 		{
-			ID:    1,
-			Type:  "static",
-			Ports: []int{3, 4},
-		},
-		{
 			ID:    2,
-			Type:  "LACP",
-			Ports: []int{5, 6},
+			Type:  "static",
+			Ports: []int{2, 6},
 		},
 	}
 

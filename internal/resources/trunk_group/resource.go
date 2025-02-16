@@ -139,7 +139,7 @@ func (r *trunkGroupResource) Read(ctx context.Context, req resource.ReadRequest,
 	}
 
 	// Fetch trunk group details from the SDK
-	trunkGroup, err := r.client.GetTrunkByID(int(state.ID.ValueInt64()))
+	trunkGroup, err := r.client.GetTrunk(int(state.ID.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to fetch Trunk Group details", err.Error())
 		return
