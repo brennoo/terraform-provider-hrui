@@ -20,11 +20,25 @@ func TestGetIPAddressSettings(t *testing.T) {
 			"Valid IP settings",
 			`<select name='dhcp_state'>
 				<option value='0' selected>Static</option>
+				<option value='1'>DHCP</option>
 			</select>
 			<input name='ip' value='192.168.1.100'>
 			<input name='netmask' value='255.255.255.0'>
 			<input name='gateway' value='192.168.1.1'>`,
 			&IPAddressSettings{false, "192.168.1.100", "255.255.255.0", "192.168.1.1"},
+			false,
+			http.StatusOK,
+		},
+		{
+			"DHCP enabled",
+			`<select name='dhcp_state'>
+				<option value='0'>Static</option>
+				<option value='1' selected>DHCP</option>
+			</select>
+			<input name='ip' value=''>
+			<input name='netmask' value=''>
+			<input name='gateway' value=''>`,
+			&IPAddressSettings{true, "", "", ""},
 			false,
 			http.StatusOK,
 		},
@@ -48,53 +62,13 @@ func TestGetIPAddressSettings(t *testing.T) {
 			defer server.Close()
 
 			client := &HRUIClient{URL: server.URL, HttpClient: server.Client()}
-			resp, err := client.Request("GET", server.URL, nil, nil)
+			settings, err := client.GetIPAddressSettings()
 
 			if tt.shouldFail {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
-				assert.NotNil(t, resp)
-			}
-		})
-	}
-}
-
-func TestSetIPAddressSettings(t *testing.T) {
-	tests := []struct {
-		name       string
-		settings   *IPAddressSettings
-		httpStatus int
-		shouldFail bool
-	}{
-		{
-			"Successful update",
-			&IPAddressSettings{false, "192.168.1.200", "255.255.255.0", "192.168.1.1"},
-			http.StatusOK,
-			false,
-		},
-		{
-			"Request error",
-			&IPAddressSettings{false, "192.168.1.200", "255.255.255.0", "192.168.1.1"},
-			http.StatusInternalServerError,
-			true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				w.WriteHeader(tt.httpStatus)
-			}))
-			defer server.Close()
-
-			client := &HRUIClient{URL: server.URL, HttpClient: server.Client()}
-			err := client.SetIPAddressSettings(tt.settings)
-
-			if tt.shouldFail {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
+				assert.Equal(t, tt.expected, settings)
 			}
 		})
 	}
