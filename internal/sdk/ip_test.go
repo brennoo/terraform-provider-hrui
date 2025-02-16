@@ -1,7 +1,6 @@
 package sdk
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -42,7 +41,7 @@ func TestGetIPAddressSettings(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(tt.httpStatus)
-				fmt.Fprintln(w, tt.html)
+				w.Write([]byte(tt.html))
 			}))
 			defer server.Close()
 
