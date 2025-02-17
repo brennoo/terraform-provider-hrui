@@ -56,13 +56,13 @@ func TestGetSystemInfo(t *testing.T) {
 			defer server.Close()
 
 			client := &HRUIClient{URL: server.URL, HttpClient: server.Client()}
-			resp, err := client.Request("GET", server.URL, nil, nil)
+			info, err := client.GetSystemInfo()
 
 			if tt.shouldFail {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
-				assert.NotNil(t, resp)
+				assert.Equal(t, tt.expected, info)
 			}
 		})
 	}
