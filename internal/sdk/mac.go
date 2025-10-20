@@ -138,10 +138,10 @@ func (c *HRUIClient) AddStaticMACEntry(mac string, vlanID int, portName string) 
 	}
 
 	formData := url.Values{
-		"mac":  {mac},
-		"vlan": {strconv.Itoa(vlanID)},
-		"src":  {strconv.Itoa(portID)},
-		"cmd":  {"macstatic"},
+		"mac":  []string{mac},
+		"vlan": []string{strconv.Itoa(vlanID)},
+		"src":  []string{strconv.Itoa(portID)},
+		"cmd":  []string{"macstatic"},
 	}
 
 	_, err = c.FormRequest(c.URL+"/mac.cgi?page=static", formData)
@@ -156,7 +156,7 @@ func (c *HRUIClient) AddStaticMACEntry(mac string, vlanID int, portName string) 
 func (c *HRUIClient) RemoveStaticMACEntries(macEntries []StaticMACEntry) error {
 	// Prepare the form data
 	formData := url.Values{
-		"cmd": {"macstatictbl"},
+		"cmd": []string{"macstatictbl"},
 	}
 
 	for _, entry := range macEntries {
