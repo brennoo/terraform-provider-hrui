@@ -117,10 +117,10 @@ func (c *HRUIClient) ConfigureLoopProtocol(loopFunction string, intervalTime, re
 
 	// Prepare form data for POST request
 	formData := url.Values{
-		"cmd":           {"loop"},
-		"func_type":     {strconv.Itoa(funcType)},
-		"interval_time": {strconv.Itoa(intervalTime)},
-		"recover_time":  {strconv.Itoa(recoverTime)},
+		"cmd":           []string{"loop"},
+		"func_type":     []string{strconv.Itoa(funcType)},
+		"interval_time": []string{strconv.Itoa(intervalTime)},
+		"recover_time":  []string{strconv.Itoa(recoverTime)},
 	}
 
 	_, err := c.FormRequest(loopURL, formData)
@@ -152,12 +152,12 @@ func (c *HRUIClient) GetSTPSettings() (*STPGlobalSettings, error) {
 func (c *HRUIClient) SetSTPSettings(stp *STPGlobalSettings) error {
 	stpURL := c.URL + "/loop.cgi?page=stp_global"
 	formData := url.Values{
-		"cmd":      {"stp"},
-		"version":  {stp.GetVersionValue()},
-		"priority": {strconv.Itoa(stp.Priority)},
-		"maxage":   {strconv.Itoa(stp.MaxAge)},
-		"hello":    {strconv.Itoa(stp.HelloTime)},
-		"delay":    {strconv.Itoa(stp.ForwardDelay)},
+		"cmd":      []string{"stp"},
+		"version":  []string{stp.GetVersionValue()},
+		"priority": []string{strconv.Itoa(stp.Priority)},
+		"maxage":   []string{strconv.Itoa(stp.MaxAge)},
+		"hello":    []string{strconv.Itoa(stp.HelloTime)},
+		"delay":    []string{strconv.Itoa(stp.ForwardDelay)},
 	}
 
 	_, err := c.FormRequest(stpURL, formData)
@@ -175,12 +175,12 @@ func (c *HRUIClient) SetSTPSettingsAsync(stp *STPGlobalSettings) error {
 
 	// Prepare form data for POST request
 	data := url.Values{
-		"version":  {stp.GetVersionValue()},
-		"priority": {strconv.Itoa(stp.Priority)},
-		"maxage":   {strconv.Itoa(stp.MaxAge)},
-		"hello":    {strconv.Itoa(stp.HelloTime)},
-		"delay":    {strconv.Itoa(stp.ForwardDelay)},
-		"cmd":      {"stp"},
+		"version":  []string{stp.GetVersionValue()},
+		"priority": []string{strconv.Itoa(stp.Priority)},
+		"maxage":   []string{strconv.Itoa(stp.MaxAge)},
+		"hello":    []string{strconv.Itoa(stp.HelloTime)},
+		"delay":    []string{strconv.Itoa(stp.ForwardDelay)},
+		"cmd":      []string{"stp"},
 	}
 
 	c.HttpClient.Timeout = 2 * time.Second
@@ -272,13 +272,13 @@ func (c *HRUIClient) SetSTPPortSettings(portName string, pathCost, priority int,
 
 	// Prepare the form data
 	formData := url.Values{
-		"cmd":      {"stp_port"},
-		"portid":   {strconv.Itoa(portID)},
-		"cost":     {strconv.Itoa(pathCost)},
-		"priority": {strconv.Itoa(priority)},
-		"p2p":      {strings.ToLower(p2p)},
-		"edge":     {strings.ToLower(edge)},
-		"submit":   {"+++Apply+++"},
+		"cmd":      []string{"stp_port"},
+		"portid":   []string{strconv.Itoa(portID)},
+		"cost":     []string{strconv.Itoa(pathCost)},
+		"priority": []string{strconv.Itoa(priority)},
+		"p2p":      []string{strings.ToLower(p2p)},
+		"edge":     []string{strings.ToLower(edge)},
+		"submit":   []string{"+++Apply+++"},
 	}
 
 	// Send the request to update STP settings

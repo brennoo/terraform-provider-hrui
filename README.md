@@ -38,7 +38,7 @@ This provider is developed using a Horaco (ZX-SWTG124AS) switch. Other brands th
       required_providers {
         hrui = {
           source  = "brennoo/hrui"
-          version = "= 0.1.0-alpha.1"
+          version = "= 0.1.0"
         }
       }
     }
