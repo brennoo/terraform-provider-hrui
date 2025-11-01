@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -33,7 +34,7 @@ func TestGetEEE(t *testing.T) {
 	defer server.Close()
 
 	client := &HRUIClient{HttpClient: server.Client(), URL: server.URL}
-	enabled, err := client.GetEEE()
+	enabled, err := client.GetEEE(context.Background())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -80,7 +81,7 @@ func TestSetEEE(t *testing.T) {
 	client := &HRUIClient{HttpClient: server.Client(), URL: server.URL}
 
 	// Enable EEE
-	err := client.SetEEE(true)
+	err := client.SetEEE(context.Background(), true)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -121,7 +122,7 @@ func TestSetEEEDisable(t *testing.T) {
 	client := &HRUIClient{HttpClient: server.Client(), URL: server.URL}
 
 	// Disable EEE
-	err := client.SetEEE(false)
+	err := client.SetEEE(context.Background(), false)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -152,7 +153,7 @@ func TestGetEEEParseError(t *testing.T) {
 	defer server.Close()
 
 	client := &HRUIClient{HttpClient: server.Client(), URL: server.URL}
-	_, err := client.GetEEE()
+	_, err := client.GetEEE(context.Background())
 	if err == nil {
 		t.Fatalf("expected error due to missing selected option, got nil")
 	}

@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -62,7 +63,7 @@ func TestGetMACAddressTable(t *testing.T) {
 		HttpClient: &http.Client{},
 	}
 
-	macTable, err := client.GetMACAddressTable()
+	macTable, err := client.GetMACAddressTable(context.Background())
 	assert.NoError(t, err)
 
 	// Validate results with anonymized expected MAC addresses
@@ -119,7 +120,7 @@ func TestGetStaticMACAddressTable(t *testing.T) {
 	}
 
 	// Test the `GetStaticMACAddressTable` method
-	entries, err := client.GetStaticMACAddressTable()
+	entries, err := client.GetStaticMACAddressTable(context.Background())
 	assert.NoError(t, err)
 	assert.Len(t, entries, 2)
 
@@ -176,11 +177,11 @@ func TestAddStaticMACEntry(t *testing.T) {
 	}
 
 	// Test the `AddStaticMACEntry` method
-	err := client.AddStaticMACEntry("01:23:45:67:89:AB", 10, "Port 1")
+	err := client.AddStaticMACEntry(context.Background(), "01:23:45:67:89:AB", 10, "Port 1")
 	assert.NoError(t, err, "AddStaticMACEntry should succeed for a valid port name")
 
 	// Test with another port name
-	err = client.AddStaticMACEntry("01:23:45:67:89:AC", 20, "Port 6")
+	err = client.AddStaticMACEntry(context.Background(), "01:23:45:67:89:AC", 20, "Port 6")
 	assert.NoError(t, err, "AddStaticMACEntry should succeed for a valid port name")
 }
 
@@ -201,6 +202,6 @@ func TestRemoveStaticMACEntries(t *testing.T) {
 		{MACAddress: "02:33:44:55:66:77", VLANID: 20, Port: "Trunk3"},
 	}
 
-	err := client.RemoveStaticMACEntries(entries)
+	err := client.RemoveStaticMACEntries(context.Background(), entries)
 	assert.NoError(t, err)
 }

@@ -97,7 +97,7 @@ func (r *stormControlResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	maxRate, err := r.client.GetPortMaxRate(data.Port.ValueString())
+	maxRate, err := r.client.GetPortMaxRate(ctx, data.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to fetch maximum rate", err.Error())
 		return
@@ -108,7 +108,7 @@ func (r *stormControlResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	err = r.client.SetStormControlConfig(
+	err = r.client.SetStormControlConfig(ctx,
 		data.StormType.ValueString(),
 		[]string{data.Port.ValueString()},
 		data.State.ValueBool(),
@@ -131,13 +131,13 @@ func (r *stormControlResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
-	config, err := r.client.GetStormControlStatus()
+	config, err := r.client.GetStormControlStatus(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to fetch storm control status", err.Error())
 		return
 	}
 
-	maxRate, err := r.client.GetPortMaxRate(state.Port.ValueString())
+	maxRate, err := r.client.GetPortMaxRate(ctx, state.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to fetch max rate for port", err.Error())
 		return
@@ -193,7 +193,7 @@ func (r *stormControlResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	maxRate, err := r.client.GetPortMaxRate(plan.Port.ValueString())
+	maxRate, err := r.client.GetPortMaxRate(ctx, plan.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to fetch maximum rate", err.Error())
 		return
@@ -204,7 +204,7 @@ func (r *stormControlResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	err = r.client.SetStormControlConfig(
+	err = r.client.SetStormControlConfig(ctx,
 		plan.StormType.ValueString(),
 		[]string{plan.Port.ValueString()},
 		plan.State.ValueBool(),
@@ -227,7 +227,7 @@ func (r *stormControlResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	err := r.client.SetStormControlConfig(
+	err := r.client.SetStormControlConfig(ctx,
 		state.StormType.ValueString(),
 		[]string{state.Port.ValueString()},
 		false,

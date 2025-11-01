@@ -112,7 +112,7 @@ func (d *portSettingDataSource) Read(ctx context.Context, req datasource.ReadReq
 		return
 	}
 
-	port, err := d.client.GetPort(data.Port.ValueString())
+	port, err := d.client.GetPort(ctx, data.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",

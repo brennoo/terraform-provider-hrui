@@ -81,14 +81,14 @@ func (r *qosPortQueueResource) Create(ctx context.Context, req resource.CreateRe
 	}
 
 	// Map the port name to its numeric ID.
-	portID, err := r.client.GetPortByName(plan.Port.ValueString())
+	portID, err := r.client.GetPortByName(ctx, plan.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Could not resolve port name '%s' to ID: %s", plan.Port.ValueString(), err))
 		return
 	}
 
 	// Configure the QoS queue for the resolved port ID.
-	err = r.client.SetQoSPortQueue(portID, int(plan.Queue.ValueInt64()))
+	err = r.client.SetQoSPortQueue(ctx, portID, int(plan.Queue.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create QoS Port Queue: %s", err))
 		return
@@ -107,14 +107,14 @@ func (r *qosPortQueueResource) Update(ctx context.Context, req resource.UpdateRe
 	}
 
 	// Map the port name to its numeric ID.
-	portID, err := r.client.GetPortByName(plan.Port.ValueString())
+	portID, err := r.client.GetPortByName(ctx, plan.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Could not resolve port name '%s' to ID: %s", plan.Port.ValueString(), err))
 		return
 	}
 
 	// Update the QoS queue for the resolved port ID.
-	err = r.client.SetQoSPortQueue(portID, int(plan.Queue.ValueInt64()))
+	err = r.client.SetQoSPortQueue(ctx, portID, int(plan.Queue.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update QoS Port Queue: %s", err))
 		return
@@ -134,14 +134,14 @@ func (r *qosPortQueueResource) Read(ctx context.Context, req resource.ReadReques
 	}
 
 	// Map the port name to its numeric ID.
-	portID, err := r.client.GetPortByName(state.Port.ValueString())
+	portID, err := r.client.GetPortByName(ctx, state.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Could not resolve port name '%s' to ID: %s", state.Port.ValueString(), err))
 		return
 	}
 
 	// Query the current QoS queue for the resolved port ID.
-	portQueue, err := r.client.GetQoSPortQueue(portID)
+	portQueue, err := r.client.GetQoSPortQueue(ctx, portID)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to fetch QoS Port Queue for port '%s': %s", state.Port.ValueString(), err))
 		return
@@ -162,14 +162,14 @@ func (r *qosPortQueueResource) Delete(ctx context.Context, req resource.DeleteRe
 	}
 
 	// Map the port name to its numeric ID.
-	portID, err := r.client.GetPortByName(state.Port.ValueString())
+	portID, err := r.client.GetPortByName(ctx, state.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Could not resolve port name '%s' to ID: %s", state.Port.ValueString(), err))
 		return
 	}
 
 	// Reset the QoS queue to its default value (e.g., 1).
-	err = r.client.SetQoSPortQueue(portID, 1)
+	err = r.client.SetQoSPortQueue(ctx, portID, 1)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to reset QoS Port Queue for port '%s': %s", state.Port.ValueString(), err))
 		return

@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -64,7 +65,7 @@ func TestGetIPAddressSettings(t *testing.T) {
 			defer server.Close()
 
 			client := &HRUIClient{URL: server.URL, HttpClient: server.Client()}
-			settings, err := client.GetIPAddressSettings()
+			settings, err := client.GetIPAddressSettings(context.Background())
 
 			if tt.shouldFail {
 				assert.Error(t, err)
@@ -119,7 +120,7 @@ func TestSetIPAddressSettings(t *testing.T) {
 			defer server.Close()
 
 			client := &HRUIClient{URL: server.URL, HttpClient: server.Client()}
-			err := client.SetIPAddressSettings(tt.settings)
+			err := client.SetIPAddressSettings(context.Background(), tt.settings)
 
 			if tt.shouldFail {
 				assert.Error(t, err)

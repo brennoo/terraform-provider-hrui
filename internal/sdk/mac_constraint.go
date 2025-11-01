@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -17,9 +18,9 @@ type MACLimit struct {
 }
 
 // GetMACLimits fetches the current MAC limits configuration for all ports.
-func (c *HRUIClient) GetMACLimits() ([]MACLimit, error) {
+func (c *HRUIClient) GetMACLimits(ctx context.Context) ([]MACLimit, error) {
 	// Execute a GET request to retrieve the MAC constraints HTML page.
-	respBody, err := c.Request("GET", fmt.Sprintf("%s/mac_constraint.cgi", c.URL), nil, nil)
+	respBody, err := c.Request(ctx, "GET", fmt.Sprintf("%s/mac_constraint.cgi", c.URL), nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch MAC constraints page: %w", err)
 	}
@@ -64,7 +65,7 @@ func (c *HRUIClient) GetMACLimits() ([]MACLimit, error) {
 }
 
 // SetMACLimit sets the MAC limit for a specific port.
-func (c *HRUIClient) SetMACLimit(portID int, enabled bool, limit *int) error {
+func (c *HRUIClient) SetMACLimit(ctx context.Context, portID int, enabled bool, limit *int) error {
 	// Build the form data.
 	formData := url.Values{}
 	formData.Set("cmd", "mac_constraint")
@@ -82,7 +83,7 @@ func (c *HRUIClient) SetMACLimit(portID int, enabled bool, limit *int) error {
 	}
 
 	// Send the POST request to apply changes.
-	respBody, err := c.FormRequest(fmt.Sprintf("%s/mac_constraint.cgi", c.URL), formData)
+	respBody, err := c.FormRequest(ctx, fmt.Sprintf("%s/mac_constraint.cgi", c.URL), formData)
 	if err != nil {
 		return fmt.Errorf("failed to update MAC constraints: %w", err)
 	}

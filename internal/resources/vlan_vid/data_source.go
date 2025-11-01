@@ -90,7 +90,7 @@ func (d *vlanVIDDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	portName := model.Port.ValueString()
 
 	// Query the VLAN configurations for all ports.
-	configs, err := d.client.ListPortVLANConfigs()
+	configs, err := d.client.ListPortVLANConfigs(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error fetching VLAN configuration",

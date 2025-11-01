@@ -76,7 +76,7 @@ func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 	}
 
 	// Create a new HRUI client using the resolved configuration and credentials.
-	hruiClient, err := sdk.NewClient(url, username, password, autosave)
+	hruiClient, err := sdk.NewClient(ctx, url, username, password, autosave)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Creation Error",
@@ -86,7 +86,7 @@ func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 	}
 
 	// Test connectivity with a basic request to validate the client setup.
-	_, err = hruiClient.Request("GET", hruiClient.URL, nil, nil)
+	_, err = hruiClient.Request(ctx, "GET", hruiClient.URL, nil, nil)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Connection Error",

@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -56,7 +57,7 @@ func TestGetSystemInfo(t *testing.T) {
 			defer server.Close()
 
 			client := &HRUIClient{URL: server.URL, HttpClient: server.Client()}
-			info, err := client.GetSystemInfo()
+			info, err := client.GetSystemInfo(context.Background())
 
 			if tt.shouldFail {
 				assert.Error(t, err)

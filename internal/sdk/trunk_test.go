@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"net/http"
 	"testing"
 
@@ -45,7 +46,7 @@ func TestGetTrunk(t *testing.T) {
 	}
 
 	// Call GetTrunk
-	trunk, err := client.GetTrunk(2)
+	trunk, err := client.GetTrunk(context.Background(), 2)
 	assert.NoError(t, err)
 
 	// Expected trunk
@@ -71,7 +72,7 @@ func TestListConfiguredTrunks(t *testing.T) {
 	}
 
 	// Call ListConfiguredTrunks
-	trunks, err := client.ListConfiguredTrunks()
+	trunks, err := client.ListConfiguredTrunks(context.Background())
 	assert.NoError(t, err)
 
 	// Expected trunks.

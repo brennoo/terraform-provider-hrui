@@ -80,12 +80,12 @@ func (r *vlanVIDResource) Configure(_ context.Context, req resource.ConfigureReq
 }
 
 // Helper function to resolve PortID from Port Name.
-func (r *vlanVIDResource) resolvePortID(portName string) (int, error) {
+func (r *vlanVIDResource) resolvePortID(ctx context.Context, portName string) (int, error) {
 	if portName == "" {
 		return 0, fmt.Errorf("port name cannot be empty")
 	}
 
-	portID, err := r.client.GetPortByName(portName)
+	portID, err := r.client.GetPortByName(ctx, portName)
 	if err != nil {
 		return 0, fmt.Errorf("failed to resolve Port ID for '%s': %w", portName, err)
 	}
@@ -108,7 +108,7 @@ func (r *vlanVIDResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	portID, err := r.resolvePortID(plan.Port.ValueString())
+	portID, err := r.resolvePortID(ctx, plan.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Resolving Port",
@@ -123,7 +123,7 @@ func (r *vlanVIDResource) Create(ctx context.Context, req resource.CreateRequest
 		AcceptFrameType: plan.AcceptFrameType.ValueString(),
 	}
 
-	err = r.client.SetPortVLANConfig(portConfig)
+	err = r.client.SetPortVLANConfig(ctx, portConfig)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Creating VLAN VID Configuration",
@@ -146,7 +146,7 @@ func (r *vlanVIDResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	portID, err := r.resolvePortID(state.Port.ValueString())
+	portID, err := r.resolvePortID(ctx, state.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Reading Port",
@@ -155,7 +155,7 @@ func (r *vlanVIDResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	configs, err := r.client.ListPortVLANConfigs()
+	configs, err := r.client.ListPortVLANConfigs(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Reading VLAN Configuration",
@@ -186,7 +186,7 @@ func (r *vlanVIDResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	portID, err := r.resolvePortID(plan.Port.ValueString())
+	portID, err := r.resolvePortID(ctx, plan.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Resolving Port",
@@ -201,7 +201,7 @@ func (r *vlanVIDResource) Update(ctx context.Context, req resource.UpdateRequest
 		AcceptFrameType: plan.AcceptFrameType.ValueString(),
 	}
 
-	err = r.client.SetPortVLANConfig(portConfig)
+	err = r.client.SetPortVLANConfig(ctx, portConfig)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating VLAN VID Configuration",
@@ -233,7 +233,7 @@ func (r *vlanVIDResource) Delete(ctx context.Context, req resource.DeleteRequest
 		AcceptFrameType: "All",
 	}
 
-	if err := r.client.SetPortVLANConfig(portConfig); err != nil {
+	if err := r.client.SetPortVLANConfig(ctx, portConfig); err != nil {
 		resp.Diagnostics.AddError(
 			"Error resetting VLAN VID configuration",
 			"Could not reset VLAN VID configuration, unexpected error: "+err.Error(),

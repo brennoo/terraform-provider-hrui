@@ -118,7 +118,7 @@ func (d *portStatisticsDataSource) Read(ctx context.Context, req datasource.Read
 	}
 
 	// Fetch port statistics from the SDK client
-	portStats, err := d.client.GetPortStatistics()
+	portStats, err := d.client.GetPortStatistics(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Unable to fetch port statistics", err.Error())
 		return

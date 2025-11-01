@@ -64,7 +64,7 @@ func (d *systemInfoDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	systemInfo, err := d.client.GetSystemInfo()
+	systemInfo, err := d.client.GetSystemInfo(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read HRUI system info, got error: %s", err))
 		return

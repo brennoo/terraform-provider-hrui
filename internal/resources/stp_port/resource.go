@@ -104,7 +104,7 @@ func (r *stpPortResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	err := r.client.SetSTPPortSettings(
+	err := r.client.SetSTPPortSettings(ctx,
 		plan.Port.ValueString(),
 		int(plan.PathCost.ValueInt64()),
 		int(plan.Priority.ValueInt64()),
@@ -120,7 +120,7 @@ func (r *stpPortResource) Create(ctx context.Context, req resource.CreateRequest
 	}
 
 	// Fetch and set the state
-	r.readPortState(plan.Port.ValueString(), &plan, &resp.Diagnostics)
+	r.readPortState(ctx, plan.Port.ValueString(), &plan, &resp.Diagnostics)
 
 	// Update the state
 	diags = resp.State.Set(ctx, &plan)
@@ -138,7 +138,7 @@ func (r *stpPortResource) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 
 	// Fetch and set the updated state
-	r.readPortState(state.Port.ValueString(), &state, &resp.Diagnostics)
+	r.readPortState(ctx, state.Port.ValueString(), &state, &resp.Diagnostics)
 
 	// Write the updated state back to Terraform
 	diags = resp.State.Set(ctx, &state)
@@ -154,7 +154,7 @@ func (r *stpPortResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	err := r.client.SetSTPPortSettings(
+	err := r.client.SetSTPPortSettings(ctx,
 		plan.Port.ValueString(),
 		int(plan.PathCost.ValueInt64()),
 		int(plan.Priority.ValueInt64()),
@@ -170,7 +170,7 @@ func (r *stpPortResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 
 	// Fetch and set the updated state
-	r.readPortState(plan.Port.ValueString(), &plan, &resp.Diagnostics)
+	r.readPortState(ctx, plan.Port.ValueString(), &plan, &resp.Diagnostics)
 
 	// Update the state
 	diags = resp.State.Set(ctx, &plan)
@@ -186,7 +186,7 @@ func (r *stpPortResource) Delete(ctx context.Context, req resource.DeleteRequest
 		return
 	}
 
-	err := r.client.SetSTPPortSettings(
+	err := r.client.SetSTPPortSettings(ctx,
 		state.Port.ValueString(),
 		20000, // Default path cost
 		128,   // Default priority
@@ -205,8 +205,8 @@ func (r *stpPortResource) Delete(ctx context.Context, req resource.DeleteRequest
 }
 
 // Helper function to fetch the port state and set it in the model.
-func (r *stpPortResource) readPortState(portName string, model *stpPortModel, diagnostics *diag.Diagnostics) {
-	stpPort, err := r.client.GetSTPPort(portName)
+func (r *stpPortResource) readPortState(ctx context.Context, portName string, model *stpPortModel, diagnostics *diag.Diagnostics) {
+	stpPort, err := r.client.GetSTPPort(ctx, portName)
 	if err != nil {
 		diagnostics.AddError(
 			"Error Reading STP Port",

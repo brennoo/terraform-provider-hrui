@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -25,12 +26,12 @@ type PortVLANConfig struct {
 }
 
 // AddVLAN creates or updates a VLAN on the switch.
-func (c *HRUIClient) AddVLAN(vlan *Vlan) error {
+func (c *HRUIClient) AddVLAN(ctx context.Context, vlan *Vlan) error {
 	if c == nil {
 		return fmt.Errorf("HRUIClient is nil")
 	}
 
-	portConfigs, err := c.ListPortVLANConfigs()
+	portConfigs, err := c.ListPortVLANConfigs(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to get port VLAN configurations: %w", err)
 	}
@@ -52,7 +53,7 @@ func (c *HRUIClient) AddVLAN(vlan *Vlan) error {
 	}
 
 	vlanURL := fmt.Sprintf("%s/vlan.cgi?page=static", c.URL)
-	_, err = c.FormRequest(vlanURL, form)
+	_, err = c.FormRequest(ctx, vlanURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to create/update VLAN: %w", err)
 	}
@@ -71,8 +72,8 @@ func containsString(slice []string, value string) bool {
 }
 
 // GetVLAN fetches a single VLAN by its VLAN ID.
-func (c *HRUIClient) GetVLAN(vlanID int) (*Vlan, error) {
-	vlans, err := c.ListVLANs()
+func (c *HRUIClient) GetVLAN(ctx context.Context, vlanID int) (*Vlan, error) {
+	vlans, err := c.ListVLANs(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch VLANs: %w", err)
 	}
@@ -87,13 +88,13 @@ func (c *HRUIClient) GetVLAN(vlanID int) (*Vlan, error) {
 }
 
 // ListVLANs fetches the list of VLANs using port names.
-func (c *HRUIClient) ListVLANs() ([]*Vlan, error) {
+func (c *HRUIClient) ListVLANs(ctx context.Context) ([]*Vlan, error) {
 	if c == nil {
 		return nil, fmt.Errorf("HRUIClient is nil")
 	}
 
 	vlanURL := fmt.Sprintf("%s/vlan.cgi?page=static", c.URL)
-	respBody, err := c.Request("GET", vlanURL, nil, nil)
+	respBody, err := c.Request(ctx, "GET", vlanURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch VLAN configuration from HRUI: %w", err)
 	}
@@ -141,7 +142,7 @@ func (c *HRUIClient) ListVLANs() ([]*Vlan, error) {
 }
 
 // RemoveVLAN deletes a VLAN by its VLAN ID from the switch.
-func (c *HRUIClient) RemoveVLAN(vlanID int) error {
+func (c *HRUIClient) RemoveVLAN(ctx context.Context, vlanID int) error {
 	if c == nil {
 		return fmt.Errorf("HRUIClient is nil")
 	}
@@ -151,7 +152,7 @@ func (c *HRUIClient) RemoveVLAN(vlanID int) error {
 
 	deleteURL := fmt.Sprintf("%s/vlan.cgi?page=getRmvVlanEntry", c.URL)
 
-	_, err := c.FormRequest(deleteURL, form)
+	_, err := c.FormRequest(ctx, deleteURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to delete VLAN: %w", err)
 	}
@@ -160,7 +161,7 @@ func (c *HRUIClient) RemoveVLAN(vlanID int) error {
 }
 
 // ListPortVLANConfigs fetches the VLAN configuration for all ports.
-func (c *HRUIClient) ListPortVLANConfigs() ([]*PortVLANConfig, error) {
+func (c *HRUIClient) ListPortVLANConfigs(ctx context.Context) ([]*PortVLANConfig, error) {
 	if c == nil {
 		return nil, fmt.Errorf("HRUIClient is nil")
 	}
@@ -171,7 +172,7 @@ func (c *HRUIClient) ListPortVLANConfigs() ([]*PortVLANConfig, error) {
 
 	portVLANURL := fmt.Sprintf("%s/vlan.cgi?page=port_based", c.URL)
 
-	respBody, err := c.Request("GET", portVLANURL, nil, nil)
+	respBody, err := c.Request(ctx, "GET", portVLANURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch port VLAN configuration from HRUI: %w", err)
 	}
@@ -196,7 +197,7 @@ func (c *HRUIClient) ListPortVLANConfigs() ([]*PortVLANConfig, error) {
 		}
 		config.PortName = portName
 
-		portID, err := c.GetPortByName(portName)
+		portID, err := c.GetPortByName(ctx, portName)
 		if err != nil {
 			fmt.Printf("Skipping row %d due to PortID resolution error for '%s': %v\n", i, portName, err)
 			return
@@ -221,8 +222,8 @@ func (c *HRUIClient) ListPortVLANConfigs() ([]*PortVLANConfig, error) {
 }
 
 // GetPortVLANConfig fetches the VLAN configuration for a specific port on the switch.
-func (c *HRUIClient) GetPortVLANConfig(port int) (*PortVLANConfig, error) {
-	configs, err := c.ListPortVLANConfigs()
+func (c *HRUIClient) GetPortVLANConfig(ctx context.Context, port int) (*PortVLANConfig, error) {
+	configs, err := c.ListPortVLANConfigs(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get all port VLAN configs: %w", err)
 	}
@@ -237,7 +238,7 @@ func (c *HRUIClient) GetPortVLANConfig(port int) (*PortVLANConfig, error) {
 }
 
 // SetPortVLANConfig sets the VLAN configuration for a specific port on the switch.
-func (c *HRUIClient) SetPortVLANConfig(config *PortVLANConfig) error {
+func (c *HRUIClient) SetPortVLANConfig(ctx context.Context, config *PortVLANConfig) error {
 	if c == nil {
 		return fmt.Errorf("HRUIClient is nil")
 	}
@@ -252,7 +253,7 @@ func (c *HRUIClient) SetPortVLANConfig(config *PortVLANConfig) error {
 			return fmt.Errorf("invalid configuration: both PortID and Name are missing")
 		}
 
-		portID, err := c.GetPortByName(config.PortName)
+		portID, err := c.GetPortByName(ctx, config.PortName)
 		if err != nil {
 			return fmt.Errorf("failed to resolve PortID for Name '%s': %w", config.PortName, err)
 		}
@@ -285,7 +286,7 @@ func (c *HRUIClient) SetPortVLANConfig(config *PortVLANConfig) error {
 
 	// Submit the form
 	portVLANURL := fmt.Sprintf("%s/vlan.cgi?page=port_based", c.URL)
-	_, err := c.FormRequest(portVLANURL, form)
+	_, err := c.FormRequest(ctx, portVLANURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to set port VLAN config: %w", err)
 	}

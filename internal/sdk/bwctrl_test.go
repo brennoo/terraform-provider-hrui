@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -92,7 +93,7 @@ func TestConfigureBandwidthControl(t *testing.T) {
 	// Run test cases
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := client.ConfigureBandwidthControl(tc.port, tc.isIngress, tc.enable, tc.rate)
+			err := client.ConfigureBandwidthControl(context.Background(), tc.port, tc.isIngress, tc.enable, tc.rate)
 			if (err != nil) != tc.expectErr {
 				t.Fatalf("unexpected error: %v", err)
 			}

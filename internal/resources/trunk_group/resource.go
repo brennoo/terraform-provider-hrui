@@ -77,7 +77,7 @@ func (r *trunkGroupResource) Create(ctx context.Context, req resource.CreateRequ
 	}
 
 	// Validate if the trunk ID is part of the available trunks.
-	availableTrunks, err := r.client.ListAvailableTrunks()
+	availableTrunks, err := r.client.ListAvailableTrunks(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to list available trunks", err.Error())
 		return
@@ -114,7 +114,7 @@ func (r *trunkGroupResource) Create(ctx context.Context, req resource.CreateRequ
 	}
 
 	// Call the SDK to create the trunk group
-	err = r.client.ConfigureTrunk(&sdk.TrunkConfig{
+	err = r.client.ConfigureTrunk(ctx, &sdk.TrunkConfig{
 		ID:    int(data.ID.ValueInt64()),
 		Type:  data.Type.ValueString(),
 		Ports: sdkPorts,
@@ -139,7 +139,7 @@ func (r *trunkGroupResource) Read(ctx context.Context, req resource.ReadRequest,
 	}
 
 	// Fetch trunk group details from the SDK
-	trunkGroup, err := r.client.GetTrunk(int(state.ID.ValueInt64()))
+	trunkGroup, err := r.client.GetTrunk(ctx, int(state.ID.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to fetch Trunk Group details", err.Error())
 		return
@@ -182,7 +182,7 @@ func (r *trunkGroupResource) Update(ctx context.Context, req resource.UpdateRequ
 	}
 
 	// Call the SDK to update the trunk group
-	err := r.client.ConfigureTrunk(&sdk.TrunkConfig{
+	err := r.client.ConfigureTrunk(ctx, &sdk.TrunkConfig{
 		ID:    int(plan.ID.ValueInt64()),
 		Type:  plan.Type.ValueString(),
 		Ports: sdkPorts,
@@ -207,7 +207,7 @@ func (r *trunkGroupResource) Delete(ctx context.Context, req resource.DeleteRequ
 	}
 
 	// SDK Call to delete the trunk group
-	err := r.client.DeleteTrunk(int(state.ID.ValueInt64()))
+	err := r.client.DeleteTrunk(ctx, int(state.ID.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to delete Trunk Group", err.Error())
 	}

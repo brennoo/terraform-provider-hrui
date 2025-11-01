@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -18,12 +19,12 @@ type BandwidthControl struct {
 }
 
 // GetBandwidthControl retrieves the bandwidth control configuration for each port.
-func (c *HRUIClient) GetBandwidthControl() ([]BandwidthControl, error) {
+func (c *HRUIClient) GetBandwidthControl(ctx context.Context) ([]BandwidthControl, error) {
 	// URL to the bandwidth control page
 	urlBw := fmt.Sprintf("%s/port.cgi?page=bw_ctrl", c.URL)
 
 	// Perform HTTP GET request
-	respBody, err := c.Request("GET", urlBw, nil, nil)
+	respBody, err := c.Request(ctx, "GET", urlBw, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch bandwidth control page: %w", err)
 	}
@@ -68,18 +69,18 @@ func (c *HRUIClient) GetBandwidthControl() ([]BandwidthControl, error) {
 }
 
 // ConfigureBandwidthControl configures ingress or egress bandwidth control for a specific port.
-func (c *HRUIClient) ConfigureBandwidthControl(portName string, isIngress, enable bool, rate string) error {
+func (c *HRUIClient) ConfigureBandwidthControl(ctx context.Context, portName string, isIngress, enable bool, rate string) error {
 	// Resolve the numeric port ID from the port name
-	portID, err := c.GetPortByName(portName)
+	portID, err := c.GetPortByName(ctx, portName)
 	if err != nil {
 		return fmt.Errorf("failed to resolve port '%s': %w", portName, err)
 	}
 
-	return c.configureBandwidthByID(portID, isIngress, enable, rate)
+	return c.configureBandwidthByID(ctx, portID, isIngress, enable, rate)
 }
 
 // configureBandwidthByID sets bandwidth control for a port using its numeric ID.
-func (c *HRUIClient) configureBandwidthByID(portID int, isIngress, enable bool, rate string) error {
+func (c *HRUIClient) configureBandwidthByID(ctx context.Context, portID int, isIngress, enable bool, rate string) error {
 	// Determine whether the configuration is for ingress or egress
 	bandwidthType := "1" // Default to Egress
 	if isIngress {
@@ -111,7 +112,7 @@ func (c *HRUIClient) configureBandwidthByID(portID int, isIngress, enable bool, 
 	endpoint := fmt.Sprintf("%s/port.cgi?page=bwctrl", c.URL)
 
 	// Send the POST request
-	_, err := c.FormRequest(endpoint, form)
+	_, err := c.FormRequest(ctx, endpoint, form)
 	if err != nil {
 		return fmt.Errorf("failed to configure bandwidth control for port ID '%d': %w", portID, err)
 	}

@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -36,10 +37,10 @@ func formatPort(rawPort string) string {
 }
 
 // GetMACAddressTable fetches and parses the MAC table from the switch.
-func (c *HRUIClient) GetMACAddressTable() ([]MACAddressEntry, error) {
+func (c *HRUIClient) GetMACAddressTable(ctx context.Context) ([]MACAddressEntry, error) {
 	url := c.URL + "/mac.cgi?page=fwd_tbl"
 
-	respBody, err := c.Request("GET", url, nil, nil)
+	respBody, err := c.Request(ctx, "GET", url, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching MAC address table: %w", err)
 	}
@@ -85,10 +86,10 @@ func (c *HRUIClient) GetMACAddressTable() ([]MACAddressEntry, error) {
 }
 
 // GetStaticMACAddressTable retrieves the static MAC address table.
-func (c *HRUIClient) GetStaticMACAddressTable() ([]StaticMACEntry, error) {
+func (c *HRUIClient) GetStaticMACAddressTable(ctx context.Context) ([]StaticMACEntry, error) {
 	url := c.URL + "/mac.cgi?page=static"
 
-	respBody, err := c.Request("GET", url, nil, nil)
+	respBody, err := c.Request(ctx, "GET", url, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching static MAC address table: %w", err)
 	}
@@ -131,8 +132,8 @@ func (c *HRUIClient) GetStaticMACAddressTable() ([]StaticMACEntry, error) {
 }
 
 // AddStaticMACEntry adds a new static MAC address entry by sending a POST request.
-func (c *HRUIClient) AddStaticMACEntry(mac string, vlanID int, portName string) error {
-	portID, err := c.GetPortByName(portName)
+func (c *HRUIClient) AddStaticMACEntry(ctx context.Context, mac string, vlanID int, portName string) error {
+	portID, err := c.GetPortByName(ctx, portName)
 	if err != nil {
 		return fmt.Errorf("failed to resolve port name '%s': %w", portName, err)
 	}
@@ -144,7 +145,7 @@ func (c *HRUIClient) AddStaticMACEntry(mac string, vlanID int, portName string) 
 		"cmd":  []string{"macstatic"},
 	}
 
-	_, err = c.FormRequest(c.URL+"/mac.cgi?page=static", formData)
+	_, err = c.FormRequest(ctx, c.URL+"/mac.cgi?page=static", formData)
 	if err != nil {
 		return fmt.Errorf("error adding static MAC address: %w", err)
 	}
@@ -153,7 +154,7 @@ func (c *HRUIClient) AddStaticMACEntry(mac string, vlanID int, portName string) 
 }
 
 // RemoveStaticMACEntries deletes one or more static MAC address entries.
-func (c *HRUIClient) RemoveStaticMACEntries(macEntries []StaticMACEntry) error {
+func (c *HRUIClient) RemoveStaticMACEntries(ctx context.Context, macEntries []StaticMACEntry) error {
 	// Prepare the form data
 	formData := url.Values{
 		"cmd": []string{"macstatictbl"},
@@ -164,7 +165,7 @@ func (c *HRUIClient) RemoveStaticMACEntries(macEntries []StaticMACEntry) error {
 		formData.Add("del", checkboxValue)
 	}
 
-	_, err := c.FormRequest(c.URL+"/mac.cgi?page=staticdel", formData)
+	_, err := c.FormRequest(ctx, c.URL+"/mac.cgi?page=staticdel", formData)
 	if err != nil {
 		return fmt.Errorf("error deleting static MAC addresses: %w", err)
 	}

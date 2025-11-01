@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/url"
@@ -17,10 +18,10 @@ type TrunkConfig struct {
 }
 
 // ListAvailableTrunks fetches available Trunks on the device.
-func (c *HRUIClient) ListAvailableTrunks() ([]TrunkConfig, error) {
+func (c *HRUIClient) ListAvailableTrunks(ctx context.Context) ([]TrunkConfig, error) {
 	// Fetch the HTML page
 	endpoint := c.URL + "/trunk.cgi?page=group"
-	respBody, err := c.Request("GET", endpoint, nil, nil)
+	respBody, err := c.Request(ctx, "GET", endpoint, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch trunk page: %w", err)
 	}
@@ -48,7 +49,7 @@ func (c *HRUIClient) ListAvailableTrunks() ([]TrunkConfig, error) {
 }
 
 // ConfigureTrunk sends configuration for a Trunk.
-func (c *HRUIClient) ConfigureTrunk(config *TrunkConfig) error {
+func (c *HRUIClient) ConfigureTrunk(ctx context.Context, config *TrunkConfig) error {
 	form := url.Values{}
 
 	// Set trunk group ID and type
@@ -66,7 +67,7 @@ func (c *HRUIClient) ConfigureTrunk(config *TrunkConfig) error {
 	endpoint := c.URL + "/trunk.cgi?page=group"
 
 	// Use FormRequest to send the form and handle errors
-	_, err := c.FormRequest(endpoint, form)
+	_, err := c.FormRequest(ctx, endpoint, form)
 	if err != nil {
 		return fmt.Errorf("failed to configure trunk: %w", err)
 	}
@@ -87,21 +88,21 @@ func parseTrunkType(trunkType string) int {
 }
 
 // DeleteTrunk sends a delete request for a Trunk.
-func (c *HRUIClient) DeleteTrunk(id int) error {
+func (c *HRUIClient) DeleteTrunk(ctx context.Context, id int) error {
 	form := url.Values{}
 	form.Set("id", strconv.Itoa(id))
 	form.Set("cmd", "group_remove")
 
 	endpoint := c.URL + "/trunk.cgi?page=group_remove"
-	_, err := c.FormRequest(endpoint, form)
+	_, err := c.FormRequest(ctx, endpoint, form)
 
 	return err
 }
 
 // GetTrunk fetches details of a configured Trunk by its ID.
-func (c *HRUIClient) GetTrunk(id int) (*TrunkConfig, error) {
+func (c *HRUIClient) GetTrunk(ctx context.Context, id int) (*TrunkConfig, error) {
 	endpoint := c.URL + "/trunk.cgi?page=group"
-	respBody, err := c.Request("GET", endpoint, nil, nil)
+	respBody, err := c.Request(ctx, "GET", endpoint, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -147,9 +148,9 @@ func (c *HRUIClient) GetTrunk(id int) (*TrunkConfig, error) {
 }
 
 // ListConfiguredTrunks fetches configured Trunks from the device.
-func (c *HRUIClient) ListConfiguredTrunks() ([]TrunkConfig, error) {
+func (c *HRUIClient) ListConfiguredTrunks(ctx context.Context) ([]TrunkConfig, error) {
 	endpoint := c.URL + "/trunk.cgi?page=group"
-	respBody, err := c.Request("GET", endpoint, nil, nil)
+	respBody, err := c.Request(ctx, "GET", endpoint, nil, nil)
 	if err != nil {
 		return nil, err
 	}

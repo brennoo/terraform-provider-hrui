@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -113,7 +114,7 @@ func TestListQoSPortQueues(t *testing.T) {
 	}
 
 	// Call ListQoSPortQueues to parse the HTML.
-	portQueues, err := client.ListQoSPortQueues()
+	portQueues, err := client.ListQoSPortQueues(context.Background())
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
@@ -181,7 +182,7 @@ func TestListQoSQueueWeights_Success(t *testing.T) {
 	}
 
 	// Call the actual method to test
-	queueWeights, err := client.ListQoSQueueWeights()
+	queueWeights, err := client.ListQoSQueueWeights(context.Background())
 	if err != nil {
 		t.Fatalf("expected no error, but got %v", err)
 	}
@@ -231,7 +232,7 @@ func TestListQoSQueueWeights_EmptyTable(t *testing.T) {
 		URL:        server.URL,
 	}
 
-	queueWeights, err := client.ListQoSQueueWeights()
+	queueWeights, err := client.ListQoSQueueWeights(context.Background())
 	if err != nil {
 		t.Fatalf("expected no error, but got %v", err)
 	}
@@ -268,7 +269,7 @@ func TestListQoSQueueWeights_MalformedHTML(t *testing.T) {
 	}
 
 	// Call the method to test; it should not return an error.
-	queueWeights, err := client.ListQoSQueueWeights()
+	queueWeights, err := client.ListQoSQueueWeights(context.Background())
 	if err != nil {
 		t.Fatalf("expected no error, but got %v", err)
 	}
@@ -307,7 +308,7 @@ func TestSetQoSQueueWeight_Success(t *testing.T) {
 	}
 
 	// Call the actual method to test
-	err := client.SetQoSQueueWeight(1, 15) // Set weight 15 for queue 1 (which is 0-based for the backend)
+	err := client.SetQoSQueueWeight(context.Background(), 1, 15) // Set weight 15 for queue 1 (which is 0-based for the backend)
 	if err != nil {
 		t.Fatalf("expected no error, but got %v", err)
 	}
@@ -328,7 +329,7 @@ func TestSetQoSQueueWeight_Failure(t *testing.T) {
 	}
 
 	// Call the method to test
-	err := client.SetQoSQueueWeight(1, 10)
+	err := client.SetQoSQueueWeight(context.Background(), 1, 10)
 	if err == nil || !strings.Contains(err.Error(), "returned status 500") {
 		t.Fatalf("expected an error with status code 500, but got %v", err)
 	}

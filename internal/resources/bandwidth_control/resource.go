@@ -72,7 +72,7 @@ func (r *bandwidthControlResource) Create(ctx context.Context, req resource.Crea
 	}
 
 	// Configure ingress rate
-	if err := r.client.ConfigureBandwidthControl(
+	if err := r.client.ConfigureBandwidthControl(ctx,
 		data.Port.ValueString(),
 		true, // isIngress
 		true, // enable
@@ -83,7 +83,7 @@ func (r *bandwidthControlResource) Create(ctx context.Context, req resource.Crea
 	}
 
 	// Configure egress rate
-	if err := r.client.ConfigureBandwidthControl(
+	if err := r.client.ConfigureBandwidthControl(ctx,
 		data.Port.ValueString(),
 		false, // isIngress
 		true,  // enable
@@ -108,7 +108,7 @@ func (r *bandwidthControlResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	// Fetch all bandwidth control configurations
-	controls, err := r.client.GetBandwidthControl()
+	controls, err := r.client.GetBandwidthControl(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Error fetching bandwidth control configurations", err.Error())
 		return
@@ -151,7 +151,7 @@ func (r *bandwidthControlResource) Update(ctx context.Context, req resource.Upda
 	}
 
 	// Update ingress rate
-	if err := r.client.ConfigureBandwidthControl(
+	if err := r.client.ConfigureBandwidthControl(ctx,
 		plan.Port.ValueString(),
 		true, // isIngress
 		true, // enable
@@ -162,7 +162,7 @@ func (r *bandwidthControlResource) Update(ctx context.Context, req resource.Upda
 	}
 
 	// Update egress rate
-	if err := r.client.ConfigureBandwidthControl(
+	if err := r.client.ConfigureBandwidthControl(ctx,
 		plan.Port.ValueString(),
 		false, // isIngress
 		true,  // enable
@@ -187,7 +187,7 @@ func (r *bandwidthControlResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	// Disable ingress rate
-	if err := r.client.ConfigureBandwidthControl(
+	if err := r.client.ConfigureBandwidthControl(ctx,
 		state.Port.ValueString(),
 		true,  // isIngress
 		false, // disable
@@ -198,7 +198,7 @@ func (r *bandwidthControlResource) Delete(ctx context.Context, req resource.Dele
 	}
 
 	// Disable egress rate
-	if err := r.client.ConfigureBandwidthControl(
+	if err := r.client.ConfigureBandwidthControl(ctx,
 		state.Port.ValueString(),
 		false, // isIngress
 		false, // disable

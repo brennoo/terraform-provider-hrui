@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -23,9 +24,9 @@ type QoSQueueWeight struct {
 
 // ListQoSPortQueues fetches and parses QoS port queues from the HTML page
 // and resolves their Port IDs using GetPortByName.
-func (c *HRUIClient) ListQoSPortQueues() ([]QoSPortQueue, error) {
+func (c *HRUIClient) ListQoSPortQueues(ctx context.Context) ([]QoSPortQueue, error) {
 	// Perform the HTTP request to fetch QoS table.
-	respBody, err := c.Request("GET", c.URL+"/qos.cgi?page=port_pri", nil, nil)
+	respBody, err := c.Request(ctx, "GET", c.URL+"/qos.cgi?page=port_pri", nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to request QoS Port Queues: %w", err)
 	}
@@ -49,7 +50,7 @@ func (c *HRUIClient) ListQoSPortQueues() ([]QoSPortQueue, error) {
 		}
 
 		// Resolve the port ID using the port name through GetPortByName.
-		portID, err := c.GetPortByName(portText)
+		portID, err := c.GetPortByName(ctx, portText)
 		if err != nil {
 			// Log or handle the invalid port name scenario.
 			fmt.Printf("Warning: Unable to resolve port '%s'. Skipping this row.\n", portText)
@@ -78,8 +79,8 @@ func (c *HRUIClient) ListQoSPortQueues() ([]QoSPortQueue, error) {
 }
 
 // GetQoSPortQueue fetches the QoS port queue by portID (0-based input).
-func (c *HRUIClient) GetQoSPortQueue(portID int) (*QoSPortQueue, error) {
-	portQueues, err := c.ListQoSPortQueues()
+func (c *HRUIClient) GetQoSPortQueue(ctx context.Context, portID int) (*QoSPortQueue, error) {
+	portQueues, err := c.ListQoSPortQueues(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve list of QoS port queues: %w", err)
 	}
@@ -94,7 +95,7 @@ func (c *HRUIClient) GetQoSPortQueue(portID int) (*QoSPortQueue, error) {
 }
 
 // SetQoSPortQueue updates the QoS port queue for the given port.
-func (c *HRUIClient) SetQoSPortQueue(portID, queue int) error {
+func (c *HRUIClient) SetQoSPortQueue(ctx context.Context, portID, queue int) error {
 	// Prepare form values for the HTTP request
 	data := url.Values{}
 	data.Set("cmd", "portprio")                      // API command for modifying port priority
@@ -105,7 +106,7 @@ func (c *HRUIClient) SetQoSPortQueue(portID, queue int) error {
 	updateURL := c.URL + "/qos.cgi?page=port_pri"
 
 	// Send the POST request to update the QoS Port Queue
-	_, err := c.FormRequest(updateURL, data)
+	_, err := c.FormRequest(ctx, updateURL, data)
 	if err != nil {
 		return fmt.Errorf("failed to update QoS Port Queue: %w", err)
 	}
@@ -114,9 +115,9 @@ func (c *HRUIClient) SetQoSPortQueue(portID, queue int) error {
 }
 
 // ListQoSQueueWeights fetches the current queues and weights from the HTML page.
-func (c *HRUIClient) ListQoSQueueWeights() ([]QoSQueueWeight, error) {
+func (c *HRUIClient) ListQoSQueueWeights(ctx context.Context) ([]QoSQueueWeight, error) {
 	// Use Request to fetch the HTML page with QoS queue weights
-	respBody, err := c.Request("GET", c.URL+"/qos.cgi?page=pkt_sch", nil, nil)
+	respBody, err := c.Request(ctx, "GET", c.URL+"/qos.cgi?page=pkt_sch", nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to request queue weights page: %w", err)
 	}
@@ -154,7 +155,7 @@ func (c *HRUIClient) ListQoSQueueWeights() ([]QoSQueueWeight, error) {
 }
 
 // SetQoSQueueWeight updates the weight for a given queue.
-func (c *HRUIClient) SetQoSQueueWeight(queue, weight int) error {
+func (c *HRUIClient) SetQoSQueueWeight(ctx context.Context, queue, weight int) error {
 	data := url.Values{}
 	data.Set("cmd", "qweight")                 // Command for setting queue weight
 	data.Set("queueid", strconv.Itoa(queue-1)) // Queue (0-based for the backend)
@@ -163,7 +164,7 @@ func (c *HRUIClient) SetQoSQueueWeight(queue, weight int) error {
 	updateURL := c.URL + "/qos.cgi?page=que_weight"
 
 	// Send the POST request to update the queue weight using FormRequest
-	_, err := c.FormRequest(updateURL, data)
+	_, err := c.FormRequest(ctx, updateURL, data)
 	if err != nil {
 		return fmt.Errorf("failed to update QoS Queue Weight: %w", err)
 	}

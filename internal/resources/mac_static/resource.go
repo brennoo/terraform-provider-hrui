@@ -77,7 +77,7 @@ func (r *macStaticResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	// Use the SDK to add the static MAC entry
-	err := r.client.AddStaticMACEntry(data.MACAddress.ValueString(), int(data.VLANID.ValueInt64()), data.Port.ValueString())
+	err := r.client.AddStaticMACEntry(ctx, data.MACAddress.ValueString(), int(data.VLANID.ValueInt64()), data.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to create static MAC entry", err.Error())
 		return
@@ -112,7 +112,7 @@ func (r *macStaticResource) Read(ctx context.Context, req resource.ReadRequest, 
 	vlanID := parts[1] // VLAN is extracted as string for validation later.
 
 	// Fetch current MAC table from the SDK
-	macTable, err := r.client.GetStaticMACAddressTable()
+	macTable, err := r.client.GetStaticMACAddressTable(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to fetch static MAC table", err.Error())
 		return
@@ -159,7 +159,7 @@ func (r *macStaticResource) Update(ctx context.Context, req resource.UpdateReque
 		state.VLANID.ValueInt64() != plan.VLANID.ValueInt64() ||
 		state.Port.ValueString() != plan.Port.ValueString() {
 		// Delete the existing entry
-		err := r.client.RemoveStaticMACEntries([]sdk.StaticMACEntry{
+		err := r.client.RemoveStaticMACEntries(ctx, []sdk.StaticMACEntry{
 			{
 				MACAddress: state.MACAddress.ValueString(),
 				VLANID:     int(state.VLANID.ValueInt64()),
@@ -171,7 +171,7 @@ func (r *macStaticResource) Update(ctx context.Context, req resource.UpdateReque
 		}
 
 		// Add the updated entry
-		err = r.client.AddStaticMACEntry(plan.MACAddress.ValueString(), int(plan.VLANID.ValueInt64()), plan.Port.ValueString())
+		err = r.client.AddStaticMACEntry(ctx, plan.MACAddress.ValueString(), int(plan.VLANID.ValueInt64()), plan.Port.ValueString())
 		if err != nil {
 			resp.Diagnostics.AddError("Failed to create updated static MAC entry", err.Error())
 			return
@@ -201,7 +201,7 @@ func (r *macStaticResource) Delete(ctx context.Context, req resource.DeleteReque
 		MACAddress: state.MACAddress.ValueString(),
 		VLANID:     int(state.VLANID.ValueInt64()),
 	}
-	err := r.client.RemoveStaticMACEntries([]sdk.StaticMACEntry{entry})
+	err := r.client.RemoveStaticMACEntries(ctx, []sdk.StaticMACEntry{entry})
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to delete static MAC entry", err.Error())
 	}

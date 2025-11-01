@@ -79,7 +79,7 @@ func (d *macTableDataSource) Configure(ctx context.Context, req datasource.Confi
 // Read fetches the MAC address table data from the switch.
 func (d *macTableDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	// Call the SDK to fetch the MAC address table
-	macTable, err := d.client.GetStaticMACAddressTable()
+	macTable, err := d.client.GetStaticMACAddressTable(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to fetch static MAC table", err.Error())
 		return

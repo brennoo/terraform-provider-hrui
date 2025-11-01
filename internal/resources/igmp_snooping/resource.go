@@ -75,7 +75,7 @@ func (r *igmpSnoopingResource) Create(ctx context.Context, req resource.CreateRe
 
 	// Set the global IGMP snooping status
 	if plan.Enabled.ValueBool() {
-		if err := r.client.EnableIGMPSnooping(); err != nil {
+		if err := r.client.EnableIGMPSnooping(ctx); err != nil {
 			resp.Diagnostics.AddError(
 				"Error Enabling IGMP Snooping",
 				fmt.Sprintf("Failed to enable global IGMP snooping: %s", err.Error()),
@@ -83,7 +83,7 @@ func (r *igmpSnoopingResource) Create(ctx context.Context, req resource.CreateRe
 			return
 		}
 	} else {
-		if err := r.client.DisableIGMPSnooping(); err != nil {
+		if err := r.client.DisableIGMPSnooping(ctx); err != nil {
 			resp.Diagnostics.AddError(
 				"Error Disabling IGMP Snooping",
 				fmt.Sprintf("Failed to disable global IGMP snooping: %s", err.Error()),
@@ -108,7 +108,7 @@ func (r *igmpSnoopingResource) Read(ctx context.Context, req resource.ReadReques
 	}
 
 	// Query the global IGMP snooping configuration using the SDK
-	config, err := r.client.FetchIGMPConfig()
+	config, err := r.client.FetchIGMPConfig(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Reading IGMP Snooping Config",
@@ -135,7 +135,7 @@ func (r *igmpSnoopingResource) Update(ctx context.Context, req resource.UpdateRe
 
 	// Update the configuration based on `enabled` state
 	if plan.Enabled.ValueBool() {
-		if err := r.client.EnableIGMPSnooping(); err != nil {
+		if err := r.client.EnableIGMPSnooping(ctx); err != nil {
 			resp.Diagnostics.AddError(
 				"Error Enabling IGMP Snooping",
 				fmt.Sprintf("Failed to enable global IGMP snooping: %s", err.Error()),
@@ -143,7 +143,7 @@ func (r *igmpSnoopingResource) Update(ctx context.Context, req resource.UpdateRe
 			return
 		}
 	} else {
-		if err := r.client.DisableIGMPSnooping(); err != nil {
+		if err := r.client.DisableIGMPSnooping(ctx); err != nil {
 			resp.Diagnostics.AddError(
 				"Error Disabling IGMP Snooping",
 				fmt.Sprintf("Failed to disable global IGMP snooping: %s", err.Error()),
@@ -159,7 +159,7 @@ func (r *igmpSnoopingResource) Update(ctx context.Context, req resource.UpdateRe
 // Delete disables global IGMP Snooping.
 func (r *igmpSnoopingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	// Disable global IGMP snooping
-	if err := r.client.DisableIGMPSnooping(); err != nil {
+	if err := r.client.DisableIGMPSnooping(ctx); err != nil {
 		resp.Diagnostics.AddError(
 			"Error Disabling IGMP Snooping",
 			fmt.Sprintf("Failed to disable global IGMP snooping: %s", err.Error()),

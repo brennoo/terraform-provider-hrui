@@ -74,14 +74,14 @@ func (d *qosPortQueueDataSource) Read(ctx context.Context, req datasource.ReadRe
 	}
 
 	// Resolve the port name to its numeric port ID
-	portID, err := d.client.GetPortByName(portName)
+	portID, err := d.client.GetPortByName(ctx, portName)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to resolve port name '%s' to a port ID: %s", portName, err))
 		return
 	}
 
 	// Fetch the QoS Port Queue data for the resolved port ID.
-	portQueue, err := d.client.GetQoSPortQueue(portID)
+	portQueue, err := d.client.GetQoSPortQueue(ctx, portID)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to fetch QoS Port Queue for port '%s': %s", portName, err))
 		return

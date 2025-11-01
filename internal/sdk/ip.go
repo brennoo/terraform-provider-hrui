@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -18,12 +19,12 @@ type IPAddressSettings struct {
 }
 
 // GetIPAddressSettings retrieves the IP address settings from the HRUI server.
-func (c *HRUIClient) GetIPAddressSettings() (*IPAddressSettings, error) {
+func (c *HRUIClient) GetIPAddressSettings(ctx context.Context) (*IPAddressSettings, error) {
 	// Construct the IP settings URL
 	ipSettingsURL := fmt.Sprintf("%s/ip.cgi", c.URL)
 
 	// Execute GET request to fetch IP settings
-	respBody, err := c.Request("GET", ipSettingsURL, nil, nil)
+	respBody, err := c.Request(ctx, "GET", ipSettingsURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch IP Settings configuration: %w", err)
 	}
@@ -60,7 +61,7 @@ func (c *HRUIClient) GetIPAddressSettings() (*IPAddressSettings, error) {
 }
 
 // SetIPAddressSettings updates the IP address settings on the HRUI server.
-func (c *HRUIClient) SetIPAddressSettings(settings *IPAddressSettings) error {
+func (c *HRUIClient) SetIPAddressSettings(ctx context.Context, settings *IPAddressSettings) error {
 	form := url.Values{}
 	form.Set("dhcp_state", "0")
 	if settings.DHCPEnabled {
@@ -71,7 +72,7 @@ func (c *HRUIClient) SetIPAddressSettings(settings *IPAddressSettings) error {
 	form.Set("gateway", settings.Gateway)
 
 	ipSettingsURL := fmt.Sprintf("%s/ip.cgi", c.URL)
-	_, err := c.FormRequest(ipSettingsURL, form)
+	_, err := c.FormRequest(ctx, ipSettingsURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to update IP Settings: %w", err)
 	}

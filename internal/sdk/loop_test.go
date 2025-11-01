@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -45,7 +46,7 @@ func TestGetLoopProtocol(t *testing.T) {
 	}
 
 	// Call GetLoopProtocol and check for correct parsing
-	loopProtocol, err := client.GetLoopProtocol()
+	loopProtocol, err := client.GetLoopProtocol(context.Background())
 	assert.NoError(t, err)
 
 	// Check the detected loop function
@@ -77,7 +78,7 @@ func TestConfigureLoopProtocol(t *testing.T) {
 	}
 
 	// Call ConfigureLoopProtocol and assert that no error is returned.
-	err := client.ConfigureLoopProtocol("Loop Prevention", 5, 12, []PortStatus{
+	err := client.ConfigureLoopProtocol(context.Background(), "Loop Prevention", 5, 12, []PortStatus{
 		{Port: "Port 1", Enable: true},
 		{Port: "Port 2", Enable: false},
 	})
@@ -135,7 +136,7 @@ func TestGetSTPPortSettings(t *testing.T) {
 		HttpClient: &http.Client{},
 	}
 
-	stpPorts, err := client.GetSTPPortSettings()
+	stpPorts, err := client.GetSTPPortSettings(context.Background())
 	assert.NoError(t, err)
 
 	expected := []STPPort{
@@ -202,7 +203,7 @@ func TestGetLoopProtocol_LoopPreventionMode(t *testing.T) {
 		HttpClient: &http.Client{},
 	}
 
-	loopProtocol, err := client.GetLoopProtocol()
+	loopProtocol, err := client.GetLoopProtocol(context.Background())
 	assert.NoError(t, err)
 
 	assert.Equal(t, "Loop Prevention", loopProtocol.LoopFunction)
@@ -273,7 +274,7 @@ func TestSetSTPPortSettings(t *testing.T) {
 		HttpClient: http.DefaultClient,
 	}
 	// Call SetSTPPortSettings with mock data
-	err := client.SetSTPPortSettings(
+	err := client.SetSTPPortSettings(context.Background(),
 		"Port 1", // Port Name
 		20000,    // Path Cost
 		128,      // Priority
@@ -339,7 +340,7 @@ func TestGetSTPSettings(t *testing.T) {
 	}
 
 	// Call our GetSTPSettings function.
-	stpSettings, err := client.GetSTPSettings()
+	stpSettings, err := client.GetSTPSettings(context.Background())
 	assert.NoError(t, err)
 
 	// Validate the parsed results.
@@ -379,7 +380,7 @@ func TestSetSTPSettings(t *testing.T) {
 	}
 
 	// Execute the SetSTPSettings function.
-	err := client.SetSTPSettings(stpUpdate)
+	err := client.SetSTPSettings(context.Background(), stpUpdate)
 	assert.NoError(t, err)
 
 	// Test has already passed if data was sent correctly (mock does the validation).
