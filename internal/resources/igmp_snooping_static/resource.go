@@ -82,7 +82,7 @@ func (r *igmpSnoopingStaticResource) Create(ctx context.Context, req resource.Cr
 	}
 
 	// Enable the specified port while preserving other ports
-	if err := r.client.UpdatePortIGMPSnoopingByName(plan.Port.ValueString(), plan.Enabled.ValueBool()); err != nil {
+	if err := r.client.UpdatePortIGMPSnoopingByName(ctx, plan.Port.ValueString(), plan.Enabled.ValueBool()); err != nil {
 		resp.Diagnostics.AddError(
 			"Error Configuring IGMP Snooping",
 			fmt.Sprintf("Failed to configure IGMP snooping for port %s: %s", plan.Port.ValueString(), err),
@@ -106,7 +106,7 @@ func (r *igmpSnoopingStaticResource) Read(ctx context.Context, req resource.Read
 	}
 
 	// Query the current IGMP snooping status for the specified port
-	enabled, err := r.client.GetPortIGMPSnoopingByName(state.Port.ValueString())
+	enabled, err := r.client.GetPortIGMPSnoopingByName(ctx, state.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Reading IGMP Snooping State",
@@ -134,7 +134,7 @@ func (r *igmpSnoopingStaticResource) Update(ctx context.Context, req resource.Up
 	}
 
 	// Update the specified port while preserving other ports
-	if err := r.client.UpdatePortIGMPSnoopingByName(plan.Port.ValueString(), plan.Enabled.ValueBool()); err != nil {
+	if err := r.client.UpdatePortIGMPSnoopingByName(ctx, plan.Port.ValueString(), plan.Enabled.ValueBool()); err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating IGMP Snooping",
 			fmt.Sprintf("Failed to update IGMP snooping for port %s: %s", plan.Port.ValueString(), err),
@@ -158,7 +158,7 @@ func (r *igmpSnoopingStaticResource) Delete(ctx context.Context, req resource.De
 	}
 
 	// Disable the specified port while preserving other ports
-	if err := r.client.UpdatePortIGMPSnoopingByName(state.Port.ValueString(), false); err != nil {
+	if err := r.client.UpdatePortIGMPSnoopingByName(ctx, state.Port.ValueString(), false); err != nil {
 		resp.Diagnostics.AddError(
 			"Error Disabling IGMP Snooping",
 			fmt.Sprintf("Failed to disable IGMP snooping for port %s: %s", state.Port.ValueString(), err),

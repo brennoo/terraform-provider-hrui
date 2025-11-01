@@ -78,7 +78,7 @@ func (r *portIsolationResource) Read(ctx context.Context, req resource.ReadReque
 	}
 
 	// Fetch port isolation configuration from the SDK
-	portIsolations, err := r.client.GetPortIsolation()
+	portIsolations, err := r.client.GetPortIsolation(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Reading Port Isolation",
@@ -118,7 +118,7 @@ func (r *portIsolationResource) Create(ctx context.Context, req resource.CreateR
 	port := plan.Port.ValueString()
 	isolationList := extractStrings(ctx, plan.IsolationList)
 
-	err := r.client.ConfigurePortIsolation(port, isolationList)
+	err := r.client.ConfigurePortIsolation(ctx, port, isolationList)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Creating Port Isolation",
@@ -146,7 +146,7 @@ func (r *portIsolationResource) Update(ctx context.Context, req resource.UpdateR
 	port := plan.Port.ValueString()
 	isolationList := extractStrings(ctx, plan.IsolationList)
 
-	err := r.client.ConfigurePortIsolation(port, isolationList)
+	err := r.client.ConfigurePortIsolation(ctx, port, isolationList)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating Port Isolation",
@@ -172,7 +172,7 @@ func (r *portIsolationResource) Delete(ctx context.Context, req resource.DeleteR
 
 	// Clear the port isolation
 	port := state.Port.ValueString()
-	err := r.client.DeletePortIsolation(port)
+	err := r.client.DeletePortIsolation(ctx, port)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Deleting Port Isolation",

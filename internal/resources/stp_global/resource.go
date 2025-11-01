@@ -115,7 +115,7 @@ func (r *stpGlobalResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	// Call the backend API to create/configure the STP settings
-	err := r.client.SetSTPSettingsAsync(&stpSettings)
+	err := r.client.SetSTPSettingsAsync(ctx, &stpSettings)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to Update STP Settings",
@@ -128,7 +128,7 @@ func (r *stpGlobalResource) Create(ctx context.Context, req resource.CreateReque
 	time.Sleep(5 * time.Second)
 
 	// Fetch the updated state from the backend
-	stpFromBackend, err := r.client.GetSTPSettings()
+	stpFromBackend, err := r.client.GetSTPSettings(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to Read STP Settings",
@@ -168,7 +168,7 @@ func (r *stpGlobalResource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 
 	// Fetch the STP settings from the backend
-	stpFromBackend, err := r.client.GetSTPSettings()
+	stpFromBackend, err := r.client.GetSTPSettings(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Reading STP Settings",
@@ -215,7 +215,7 @@ func (r *stpGlobalResource) Update(ctx context.Context, req resource.UpdateReque
 	}
 
 	// Call the backend API to update the STP settings
-	err := r.client.SetSTPSettingsAsync(&stpSettings)
+	err := r.client.SetSTPSettingsAsync(ctx, &stpSettings)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to Update STP Settings",
@@ -228,7 +228,7 @@ func (r *stpGlobalResource) Update(ctx context.Context, req resource.UpdateReque
 	time.Sleep(5 * time.Second)
 
 	// Fetch the updated state from the backend
-	stpFromBackend, err := r.client.GetSTPSettings()
+	stpFromBackend, err := r.client.GetSTPSettings(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to Read Updated STP Settings",
@@ -262,7 +262,7 @@ func (r *stpGlobalResource) Delete(ctx context.Context, req resource.DeleteReque
 		STPStatus: "Disable",
 	}
 
-	err := r.client.SetSTPSettingsAsync(&stpSettings)
+	err := r.client.SetSTPSettingsAsync(ctx, &stpSettings)
 	if err != nil {
 		resp.Diagnostics.AddError("Error Deleting STP Global Resource", fmt.Sprintf("Unable to delete STP Global Resource: %s", err))
 	}

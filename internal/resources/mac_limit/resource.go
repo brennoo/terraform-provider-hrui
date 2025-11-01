@@ -77,8 +77,8 @@ func (r *macLimitResource) Configure(ctx context.Context, req resource.Configure
 }
 
 // retrievePortID resolves the port name to a numeric PortID using the SDK.
-func (r *macLimitResource) retrievePortID(portName string, diagnostics *diag.Diagnostics) (int, bool) {
-	portID, err := r.client.GetPortByName(portName)
+func (r *macLimitResource) retrievePortID(ctx context.Context, portName string, diagnostics *diag.Diagnostics) (int, bool) {
+	portID, err := r.client.GetPortByName(ctx, portName)
 	if err != nil {
 		diagnostics.AddError(
 			"Port Resolution Error",
@@ -98,7 +98,7 @@ func (r *macLimitResource) Create(ctx context.Context, req resource.CreateReques
 	}
 
 	// Resolve the port name to a numeric PortID.
-	portID, ok := r.retrievePortID(plan.Port.ValueString(), &resp.Diagnostics)
+	portID, ok := r.retrievePortID(ctx, plan.Port.ValueString(), &resp.Diagnostics)
 	if !ok {
 		return
 	}
@@ -111,7 +111,7 @@ func (r *macLimitResource) Create(ctx context.Context, req resource.CreateReques
 	}
 
 	// Call the SDK to set the MAC limit.
-	err := r.client.SetMACLimit(portID, plan.Enabled.ValueBool(), limit)
+	err := r.client.SetMACLimit(ctx, portID, plan.Enabled.ValueBool(), limit)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",
@@ -133,7 +133,7 @@ func (r *macLimitResource) Read(ctx context.Context, req resource.ReadRequest, r
 	}
 
 	// Get the MAC limits.
-	macLimits, err := r.client.GetMACLimits()
+	macLimits, err := r.client.GetMACLimits(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",
@@ -176,7 +176,7 @@ func (r *macLimitResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 
 	// Resolve the port name to a numeric PortID.
-	portID, ok := r.retrievePortID(plan.Port.ValueString(), &resp.Diagnostics)
+	portID, ok := r.retrievePortID(ctx, plan.Port.ValueString(), &resp.Diagnostics)
 	if !ok {
 		return
 	}
@@ -189,7 +189,7 @@ func (r *macLimitResource) Update(ctx context.Context, req resource.UpdateReques
 	}
 
 	// Call the SDK to update the MAC limit.
-	err := r.client.SetMACLimit(portID, plan.Enabled.ValueBool(), limit)
+	err := r.client.SetMACLimit(ctx, portID, plan.Enabled.ValueBool(), limit)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",
@@ -211,13 +211,13 @@ func (r *macLimitResource) Delete(ctx context.Context, req resource.DeleteReques
 	}
 
 	// Resolve the port name to a numeric PortID.
-	portID, ok := r.retrievePortID(state.Port.ValueString(), &resp.Diagnostics)
+	portID, ok := r.retrievePortID(ctx, state.Port.ValueString(), &resp.Diagnostics)
 	if !ok {
 		return
 	}
 
 	// Call the SDK to disable the MAC limit.
-	err := r.client.SetMACLimit(portID, false, nil)
+	err := r.client.SetMACLimit(ctx, portID, false, nil)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",

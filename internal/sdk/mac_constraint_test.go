@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -49,7 +50,7 @@ func TestGetMACLimits(t *testing.T) {
 	}
 
 	// Call the GetMACLimits function
-	macLimits, err := client.GetMACLimits()
+	macLimits, err := client.GetMACLimits(context.Background())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -129,7 +130,7 @@ func TestSetMACLimit(t *testing.T) {
 		reqHeader.Set("Test-ID", "EnableWithLimit")
 		client.HttpClient.Transport = addTestIDHeader(reqHeader, server.Client().Transport)
 
-		err := client.SetMACLimit(1, true, intPointer(100))
+		err := client.SetMACLimit(context.Background(), 1, true, intPointer(100))
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
@@ -141,7 +142,7 @@ func TestSetMACLimit(t *testing.T) {
 		reqHeader.Set("Test-ID", "Disable")
 		client.HttpClient.Transport = addTestIDHeader(reqHeader, server.Client().Transport)
 
-		err := client.SetMACLimit(2, false, nil)
+		err := client.SetMACLimit(context.Background(), 2, false, nil)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
@@ -153,7 +154,7 @@ func TestSetMACLimit(t *testing.T) {
 		reqHeader.Set("Test-ID", "EnableUnlimited")
 		client.HttpClient.Transport = addTestIDHeader(reqHeader, server.Client().Transport)
 
-		err := client.SetMACLimit(3, true, nil)
+		err := client.SetMACLimit(context.Background(), 3, true, nil)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}

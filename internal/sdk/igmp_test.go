@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -96,7 +97,7 @@ func TestConfigurePortIGMPSnooping(t *testing.T) {
 				HttpClient: server.Client(),
 			}
 
-			err := client.ConfigurePortIGMPSnooping(tc.portID, tc.enable)
+			err := client.ConfigurePortIGMPSnooping(context.Background(), tc.portID, tc.enable)
 			if tc.expectedError {
 				assert.Error(t, err, tc.name)
 			} else {

@@ -73,7 +73,7 @@ func (r *jumboFrameResource) Create(ctx context.Context, req resource.CreateRequ
 	}
 
 	// Call the SDK to set the Jumbo Frame size
-	err := r.client.SetJumboFrame(int(plan.Size.ValueInt64()))
+	err := r.client.SetJumboFrame(ctx, int(plan.Size.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",
@@ -96,7 +96,7 @@ func (r *jumboFrameResource) Read(ctx context.Context, req resource.ReadRequest,
 	}
 
 	// Call the SDK to get the current Jumbo Frame size
-	jumboFrame, err := r.client.GetJumboFrame()
+	jumboFrame, err := r.client.GetJumboFrame(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",
@@ -120,7 +120,7 @@ func (r *jumboFrameResource) Update(ctx context.Context, req resource.UpdateRequ
 	}
 
 	// Call the SDK to set the new Jumbo Frame size
-	err := r.client.SetJumboFrame(int(plan.Size.ValueInt64()))
+	err := r.client.SetJumboFrame(ctx, int(plan.Size.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",
@@ -138,7 +138,7 @@ func (r *jumboFrameResource) Delete(ctx context.Context, req resource.DeleteRequ
 	defaultFrameSize := 16383
 
 	// Call the SDK to reset the Jumbo Frame size to the default
-	err := r.client.SetJumboFrame(defaultFrameSize)
+	err := r.client.SetJumboFrame(ctx, defaultFrameSize)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",

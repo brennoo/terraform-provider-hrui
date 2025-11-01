@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -8,10 +9,10 @@ import (
 )
 
 // GetSystemInfo retrieves system information from the HRUI server.
-func (c *HRUIClient) GetSystemInfo() (map[string]string, error) {
+func (c *HRUIClient) GetSystemInfo(ctx context.Context) (map[string]string, error) {
 	systemInfoURL := fmt.Sprintf("%s/info.cgi", c.URL)
 
-	respBody, err := c.Request("GET", systemInfoURL, nil, nil)
+	respBody, err := c.Request(ctx, "GET", systemInfoURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch System Info from HRUI: %w", err)
 	}

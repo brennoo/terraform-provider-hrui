@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/url"
@@ -68,10 +69,10 @@ type STPPort struct {
 }
 
 // GetLoopProtocol fetches the loop protocol settings.
-func (c *HRUIClient) GetLoopProtocol() (*LoopProtocol, error) {
+func (c *HRUIClient) GetLoopProtocol(ctx context.Context) (*LoopProtocol, error) {
 	loopURL := c.URL + "/loop.cgi"
 
-	respBody, err := c.Request("GET", loopURL, nil, nil)
+	respBody, err := c.Request(ctx, "GET", loopURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch loop protocol page: %w", err)
 	}
@@ -108,7 +109,7 @@ func (c *HRUIClient) GetLoopProtocol() (*LoopProtocol, error) {
 }
 
 // ConfigureLoopProtocol updates the loop function and associated settings.
-func (c *HRUIClient) ConfigureLoopProtocol(loopFunction string, intervalTime, recoverTime int, portStatuses []PortStatus) error {
+func (c *HRUIClient) ConfigureLoopProtocol(ctx context.Context, loopFunction string, intervalTime, recoverTime int, portStatuses []PortStatus) error {
 	loopURL := c.URL + "/loop.cgi"
 	funcType, valid := LoopFunctionType[loopFunction]
 	if !valid {
@@ -123,7 +124,7 @@ func (c *HRUIClient) ConfigureLoopProtocol(loopFunction string, intervalTime, re
 		"recover_time":  []string{strconv.Itoa(recoverTime)},
 	}
 
-	_, err := c.FormRequest(loopURL, formData)
+	_, err := c.FormRequest(ctx, loopURL, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update loop protocol: %w", err)
 	}
@@ -132,10 +133,10 @@ func (c *HRUIClient) ConfigureLoopProtocol(loopFunction string, intervalTime, re
 }
 
 // GetSTPSettings fetches and parses the STP Global Settings page.
-func (c *HRUIClient) GetSTPSettings() (*STPGlobalSettings, error) {
+func (c *HRUIClient) GetSTPSettings(ctx context.Context) (*STPGlobalSettings, error) {
 	stpURL := c.URL + "/loop.cgi?page=stp_global"
 
-	respBody, err := c.Request("GET", stpURL, nil, nil)
+	respBody, err := c.Request(ctx, "GET", stpURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch STP Global Settings page: %w", err)
 	}
@@ -149,7 +150,7 @@ func (c *HRUIClient) GetSTPSettings() (*STPGlobalSettings, error) {
 }
 
 // SetSTPSettings updates the STP global settings.
-func (c *HRUIClient) SetSTPSettings(stp *STPGlobalSettings) error {
+func (c *HRUIClient) SetSTPSettings(ctx context.Context, stp *STPGlobalSettings) error {
 	stpURL := c.URL + "/loop.cgi?page=stp_global"
 	formData := url.Values{
 		"cmd":      []string{"stp"},
@@ -160,7 +161,7 @@ func (c *HRUIClient) SetSTPSettings(stp *STPGlobalSettings) error {
 		"delay":    []string{strconv.Itoa(stp.ForwardDelay)},
 	}
 
-	_, err := c.FormRequest(stpURL, formData)
+	_, err := c.FormRequest(ctx, stpURL, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update STP global settings: %w", err)
 	}
@@ -170,7 +171,7 @@ func (c *HRUIClient) SetSTPSettings(stp *STPGlobalSettings) error {
 
 // SetSTPSettingsAsync performs a fire-and-forget POST request to update the STP Global Settings.
 // needed due to a bug in the cgi for updating stp global settings that never returns.
-func (c *HRUIClient) SetSTPSettingsAsync(stp *STPGlobalSettings) error {
+func (c *HRUIClient) SetSTPSettingsAsync(ctx context.Context, stp *STPGlobalSettings) error {
 	stpURL := c.URL + "/loop.cgi?page=stp_global"
 
 	// Prepare form data for POST request
@@ -184,7 +185,7 @@ func (c *HRUIClient) SetSTPSettingsAsync(stp *STPGlobalSettings) error {
 	}
 
 	c.HttpClient.Timeout = 2 * time.Second
-	_, err := c.FormRequest(stpURL, data)
+	_, err := c.FormRequest(ctx, stpURL, data)
 	if err != nil {
 		log.Printf("[WARN] POST request timed out or failed: %v", err)
 		return nil
@@ -194,10 +195,10 @@ func (c *HRUIClient) SetSTPSettingsAsync(stp *STPGlobalSettings) error {
 }
 
 // GetSTPPortSettings fetches the STP port settings.
-func (c *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
+func (c *HRUIClient) GetSTPPortSettings(ctx context.Context) ([]STPPort, error) {
 	stpURL := c.URL + "/loop.cgi?page=stp_port"
 
-	respBody, err := c.Request("GET", stpURL, nil, nil)
+	respBody, err := c.Request(ctx, "GET", stpURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch STP port settings page: %w", err)
 	}
@@ -261,8 +262,8 @@ func (c *HRUIClient) GetSTPPortSettings() ([]STPPort, error) {
 }
 
 // SetSTPPortSettings updates the STP settings for a specific port by its name.
-func (c *HRUIClient) SetSTPPortSettings(portName string, pathCost, priority int, p2p, edge string) error {
-	portID, err := c.GetPortByName(portName)
+func (c *HRUIClient) SetSTPPortSettings(ctx context.Context, portName string, pathCost, priority int, p2p, edge string) error {
+	portID, err := c.GetPortByName(ctx, portName)
 	if err != nil {
 		return fmt.Errorf("failed to resolve port ID for port '%s': %w", portName, err)
 	}
@@ -282,7 +283,7 @@ func (c *HRUIClient) SetSTPPortSettings(portName string, pathCost, priority int,
 	}
 
 	// Send the request to update STP settings
-	_, err = c.FormRequest(stpURL, formData)
+	_, err = c.FormRequest(ctx, stpURL, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update STP port settings for port '%s': %w", portName, err)
 	}
@@ -291,8 +292,8 @@ func (c *HRUIClient) SetSTPPortSettings(portName string, pathCost, priority int,
 }
 
 // GetSTPPort fetches a single STP port by its ID from the backend.
-func (c *HRUIClient) GetSTPPort(portName string) (*STPPort, error) {
-	ports, err := c.GetSTPPortSettings()
+func (c *HRUIClient) GetSTPPort(ctx context.Context, portName string) (*STPPort, error) {
+	ports, err := c.GetSTPPortSettings(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch STP port settings: %w", err)
 	}

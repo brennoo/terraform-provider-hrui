@@ -90,7 +90,7 @@ func (r *portMirroringResource) Create(ctx context.Context, req resource.CreateR
 	}
 
 	// Call the SDK to configure port mirroring
-	if err := r.client.ConfigurePortMirror(portMirror); err != nil {
+	if err := r.client.ConfigurePortMirror(ctx, portMirror); err != nil {
 		resp.Diagnostics.AddError(
 			"Error Configuring Port Mirroring",
 			"An error occurred while configuring port mirroring: "+err.Error(),
@@ -115,7 +115,7 @@ func (r *portMirroringResource) Read(ctx context.Context, req resource.ReadReque
 	}
 
 	// Get the current port mirroring configuration
-	portMirror, err := r.client.GetPortMirror()
+	portMirror, err := r.client.GetPortMirror(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Reading Port Mirroring",
@@ -158,7 +158,7 @@ func (r *portMirroringResource) Update(ctx context.Context, req resource.UpdateR
 	}
 
 	// Call the SDK to update port mirroring
-	if err := r.client.ConfigurePortMirror(portMirror); err != nil {
+	if err := r.client.ConfigurePortMirror(ctx, portMirror); err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating Port Mirroring",
 			"An error occurred while updating the port mirroring configuration: "+err.Error(),
@@ -174,7 +174,7 @@ func (r *portMirroringResource) Update(ctx context.Context, req resource.UpdateR
 // Delete removes the port mirroring configuration from the system.
 func (r *portMirroringResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	// Call the SDK to delete the port mirroring configuration
-	if err := r.client.DeletePortMirror(); err != nil {
+	if err := r.client.DeletePortMirror(ctx); err != nil {
 		resp.Diagnostics.AddError(
 			"Error Deleting Port Mirroring",
 			"An error occurred while deleting the port mirroring configuration: "+err.Error(),
@@ -195,7 +195,7 @@ func (r *portMirroringResource) ImportState(ctx context.Context, req resource.Im
 	}
 
 	// Fetch the current port mirroring configuration
-	portMirror, err := r.client.GetPortMirror()
+	portMirror, err := r.client.GetPortMirror(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Importing Port Mirroring",

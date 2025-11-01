@@ -121,7 +121,7 @@ func (r *portSettingResource) Create(ctx context.Context, req resource.CreateReq
 	}
 
 	// Call API to configure the port
-	finalPort, err := r.client.ConfigurePort(port)
+	finalPort, err := r.client.ConfigurePort(ctx, port)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to create HRUI port settings: %s", err))
 		return
@@ -151,7 +151,7 @@ func (r *portSettingResource) Read(ctx context.Context, req resource.ReadRequest
 	}
 
 	// Fetch the current data for the port from the switch
-	port, err := r.client.GetPort(state.Port.ValueString())
+	port, err := r.client.GetPort(ctx, state.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to read HRUI port settings: %s", err))
 		return
@@ -195,7 +195,7 @@ func (r *portSettingResource) Update(ctx context.Context, req resource.UpdateReq
 		FlowControlConfig: plan.FlowControl.Config.ValueString(),
 	}
 
-	finalPort, err := r.client.ConfigurePort(port)
+	finalPort, err := r.client.ConfigurePort(ctx, port)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update HRUI port settings, got error: %s", err))
 		return
@@ -232,7 +232,7 @@ func (r *portSettingResource) Delete(ctx context.Context, req resource.DeleteReq
 	}
 
 	// Reset the port to defaults
-	_, err := r.client.ConfigurePort(defaultPort)
+	_, err := r.client.ConfigurePort(ctx, defaultPort)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to Reset Port to Default",

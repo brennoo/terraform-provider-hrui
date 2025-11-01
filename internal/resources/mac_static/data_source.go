@@ -91,7 +91,7 @@ func (d *macStaticDataSource) Read(ctx context.Context, req datasource.ReadReque
 	}
 
 	// Retrieve the static MAC address table from the SDK
-	macTable, err := d.client.GetStaticMACAddressTable()
+	macTable, err := d.client.GetStaticMACAddressTable(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Failed to fetch static MAC table", err.Error())
 		return

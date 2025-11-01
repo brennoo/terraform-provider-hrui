@@ -63,13 +63,13 @@ func (r *ipAddressResource) Create(ctx context.Context, req resource.CreateReque
 		Gateway:     data.Gateway.ValueString(),
 	}
 
-	if err := r.client.SetIPAddressSettings(settings); err != nil {
+	if err := r.client.SetIPAddressSettings(ctx, settings); err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create HRUI IP address settings, got error: %s", err))
 		return
 	}
 
 	// Fetch updated data to sync with the latest state
-	updatedSettings, err := r.client.GetIPAddressSettings()
+	updatedSettings, err := r.client.GetIPAddressSettings(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read the latest HRUI IP address settings, got error: %s", err))
 		return
@@ -87,7 +87,7 @@ func (r *ipAddressResource) Create(ctx context.Context, req resource.CreateReque
 
 // Read function for IP Address settings.
 func (r *ipAddressResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	settings, err := r.client.GetIPAddressSettings()
+	settings, err := r.client.GetIPAddressSettings(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read the latest HRUI IP address settings, got error: %s", err))
 		return
@@ -118,7 +118,7 @@ func (r *ipAddressResource) Update(ctx context.Context, req resource.UpdateReque
 		Gateway:     data.Gateway.ValueString(),
 	}
 
-	if err := r.client.SetIPAddressSettings(settings); err != nil {
+	if err := r.client.SetIPAddressSettings(ctx, settings); err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to update HRUI IP address settings",
 			fmt.Sprintf("Failed to update IP address settings: %s", err),
@@ -126,7 +126,7 @@ func (r *ipAddressResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	updatedSettings, err := r.client.GetIPAddressSettings()
+	updatedSettings, err := r.client.GetIPAddressSettings(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to fetch updated IP address settings",

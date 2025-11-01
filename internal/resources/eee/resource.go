@@ -73,7 +73,7 @@ func (r *eeeResource) Create(ctx context.Context, req resource.CreateRequest, re
 	}
 
 	// Call the SDK to set the EEE status
-	err := r.client.SetEEE(plan.Enabled.ValueBool())
+	err := r.client.SetEEE(ctx, plan.Enabled.ValueBool())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",
@@ -96,7 +96,7 @@ func (r *eeeResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	}
 
 	// Call the SDK to get the current EEE status
-	enabled, err := r.client.GetEEE()
+	enabled, err := r.client.GetEEE(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",
@@ -120,7 +120,7 @@ func (r *eeeResource) Update(ctx context.Context, req resource.UpdateRequest, re
 	}
 
 	// Call the SDK to set the new EEE status
-	err := r.client.SetEEE(plan.Enabled.ValueBool())
+	err := r.client.SetEEE(ctx, plan.Enabled.ValueBool())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",
@@ -136,7 +136,7 @@ func (r *eeeResource) Update(ctx context.Context, req resource.UpdateRequest, re
 // Delete disables EEE by setting the property to its default value (`false`).
 func (r *eeeResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	// Call the SDK to disable EEE (default is off)
-	err := r.client.SetEEE(false)
+	err := r.client.SetEEE(ctx, false)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",

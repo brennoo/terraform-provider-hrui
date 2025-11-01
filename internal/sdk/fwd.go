@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/url"
@@ -31,8 +32,8 @@ type JumboFrame struct {
 }
 
 // GetStormControlStatus fetches the current storm control status from the HTML page.
-func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
-	respBody, err := c.Request("GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
+func (c *HRUIClient) GetStormControlStatus(ctx context.Context) (*StormControlConfig, error) {
+	respBody, err := c.Request(ctx, "GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch storm control page: %w", err)
 	}
@@ -93,6 +94,7 @@ func (c *HRUIClient) GetStormControlStatus() (*StormControlConfig, error) {
 
 // SetStormControlConfig updates the storm control settings for specific ports.
 func (c *HRUIClient) SetStormControlConfig(
+	ctx context.Context,
 	stormType string, // Type of storm control: "Broadcast", "Known Multicast", etc.
 	ports []string, // Ports to apply settings to, as strings
 	state bool, // Whether to enable or disable storm control.
@@ -122,7 +124,7 @@ func (c *HRUIClient) SetStormControlConfig(
 		formData.Set("rate", strconv.FormatInt(*rate, 10))
 	}
 
-	respBody, err := c.FormRequest(c.URL+"/fwd.cgi?page=storm_ctrl", formData)
+	respBody, err := c.FormRequest(ctx, c.URL+"/fwd.cgi?page=storm_ctrl", formData)
 	if err != nil {
 		return fmt.Errorf("failed to update storm control settings: %w", err)
 	}
@@ -149,9 +151,9 @@ func (c *HRUIClient) SetStormControlConfig(
 
 // GetPortMaxRate retrieves the maximum allowed traffic rate (kbps) for a specific port
 // using the provided human-readable port name (e.g., "Port 1") rather than port ID.
-func (c *HRUIClient) GetPortMaxRate(portName string) (int64, error) {
+func (c *HRUIClient) GetPortMaxRate(ctx context.Context, portName string) (int64, error) {
 	// Fetch the storm control HTML page.
-	respBody, err := c.Request("GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
+	respBody, err := c.Request(ctx, "GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
 	if err != nil {
 		return 0, fmt.Errorf("failed to fetch storm control page: %w", err)
 	}
@@ -249,12 +251,12 @@ func stormTypeToID(stormType string) string {
 }
 
 // GetJumboFrame retrieves the current Jumbo Frame configuration from the HTML page.
-func (c *HRUIClient) GetJumboFrame() (*JumboFrame, error) {
+func (c *HRUIClient) GetJumboFrame(ctx context.Context) (*JumboFrame, error) {
 	// URL to the Jumbo Frame page
 	urlJumbo := fmt.Sprintf("%s/fwd.cgi?page=jumboframe", c.URL)
 
 	// Perform HTTP GET request
-	respBody, err := c.Request("GET", urlJumbo, nil, nil)
+	respBody, err := c.Request(ctx, "GET", urlJumbo, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch Jumbo Frame page: %w", err)
 	}
@@ -280,7 +282,7 @@ func (c *HRUIClient) GetJumboFrame() (*JumboFrame, error) {
 }
 
 // SetJumboFrame sets the Jumbo Frame size on the device.
-func (c *HRUIClient) SetJumboFrame(frameSize int) error {
+func (c *HRUIClient) SetJumboFrame(ctx context.Context, frameSize int) error {
 	// Map the FrameSize to its corresponding dropdown value
 	frameSizeValue := map[int]string{
 		1522:  "0",
@@ -304,7 +306,7 @@ func (c *HRUIClient) SetJumboFrame(frameSize int) error {
 	endpoint := fmt.Sprintf("%s/fwd.cgi?page=jumboframe", c.URL)
 
 	// Send the POST request
-	respBody, err := c.FormRequest(endpoint, formData)
+	respBody, err := c.FormRequest(ctx, endpoint, formData)
 	if err != nil {
 		return fmt.Errorf("failed to set Jumbo Frame size '%d': %w", frameSize, err)
 	}

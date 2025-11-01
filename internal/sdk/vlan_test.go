@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -103,7 +104,7 @@ func TestGetVLAN(t *testing.T) {
 
 	client := setupClient(mock.URL)
 
-	vlan, err := client.GetVLAN(10)
+	vlan, err := client.GetVLAN(context.Background(), 10)
 	require.NoError(t, err)
 	require.NotNil(t, vlan)
 
@@ -126,7 +127,7 @@ func TestAddVLAN(t *testing.T) {
 		TaggedPorts:   []string{"eth2"},
 	}
 
-	err := client.AddVLAN(newVLAN)
+	err := client.AddVLAN(context.Background(), newVLAN)
 	require.NoError(t, err)
 }
 
@@ -137,7 +138,7 @@ func TestRemoveVLAN(t *testing.T) {
 
 	client := setupClient(mock.URL)
 
-	require.NoError(t, client.RemoveVLAN(10))
+	require.NoError(t, client.RemoveVLAN(context.Background(), 10))
 }
 
 // Test ListVLANs.
@@ -147,7 +148,7 @@ func TestListVLANs(t *testing.T) {
 
 	client := setupClient(mock.URL)
 
-	vlans, err := client.ListVLANs()
+	vlans, err := client.ListVLANs(context.Background())
 	assert.NoError(t, err)
 	assert.NotEmpty(t, vlans)
 }
@@ -159,7 +160,7 @@ func TestListPortVLANConfigs(t *testing.T) {
 
 	client := setupClient(mock.URL)
 
-	configs, err := client.ListPortVLANConfigs()
+	configs, err := client.ListPortVLANConfigs(context.Background())
 	assert.NoError(t, err)
 	assert.NotEmpty(t, configs)
 
@@ -179,7 +180,7 @@ func TestListVLANsWithTrunkMembers(t *testing.T) {
 
 	client := setupClient(mock.URL)
 
-	configs, err := client.ListPortVLANConfigs()
+	configs, err := client.ListPortVLANConfigs(context.Background())
 	assert.NoError(t, err)
 	assert.NotEmpty(t, configs)
 }

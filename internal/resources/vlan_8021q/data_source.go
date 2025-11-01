@@ -98,7 +98,7 @@ func (d *vlan8021qDataSource) Read(ctx context.Context, req datasource.ReadReque
 
 	// Fetch the VLAN data
 	vlanID := model.VlanID.ValueInt64()
-	vlan, err := d.client.GetVLAN(int(vlanID))
+	vlan, err := d.client.GetVLAN(ctx, int(vlanID))
 	if err != nil {
 		resp.Diagnostics.AddError("Error fetching VLAN", fmt.Sprintf("Could not fetch VLAN with ID %d: %s", vlanID, err.Error()))
 		return

@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -57,7 +58,7 @@ func TestGetStormControlStatus(t *testing.T) {
 	client := &HRUIClient{HttpClient: server.Client(), URL: server.URL}
 
 	// Test GetStormControlStatus
-	config, err := client.GetStormControlStatus()
+	config, err := client.GetStormControlStatus(context.Background())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -132,7 +133,7 @@ func TestGetPortMaxRate(t *testing.T) {
 	client := &HRUIClient{HttpClient: server.Client(), URL: server.URL}
 
 	// Test case: Valid port (Port 1)
-	rate, err := client.GetPortMaxRate("Port 1")
+	rate, err := client.GetPortMaxRate(context.Background(), "Port 1")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -141,7 +142,7 @@ func TestGetPortMaxRate(t *testing.T) {
 	}
 
 	// Test case: Valid port (Port 2)
-	rate, err = client.GetPortMaxRate("Port 2")
+	rate, err = client.GetPortMaxRate(context.Background(), "Port 2")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -150,7 +151,7 @@ func TestGetPortMaxRate(t *testing.T) {
 	}
 
 	// Test case: Non-existent port (Port 3)
-	_, err = client.GetPortMaxRate("Port 3")
+	_, err = client.GetPortMaxRate(context.Background(), "Port 3")
 	if err == nil {
 		t.Fatal("expected an error, received none")
 	}
@@ -212,7 +213,7 @@ func TestGetJumboFrame(t *testing.T) {
 	defer server.Close()
 
 	client := &HRUIClient{HttpClient: server.Client(), URL: server.URL}
-	jumboFrame, err := client.GetJumboFrame()
+	jumboFrame, err := client.GetJumboFrame(context.Background())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -256,7 +257,7 @@ func TestSetJumboFrame(t *testing.T) {
 	defer server.Close()
 
 	client := &HRUIClient{HttpClient: server.Client(), URL: server.URL}
-	err := client.SetJumboFrame(expectedFrameSize)
+	err := client.SetJumboFrame(context.Background(), expectedFrameSize)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -266,7 +267,7 @@ func TestSetJumboFrameInvalidSize(t *testing.T) {
 	client := &HRUIClient{HttpClient: http.DefaultClient, URL: "http://example.com"}
 
 	invalidFrameSize := 1500 // This size is not supported
-	err := client.SetJumboFrame(invalidFrameSize)
+	err := client.SetJumboFrame(context.Background(), invalidFrameSize)
 	if err == nil {
 		t.Fatalf("expected error for invalid frame size, got nil")
 	}

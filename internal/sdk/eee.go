@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 	"strings"
@@ -10,10 +11,10 @@ import (
 
 // GetEEE fetches the current EEE (Energy Efficient Ethernet) status from the device.
 // Returns `true` if EEE is enabled, `false` if disabled.
-func (c *HRUIClient) GetEEE() (bool, error) {
+func (c *HRUIClient) GetEEE(ctx context.Context) (bool, error) {
 	// Issue a GET request to `/eee.cgi`
 	endpoint := fmt.Sprintf("%s/eee.cgi", c.URL)
-	responseBody, err := c.Request("GET", endpoint, nil, nil)
+	responseBody, err := c.Request(ctx, "GET", endpoint, nil, nil)
 	if err != nil {
 		return false, fmt.Errorf("failed to fetch EEE status: %w", err)
 	}
@@ -24,7 +25,7 @@ func (c *HRUIClient) GetEEE() (bool, error) {
 
 // SetEEE updates the EEE (Energy Efficient Ethernet) status on the device.
 // Pass `true` to enable EEE or `false` to disable it.
-func (c *HRUIClient) SetEEE(enabled bool) error {
+func (c *HRUIClient) SetEEE(ctx context.Context, enabled bool) error {
 	// Construct the POST form data
 	funcType := "0" // Default to Disable
 	if enabled {
@@ -36,7 +37,7 @@ func (c *HRUIClient) SetEEE(enabled bool) error {
 
 	// Issue a POST request to `/eee.cgi`
 	endpoint := fmt.Sprintf("%s/eee.cgi", c.URL)
-	_, err := c.FormRequest(endpoint, formData)
+	_, err := c.FormRequest(ctx, endpoint, formData)
 	if err != nil {
 		return fmt.Errorf("failed to update EEE status: %w", err)
 	}

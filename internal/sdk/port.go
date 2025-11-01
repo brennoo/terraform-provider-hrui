@@ -2,6 +2,7 @@ package sdk
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"log"
 	"net/url"
@@ -63,8 +64,8 @@ type PortIsolation struct {
 	IsolationList []string
 }
 
-func (c *HRUIClient) GetPort(portID string) (*Port, error) {
-	ports, err := c.ListPorts()
+func (c *HRUIClient) GetPort(ctx context.Context, portID string) (*Port, error) {
+	ports, err := c.ListPorts(ctx)
 	if err != nil {
 		log.Printf("failed to fetch Ports: %v", err)
 		return nil, err
@@ -80,8 +81,8 @@ func (c *HRUIClient) GetPort(portID string) (*Port, error) {
 }
 
 // GetPortByName fetches port.cgi, parses it, and resolves the numeric port ID for a given port name.
-func (c *HRUIClient) GetPortByName(portName string) (int, error) {
-	respBody, err := c.Request("GET", fmt.Sprintf("%s/port.cgi", c.URL), nil, nil)
+func (c *HRUIClient) GetPortByName(ctx context.Context, portName string) (int, error) {
+	respBody, err := c.Request(ctx, "GET", fmt.Sprintf("%s/port.cgi", c.URL), nil, nil)
 	if err != nil {
 		return 0, fmt.Errorf("failed to fetch port.cgi: %w", err)
 	}
@@ -123,10 +124,10 @@ func (c *HRUIClient) GetPortByName(portName string) (int, error) {
 }
 
 // ListPorts retrieves information about all switch ports.
-func (c *HRUIClient) ListPorts() ([]*Port, error) {
+func (c *HRUIClient) ListPorts(ctx context.Context) ([]*Port, error) {
 	portURL := fmt.Sprintf("%s/port.cgi", c.URL)
 
-	respBody, err := c.Request("GET", portURL, nil, nil)
+	respBody, err := c.Request(ctx, "GET", portURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch Port settings from HRUI: %w", err)
 	}
@@ -181,7 +182,7 @@ func (c *HRUIClient) ListPorts() ([]*Port, error) {
 }
 
 // ConfigurePort updates the configuration for a single port.
-func (c *HRUIClient) ConfigurePort(port *Port) (*Port, error) {
+func (c *HRUIClient) ConfigurePort(ctx context.Context, port *Port) (*Port, error) {
 	var speedDuplexNumeric string
 	for k, v := range speedDuplexMapping {
 		if v == port.SpeedDuplexConfig {
@@ -204,7 +205,7 @@ func (c *HRUIClient) ConfigurePort(port *Port) (*Port, error) {
 		return nil, fmt.Errorf("invalid FlowControl value: %s", port.FlowControlConfig)
 	}
 
-	portID, err := c.GetPortByName(port.ID)
+	portID, err := c.GetPortByName(ctx, port.ID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve port name '%s': %w", port.ID, err)
 	}
@@ -217,12 +218,12 @@ func (c *HRUIClient) ConfigurePort(port *Port) (*Port, error) {
 	form.Set("flow", flowControlNumeric)
 
 	portsURL := fmt.Sprintf("%s/port.cgi", c.URL)
-	_, err = c.FormRequest(portsURL, form)
+	_, err = c.FormRequest(ctx, portsURL, form)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update port settings: %w", err)
 	}
 
-	updatedPort, err := c.GetPort(port.ID)
+	updatedPort, err := c.GetPort(ctx, port.ID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve updated port state: %w", err)
 	}
@@ -231,13 +232,13 @@ func (c *HRUIClient) ConfigurePort(port *Port) (*Port, error) {
 }
 
 // GetValidPorts fetches and returns the list of IDs of all ports available on the system.
-func (c *HRUIClient) GetValidPorts() ([]int, error) {
+func (c *HRUIClient) GetValidPorts(ctx context.Context) ([]int, error) {
 	if c == nil {
 		return nil, fmt.Errorf("HRUIClient is nil")
 	}
 
 	// Call ListPorts to fetch all ports.
-	ports, err := c.ListPorts()
+	ports, err := c.ListPorts(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list ports: %w", err)
 	}
@@ -246,7 +247,7 @@ func (c *HRUIClient) GetValidPorts() ([]int, error) {
 	validPorts := []int{}
 	for _, port := range ports {
 		// Use GetPortByName to resolve the numeric ID for each port name.
-		portID, err := c.GetPortByName(port.ID)
+		portID, err := c.GetPortByName(ctx, port.ID)
 		if err != nil {
 			return nil, fmt.Errorf("invalid port name '%s': %w", port.ID, err)
 		}
@@ -259,14 +260,14 @@ func (c *HRUIClient) GetValidPorts() ([]int, error) {
 }
 
 // GetTotalPorts returns the current number of ports.
-func (c *HRUIClient) GetTotalPorts() (int, error) {
+func (c *HRUIClient) GetTotalPorts(ctx context.Context) (int, error) {
 	if c == nil {
 		return 0, fmt.Errorf("HRUIClient is nil")
 	}
 
 	// Request the trunk group page
 	url := fmt.Sprintf("%s/trunk.cgi?page=group", c.URL)
-	body, err := c.Request("GET", url, nil, nil)
+	body, err := c.Request(ctx, "GET", url, nil, nil)
 	if err != nil {
 		return 0, fmt.Errorf("failed to fetch trunk group page: %w", err)
 	}
@@ -291,10 +292,10 @@ func (c *HRUIClient) GetTotalPorts() (int, error) {
 }
 
 // GetPortStatistics retrieves port statistics from the switch.
-func (c *HRUIClient) GetPortStatistics() ([]*PortStatistics, error) {
+func (c *HRUIClient) GetPortStatistics(ctx context.Context) ([]*PortStatistics, error) {
 	statsURL := fmt.Sprintf("%s/port.cgi?page=stats", c.URL)
 
-	respBody, err := c.Request("GET", statsURL, nil, nil)
+	respBody, err := c.Request(ctx, "GET", statsURL, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch port statistics page: %w", err)
 	}
@@ -334,10 +335,10 @@ func (c *HRUIClient) GetPortStatistics() ([]*PortStatistics, error) {
 }
 
 // GetPortMirror fetches the current port mirroring configuration (if any).
-func (c *HRUIClient) GetPortMirror() (*PortMirror, error) {
+func (c *HRUIClient) GetPortMirror(ctx context.Context) (*PortMirror, error) {
 	// Fetch the mirroring configuration page
 	urlMirror := fmt.Sprintf("%s/port.cgi?page=mirroring", c.URL)
-	respBody, err := c.Request("GET", urlMirror, nil, nil)
+	respBody, err := c.Request(ctx, "GET", urlMirror, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch Port Mirror settings: %w", err)
 	}
@@ -395,7 +396,7 @@ func formatPortValue(raw string) string {
 }
 
 // ConfigurePortMirror sets up or updates port mirroring with the given configuration.
-func (c *HRUIClient) ConfigurePortMirror(p *PortMirror) error {
+func (c *HRUIClient) ConfigurePortMirror(ctx context.Context, p *PortMirror) error {
 	// Construct the URL for configuring port mirroring
 	urlMirror := fmt.Sprintf("%s/port.cgi?page=mirroring", c.URL)
 	form := url.Values{}
@@ -416,7 +417,7 @@ func (c *HRUIClient) ConfigurePortMirror(p *PortMirror) error {
 	}
 
 	// Resolve the mirroring port ID
-	mirroringPortID, err := c.GetPortByName(p.MirroringPort)
+	mirroringPortID, err := c.GetPortByName(ctx, p.MirroringPort)
 	if err != nil {
 		return fmt.Errorf("failed to resolve mirroring port '%s': %w", p.MirroringPort, err)
 	}
@@ -429,7 +430,7 @@ func (c *HRUIClient) ConfigurePortMirror(p *PortMirror) error {
 	form.Set("mirrored_port", p.MirroredPort)
 
 	// Make the request to update port mirroring configuration
-	_, err = c.FormRequest(urlMirror, form)
+	_, err = c.FormRequest(ctx, urlMirror, form)
 	if err != nil {
 		return fmt.Errorf("failed to update port mirror settings: %w", err)
 	}
@@ -438,14 +439,14 @@ func (c *HRUIClient) ConfigurePortMirror(p *PortMirror) error {
 }
 
 // DeletePortMirror removes the current port mirroring configuration.
-func (c *HRUIClient) DeletePortMirror() error {
+func (c *HRUIClient) DeletePortMirror(ctx context.Context) error {
 	// Construct the URL for deleting port mirroring configuration
 	urlMirror := fmt.Sprintf("%s/port.cgi?page=delete_mirror", c.URL)
 	form := url.Values{}
 	form.Set("cmd", "del_mirror")
 
 	// Send the form request to delete the configuration
-	_, err := c.FormRequest(urlMirror, form)
+	_, err := c.FormRequest(ctx, urlMirror, form)
 	if err != nil {
 		return fmt.Errorf("failed to delete port mirror settings: %w", err)
 	}
@@ -454,10 +455,10 @@ func (c *HRUIClient) DeletePortMirror() error {
 }
 
 // GetPortIsolation fetches the current port isolation configuration.
-func (c *HRUIClient) GetPortIsolation() ([]PortIsolation, error) {
+func (c *HRUIClient) GetPortIsolation(ctx context.Context) ([]PortIsolation, error) {
 	// Fetch the port isolation page from the device
 	url := fmt.Sprintf("%s/port.cgi?page=isolation", c.URL)
-	respBody, err := c.Request("GET", url, nil, nil)
+	respBody, err := c.Request(ctx, "GET", url, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch port isolation page: %w", err)
 	}
@@ -529,7 +530,7 @@ func isNumeric(s string) bool {
 	return err == nil
 }
 
-func (c *HRUIClient) ConfigurePortIsolation(port string, isolationList []string) error {
+func (c *HRUIClient) ConfigurePortIsolation(ctx context.Context, port string, isolationList []string) error {
 	endpoint := fmt.Sprintf("%s/port.cgi?page=isolation", c.URL)
 
 	formData := url.Values{}
@@ -539,7 +540,7 @@ func (c *HRUIClient) ConfigurePortIsolation(port string, isolationList []string)
 		formData.Add("isolationlist", isolation)
 	}
 
-	_, err := c.FormRequest(endpoint, formData)
+	_, err := c.FormRequest(ctx, endpoint, formData)
 	if err != nil {
 		return fmt.Errorf("failed to configure port isolation: %w", err)
 	}
@@ -548,8 +549,8 @@ func (c *HRUIClient) ConfigurePortIsolation(port string, isolationList []string)
 }
 
 // DeletePortIsolation resets the isolation list for a specific port.
-func (c *HRUIClient) DeletePortIsolation(port string) error {
-	ports, err := c.ListPorts()
+func (c *HRUIClient) DeletePortIsolation(ctx context.Context, port string) error {
+	ports, err := c.ListPorts(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to retrieve ports to delete port isolation: %w", err)
 	}
@@ -568,7 +569,7 @@ func (c *HRUIClient) DeletePortIsolation(port string) error {
 		formData.Add("isolationlist", p)
 	}
 
-	_, err = c.FormRequest(endpoint, formData)
+	_, err = c.FormRequest(ctx, endpoint, formData)
 	if err != nil {
 		return fmt.Errorf("failed to delete port isolation for port '%s': %w", port, err)
 	}

@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"crypto/md5" //#nosec G501 -- HRUI switch auth requires it
 	"fmt"
 	"net/http"
@@ -12,7 +13,7 @@ import (
 )
 
 func createAuthenticatedClient(t *testing.T, server *httptest.Server) *HRUIClient {
-	clientObj, err := NewClient(server.URL, "testuser", "testpass", false)
+	clientObj, err := NewClient(context.Background(), server.URL, "testuser", "testpass", false)
 	require.NoError(t, err)
 	require.NotNil(t, clientObj)
 	require.NotNil(t, clientObj.HttpClient)
@@ -63,7 +64,7 @@ func TestNewClient_SuccessfulAuthentication(t *testing.T) {
 	}))
 	defer server.Close()
 
-	clientObj, err := NewClient(server.URL, "testuser", "testpass", false)
+	clientObj, err := NewClient(context.Background(), server.URL, "testuser", "testpass", false)
 	require.NoError(t, err, "Failed to authenticate the client")
 	require.NotNil(t, clientObj)
 	require.NotNil(t, clientObj.HttpClient)
@@ -85,7 +86,7 @@ func TestNewClient_FailedAuthentication(t *testing.T) {
 	}))
 	defer server.Close()
 
-	clientObj, err := NewClient(server.URL, "invaliduser", "invalidpass", false)
+	clientObj, err := NewClient(context.Background(), server.URL, "invaliduser", "invalidpass", false)
 	require.Error(t, err)
 	require.Nil(t, clientObj)
 	require.Contains(t, err.Error(), "failed to authenticate HRUIClient")
@@ -107,7 +108,7 @@ func TestClient_CommitChanges_Success(t *testing.T) {
 	defer server.Close()
 
 	clientObj := createAuthenticatedClient(t, server)
-	err := clientObj.CommitChanges()
+	err := clientObj.CommitChanges(context.Background())
 	require.NoError(t, err)
 }
 
@@ -127,7 +128,7 @@ func TestClient_CommitChanges_Failure(t *testing.T) {
 	defer server.Close()
 
 	clientObj := createAuthenticatedClient(t, server)
-	err := clientObj.CommitChanges()
+	err := clientObj.CommitChanges(context.Background())
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "Error saving configuration")
 }
@@ -148,7 +149,7 @@ func TestClient_Request_Success(t *testing.T) {
 	defer server.Close()
 
 	clientObj := createAuthenticatedClient(t, server)
-	respBody, err := clientObj.Request("GET", fmt.Sprintf("%s/test", server.URL), nil, nil)
+	respBody, err := clientObj.Request(context.Background(), "GET", fmt.Sprintf("%s/test", server.URL), nil, nil)
 	require.NoError(t, err)
 	require.Equal(t, "Success", string(respBody))
 }
@@ -168,7 +169,7 @@ func TestClient_Request_Failure(t *testing.T) {
 	defer server.Close()
 
 	clientObj := createAuthenticatedClient(t, server)
-	_, err := clientObj.Request("GET", fmt.Sprintf("%s/test", server.URL), nil, nil)
+	_, err := clientObj.Request(context.Background(), "GET", fmt.Sprintf("%s/test", server.URL), nil, nil)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "/test returned status 404")
 }
@@ -202,7 +203,7 @@ func TestClient_FormRequest_Success(t *testing.T) {
 	formData.Set("param1", "value1")
 	formData.Set("param2", "value2")
 
-	respBody, err := clientObj.FormRequest(fmt.Sprintf("%s/test", server.URL), formData)
+	respBody, err := clientObj.FormRequest(context.Background(), fmt.Sprintf("%s/test", server.URL), formData)
 	require.NoError(t, err)
 	require.Equal(t, "Success", string(respBody))
 }
@@ -225,7 +226,7 @@ func TestClient_FormRequest_Failure(t *testing.T) {
 	formData := url.Values{}
 	formData.Set("param1", "value1")
 
-	_, err := clientObj.FormRequest(fmt.Sprintf("%s/test", server.URL), formData)
+	_, err := clientObj.FormRequest(context.Background(), fmt.Sprintf("%s/test", server.URL), formData)
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "/test returned status 404")
 }

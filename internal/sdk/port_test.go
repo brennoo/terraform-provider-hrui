@@ -1,6 +1,7 @@
 package sdk
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -99,7 +100,7 @@ func TestListPorts(t *testing.T) {
 		HttpClient: server.Client(),
 	}
 
-	ports, err := client.ListPorts()
+	ports, err := client.ListPorts(context.Background())
 	require.NoError(t, err)
 	require.Len(t, ports, 5)
 
@@ -168,7 +169,7 @@ func TestGetPort(t *testing.T) {
 	}
 
 	// Test for a physical port
-	port, err := client.GetPort("Port 1")
+	port, err := client.GetPort(context.Background(), "Port 1")
 	require.NoError(t, err)
 
 	expectedPort := &Port{
@@ -184,7 +185,7 @@ func TestGetPort(t *testing.T) {
 	assert.Equal(t, expectedPort, port)
 
 	// Test for a trunk port
-	port, err = client.GetPort("Trunk1")
+	port, err = client.GetPort(context.Background(), "Trunk1")
 	require.NoError(t, err)
 
 	expectedPort = &Port{
@@ -256,7 +257,7 @@ func TestGetPortStatistics(t *testing.T) {
 		HttpClient: server.Client(),
 	}
 
-	stats, err := client.GetPortStatistics()
+	stats, err := client.GetPortStatistics(context.Background())
 	require.NoError(t, err)
 
 	expectedStats := []*PortStatistics{
@@ -331,11 +332,11 @@ func TestPortMirroring(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client, err := NewClient(server.URL, "testuser", "testpassword", false)
+	client, err := NewClient(context.Background(), server.URL, "testuser", "testpassword", false)
 	require.NoError(t, err)
 	require.NotNil(t, client)
 
-	portMirror, err := client.GetPortMirror()
+	portMirror, err := client.GetPortMirror(context.Background())
 	require.NoError(t, err)
 	expectedPortMirror := &PortMirror{
 		MirrorDirection: "Rx",
@@ -349,10 +350,10 @@ func TestPortMirroring(t *testing.T) {
 		MirroringPort:   "Port 2",
 		MirroredPort:    "Port 3",
 	}
-	err = client.ConfigurePortMirror(newPortMirror)
+	err = client.ConfigurePortMirror(context.Background(), newPortMirror)
 	require.NoError(t, err)
 
-	err = client.DeletePortMirror()
+	err = client.DeletePortMirror(context.Background())
 	require.NoError(t, err)
 }
 
@@ -408,7 +409,7 @@ func TestGetPortIsolation(t *testing.T) {
 	}
 
 	// Call GetPortIsolation
-	isolations, err := client.GetPortIsolation()
+	isolations, err := client.GetPortIsolation(context.Background())
 	require.NoError(t, err)
 
 	// Assert that the number of isolations matches the number of rows in the mock HTML
