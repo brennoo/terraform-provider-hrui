@@ -12,7 +12,10 @@ import (
 )
 
 // Ensure implementation satisfies the resource.Resource interface.
-var _ resource.Resource = &macStaticResource{}
+var (
+	_ resource.Resource              = &macStaticResource{}
+	_ resource.ResourceWithConfigure = &macStaticResource{}
+)
 
 // macStaticResource manages static MAC entries on the switch.
 type macStaticResource struct {

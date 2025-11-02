@@ -166,8 +166,28 @@ func (r *loopProtocolResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	// Set the state based on the current plan configuration.
-	diags = resp.State.Set(ctx, &plan)
+	// Read back from the device to ensure state matches what was actually applied
+	loopProtocol, err := r.client.GetLoopProtocol(ctx)
+	if err != nil {
+		resp.Diagnostics.AddError("Error Reading Loop Protocol", fmt.Sprintf("Unable to read Loop Protocol after creation: %s", err.Error()))
+		return
+	}
+
+	// Update state with values from device
+	state := loopProtocolModel{
+		LoopFunction: types.StringValue(loopProtocol.LoopFunction),
+	}
+
+	if isTimingRelevant(loopProtocol.LoopFunction) {
+		state.IntervalTime = types.Int64Value(int64(loopProtocol.IntervalTime))
+		state.RecoverTime = types.Int64Value(int64(loopProtocol.RecoverTime))
+	} else {
+		state.IntervalTime = types.Int64Null()
+		state.RecoverTime = types.Int64Null()
+	}
+
+	// Set the state based on what was read from the device
+	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 }
 
@@ -232,8 +252,28 @@ func (r *loopProtocolResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	// Update the state to match the requested plan.
-	diags = resp.State.Set(ctx, plan)
+	// Read back from the device to ensure state matches what was actually applied
+	loopProtocol, err := r.client.GetLoopProtocol(ctx)
+	if err != nil {
+		resp.Diagnostics.AddError("Error Reading Loop Protocol", fmt.Sprintf("Unable to read Loop Protocol after update: %s", err.Error()))
+		return
+	}
+
+	// Update state with values from device
+	state := loopProtocolModel{
+		LoopFunction: types.StringValue(loopProtocol.LoopFunction),
+	}
+
+	if isTimingRelevant(loopProtocol.LoopFunction) {
+		state.IntervalTime = types.Int64Value(int64(loopProtocol.IntervalTime))
+		state.RecoverTime = types.Int64Value(int64(loopProtocol.RecoverTime))
+	} else {
+		state.IntervalTime = types.Int64Null()
+		state.RecoverTime = types.Int64Null()
+	}
+
+	// Update the state to match what was read from the device
+	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 }
 

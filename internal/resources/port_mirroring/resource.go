@@ -3,10 +3,8 @@ package port_mirroring
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
-	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
@@ -180,42 +178,4 @@ func (r *portMirroringResource) Delete(ctx context.Context, req resource.DeleteR
 			"An error occurred while deleting the port mirroring configuration: "+err.Error(),
 		)
 	}
-}
-
-// ImportState allows importing an existing port mirroring configuration by ID.
-func (r *portMirroringResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	// Expect the import ID to be in the format `mirroring_port:mirrored_port`
-	parts := strings.Split(req.ID, ":")
-	if len(parts) != 2 {
-		resp.Diagnostics.AddError(
-			"Invalid Import ID",
-			"Expected ID in the format `mirroring_port:mirrored_port`.",
-		)
-		return
-	}
-
-	// Fetch the current port mirroring configuration
-	portMirror, err := r.client.GetPortMirror(ctx)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error Importing Port Mirroring",
-			"An error occurred while fetching the port mirroring configuration: "+err.Error(),
-		)
-		return
-	}
-
-	// Validate the fetched configuration with the import ID
-	if portMirror.MirroringPort != parts[0] || portMirror.MirroredPort != parts[1] {
-		resp.Diagnostics.AddError(
-			"Port Mirroring Configuration Not Found",
-			fmt.Sprintf("No port mirroring configuration found for ID: %s.", req.ID),
-		)
-		return
-	}
-
-	// Set the imported attributes
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mirror_direction"), portMirror.MirrorDirection)...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mirroring_port"), portMirror.MirroringPort)...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mirrored_port"), portMirror.MirroredPort)...)
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
 }

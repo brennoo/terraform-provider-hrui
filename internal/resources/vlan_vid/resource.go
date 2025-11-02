@@ -90,12 +90,36 @@ func (r *vlanVIDResource) resolvePortID(ctx context.Context, portName string) (i
 		return 0, fmt.Errorf("failed to resolve Port ID for '%s': %w", portName, err)
 	}
 
-	// Validate PortID
-	if portID <= 0 {
+	// Validate PortID (device uses 0-based indexing, so Port 1 = portID 0 is valid)
+	if portID < 0 {
 		return 0, fmt.Errorf("invalid Port ID '%d' resolved for port '%s'", portID, portName)
 	}
 
 	return portID, nil
+}
+
+// normalizeAcceptFrameType converts user-friendly values to SDK values.
+func normalizeAcceptFrameType(userValue string) string {
+	switch userValue {
+	case "Tagged":
+		return "Tag-only"
+	case "Untagged":
+		return "Untag-only"
+	default:
+		return userValue // "All" or other values pass through
+	}
+}
+
+// denormalizeAcceptFrameType converts SDK values back to user-friendly values.
+func denormalizeAcceptFrameType(sdkValue string) string {
+	switch sdkValue {
+	case "Tag-only", "Tagged Only":
+		return "Tagged"
+	case "Untag-only", "Untagged Only":
+		return "Untagged"
+	default:
+		return sdkValue // "All" or other values pass through
+	}
 }
 
 // Create configures the port with the given VLAN ID and accepted frame type.
@@ -120,7 +144,7 @@ func (r *vlanVIDResource) Create(ctx context.Context, req resource.CreateRequest
 	portConfig := &sdk.PortVLANConfig{
 		PortID:          portID,
 		PVID:            int(plan.VlanID.ValueInt64()),
-		AcceptFrameType: plan.AcceptFrameType.ValueString(),
+		AcceptFrameType: normalizeAcceptFrameType(plan.AcceptFrameType.ValueString()),
 	}
 
 	err = r.client.SetPortVLANConfig(ctx, portConfig)
@@ -167,7 +191,8 @@ func (r *vlanVIDResource) Read(ctx context.Context, req resource.ReadRequest, re
 	for _, config := range configs {
 		if config.PortID == portID {
 			state.VlanID = types.Int64Value(int64(config.PVID))
-			state.AcceptFrameType = types.StringValue(config.AcceptFrameType)
+			// Normalize AcceptFrameType from device format to user-friendly format
+			state.AcceptFrameType = types.StringValue(denormalizeAcceptFrameType(config.AcceptFrameType))
 			break
 		}
 	}
@@ -198,7 +223,7 @@ func (r *vlanVIDResource) Update(ctx context.Context, req resource.UpdateRequest
 	portConfig := &sdk.PortVLANConfig{
 		PortID:          portID,
 		PVID:            int(plan.VlanID.ValueInt64()),
-		AcceptFrameType: plan.AcceptFrameType.ValueString(),
+		AcceptFrameType: normalizeAcceptFrameType(plan.AcceptFrameType.ValueString()),
 	}
 
 	err = r.client.SetPortVLANConfig(ctx, portConfig)
@@ -243,6 +268,5 @@ func (r *vlanVIDResource) Delete(ctx context.Context, req resource.DeleteRequest
 
 // ImportState imports an existing resource into Terraform.
 func (r *vlanVIDResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("port"),
-		req, resp)
+	resource.ImportStatePassthroughID(ctx, path.Root("port"), req, resp)
 }

@@ -58,13 +58,15 @@ func (c *HRUIClient) ConfigurePortIGMPSnooping(ctx context.Context, portID int, 
 		return fmt.Errorf("failed to fetch IGMP configuration: %w", err)
 	}
 
-	// Check if the port ID exists in the current configuration.
-	if _, exists := currentState[portID]; !exists {
-		return fmt.Errorf("invalid port: %d does not exist in configuration", portID)
+	// If the port doesn't exist in the configuration yet, treat it as "off".
+	// This allows configuring ports that haven't been set up for IGMP yet.
+	currentPortState, exists := currentState[portID]
+	if !exists {
+		currentPortState = "off"
 	}
 
 	// Skip operation if the port is already in the desired state.
-	isStateMatch := (enable && currentState[portID] == "on") || (!enable && currentState[portID] == "off")
+	isStateMatch := (enable && currentPortState == "on") || (!enable && currentPortState == "off")
 	if isStateMatch {
 		return nil
 	}
@@ -73,7 +75,9 @@ func (c *HRUIClient) ConfigurePortIGMPSnooping(ctx context.Context, portID int, 
 	if enable {
 		currentState[portID] = "on"
 	} else {
-		delete(currentState, portID)
+		// When disabling, we can either delete the entry or set it to "off"
+		// Setting to "off" ensures the port remains in the configuration
+		currentState[portID] = "off"
 	}
 
 	// Construct the payload for all enabled ports.
@@ -110,6 +114,7 @@ func (c *HRUIClient) GetAllPortsIGMPSnooping(ctx context.Context) (map[int]strin
 }
 
 // GetPortIGMPSnooping retrieves the IGMP snooping state for a specific port by its ID.
+// If the port is not found in the configuration, it returns false (disabled) rather than an error.
 func (c *HRUIClient) GetPortIGMPSnooping(ctx context.Context, portID int) (bool, error) {
 	allPorts, err := c.GetAllPortsIGMPSnooping(ctx)
 	if err != nil {
@@ -118,7 +123,8 @@ func (c *HRUIClient) GetPortIGMPSnooping(ctx context.Context, portID int) (bool,
 
 	status, exists := allPorts[portID]
 	if !exists {
-		return false, fmt.Errorf("port %d is not found in the IGMP configuration", portID)
+		// Port not in configuration means it's disabled (not configured for IGMP)
+		return false, nil
 	}
 
 	return status == "on", nil

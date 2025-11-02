@@ -3,6 +3,8 @@ package trunk_group
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -107,6 +109,40 @@ func (r *trunkGroupResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
+	// Check for port mirroring conflicts and remove port mirroring if needed
+	portMirror, err := r.client.GetPortMirror(ctx)
+	if err == nil && portMirror != nil {
+		// Check if any trunk port is being used in port mirroring
+		needsCleanup := false
+		mirroringPortID, _ := r.client.GetPortByName(ctx, portMirror.MirroringPort)
+
+		for _, port := range ports {
+			portID := int(port)
+			// Check if this port is the mirroring port
+			if portID == mirroringPortID {
+				needsCleanup = true
+				break
+			}
+			// Check if this port is in the mirrored port list
+			if strings.Contains(portMirror.MirroredPort, fmt.Sprintf("%d", portID)) ||
+				strings.Contains(portMirror.MirroredPort, fmt.Sprintf("Port %d", portID)) {
+				needsCleanup = true
+				break
+			}
+		}
+
+		if needsCleanup {
+			// Delete port mirroring configuration before creating trunk
+			if err := r.client.DeletePortMirror(ctx); err != nil {
+				resp.Diagnostics.AddError(
+					"Failed to remove port mirroring conflict",
+					fmt.Sprintf("Port mirroring is configured and conflicts with trunk ports. Failed to remove: %s", err),
+				)
+				return
+			}
+		}
+	}
+
 	// Convert to SDK-compatible types
 	sdkPorts := make([]int, len(ports))
 	for i, port := range ports {
@@ -124,8 +160,35 @@ func (r *trunkGroupResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	// Save the state
-	diags = resp.State.Set(ctx, &data)
+	// Wait for the device to reflect the changes
+	time.Sleep(2 * time.Second)
+
+	// Read back from the device to ensure state matches what was actually applied
+	trunkGroup, err := r.client.GetTrunk(ctx, int(data.ID.ValueInt64()))
+	if err != nil {
+		resp.Diagnostics.AddError("Failed to fetch Trunk Group details after creation", err.Error())
+		return
+	}
+
+	// Update state with values from device
+	state := trunkGroupModel{
+		ID:   data.ID,
+		Type: types.StringValue(trunkGroup.Type),
+	}
+
+	// Convert ports from SDK (1-indexed) to Terraform list
+	trunkPorts := make([]int64, len(trunkGroup.Ports))
+	for i, port := range trunkGroup.Ports {
+		trunkPorts[i] = int64(port)
+	}
+	state.Ports, diags = types.ListValueFrom(ctx, types.Int64Type, trunkPorts)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Save the state based on what was read from the device
+	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 }
 
@@ -175,6 +238,40 @@ func (r *trunkGroupResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
+	// Check for port mirroring conflicts and remove port mirroring if needed
+	portMirror, err := r.client.GetPortMirror(ctx)
+	if err == nil && portMirror != nil {
+		// Check if any trunk port is being used in port mirroring
+		needsCleanup := false
+		mirroringPortID, _ := r.client.GetPortByName(ctx, portMirror.MirroringPort)
+
+		for _, port := range ports {
+			portID := int(port)
+			// Check if this port is the mirroring port
+			if portID == mirroringPortID {
+				needsCleanup = true
+				break
+			}
+			// Check if this port is in the mirrored port list
+			if strings.Contains(portMirror.MirroredPort, fmt.Sprintf("%d", portID)) ||
+				strings.Contains(portMirror.MirroredPort, fmt.Sprintf("Port %d", portID)) {
+				needsCleanup = true
+				break
+			}
+		}
+
+		if needsCleanup {
+			// Delete port mirroring configuration before updating trunk
+			if err := r.client.DeletePortMirror(ctx); err != nil {
+				resp.Diagnostics.AddError(
+					"Failed to remove port mirroring conflict",
+					fmt.Sprintf("Port mirroring is configured and conflicts with trunk ports. Failed to remove: %s", err),
+				)
+				return
+			}
+		}
+	}
+
 	// Convert to SDK-compatible types
 	sdkPorts := make([]int, len(ports))
 	for i, port := range ports {
@@ -182,7 +279,7 @@ func (r *trunkGroupResource) Update(ctx context.Context, req resource.UpdateRequ
 	}
 
 	// Call the SDK to update the trunk group
-	err := r.client.ConfigureTrunk(ctx, &sdk.TrunkConfig{
+	err = r.client.ConfigureTrunk(ctx, &sdk.TrunkConfig{
 		ID:    int(plan.ID.ValueInt64()),
 		Type:  plan.Type.ValueString(),
 		Ports: sdkPorts,
@@ -192,8 +289,35 @@ func (r *trunkGroupResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	// Save the updated state
-	diags = resp.State.Set(ctx, &plan)
+	// Wait for the device to reflect the changes
+	time.Sleep(2 * time.Second)
+
+	// Read back from the device to ensure state matches what was actually applied
+	trunkGroup, err := r.client.GetTrunk(ctx, int(plan.ID.ValueInt64()))
+	if err != nil {
+		resp.Diagnostics.AddError("Failed to fetch Trunk Group details after update", err.Error())
+		return
+	}
+
+	// Update state with values from device
+	state := trunkGroupModel{
+		ID:   plan.ID,
+		Type: types.StringValue(trunkGroup.Type),
+	}
+
+	// Convert ports from SDK (1-indexed) to Terraform list
+	trunkPorts := make([]int64, len(trunkGroup.Ports))
+	for i, port := range trunkGroup.Ports {
+		trunkPorts[i] = int64(port)
+	}
+	state.Ports, diags = types.ListValueFrom(ctx, types.Int64Type, trunkPorts)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Save the updated state based on what was read from the device
+	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
 }
 

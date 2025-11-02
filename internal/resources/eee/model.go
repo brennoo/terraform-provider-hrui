@@ -6,5 +6,6 @@ import (
 
 // eeeModel represents the state model for the EEE Terraform resource.
 type eeeModel struct {
-	Enabled types.Bool `tfsdk:"enabled"`
+	ID      types.String `tfsdk:"id"`
+	Enabled types.Bool   `tfsdk:"enabled"`
 }

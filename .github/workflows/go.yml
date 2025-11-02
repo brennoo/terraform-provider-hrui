@@ -4,6 +4,10 @@ on: [pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # To support multiple firmware versions
+        firmware: [ "v1.9" ]
 
     steps:
       - uses: actions/checkout@v4
@@ -15,10 +19,24 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('go.mod') }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
       - name: Install dependencies
         run: go get .
       - name: Build
         run: go build -v ./...
-      - name: Test with the Go CLI
+      - name: Test (Unit)
         run: go test ./...
+      - name: Test (Acceptance)
+        env:
+          # VCR configuration
+          VCR_MODE: replay
+          HRUI_FW_VERSION: ${{ matrix.firmware }}
+          # Provider configuration (required even in replay mode, values don't matter)
+          HRUI_URL: http://localhost
+          HRUI_USERNAME: testuser
+          HRUI_PASSWORD: testpass
+          HRUI_AUTOSAVE: "false"
+        timeout-minutes: 30
+        run: go test -v -timeout 10m ./... -run TestAcc

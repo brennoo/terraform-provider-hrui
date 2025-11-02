@@ -138,6 +138,7 @@ func (r *ipAddressResource) Update(ctx context.Context, req resource.UpdateReque
 	data.IPAddress = types.StringValue(updatedSettings.IPAddress)
 	data.Netmask = types.StringValue(updatedSettings.Netmask)
 	data.Gateway = types.StringValue(updatedSettings.Gateway)
+	data.ID = types.StringValue("ip_address_settings")
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -97,17 +97,21 @@ func (r *stormControlResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	maxRate, err := r.client.GetPortMaxRate(ctx, data.Port.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Failed to fetch maximum rate", err.Error())
-		return
+	// Only validate rate if storm control is enabled
+	if data.State.ValueBool() {
+		maxRate, err := r.client.GetPortMaxRate(ctx, data.Port.ValueString())
+		if err != nil {
+			resp.Diagnostics.AddError("Failed to fetch maximum rate", err.Error())
+			return
+		}
+
+		if err := validateStormControlRate(data.Rate.ValueInt64(), maxRate); err != nil {
+			resp.Diagnostics.AddError("Invalid Rate for Storm Control", err.Error())
+			return
+		}
 	}
 
-	if err := validateStormControlRate(data.Rate.ValueInt64(), maxRate); err != nil {
-		resp.Diagnostics.AddError("Invalid Rate for Storm Control", err.Error())
-		return
-	}
-
+	var err error
 	err = r.client.SetStormControlConfig(ctx,
 		data.StormType.ValueString(),
 		[]string{data.Port.ValueString()},
@@ -193,17 +197,21 @@ func (r *stormControlResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	maxRate, err := r.client.GetPortMaxRate(ctx, plan.Port.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Failed to fetch maximum rate", err.Error())
-		return
+	// Only validate rate if storm control is enabled
+	if plan.State.ValueBool() {
+		maxRate, err := r.client.GetPortMaxRate(ctx, plan.Port.ValueString())
+		if err != nil {
+			resp.Diagnostics.AddError("Failed to fetch maximum rate", err.Error())
+			return
+		}
+
+		if err := validateStormControlRate(plan.Rate.ValueInt64(), maxRate); err != nil {
+			resp.Diagnostics.AddError("Invalid Rate for Storm Control", err.Error())
+			return
+		}
 	}
 
-	if err := validateStormControlRate(plan.Rate.ValueInt64(), maxRate); err != nil {
-		resp.Diagnostics.AddError("Invalid Rate for Storm Control", err.Error())
-		return
-	}
-
+	var err error
 	err = r.client.SetStormControlConfig(ctx,
 		plan.StormType.ValueString(),
 		[]string{plan.Port.ValueString()},

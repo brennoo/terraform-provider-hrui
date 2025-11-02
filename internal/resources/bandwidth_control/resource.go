@@ -39,11 +39,11 @@ func (r *bandwidthControlResource) Schema(_ context.Context, req resource.Schema
 				Required:    true,
 			},
 			"ingress_rate": schema.StringAttribute{
-				Description: "Ingress bandwidth rate in kbps. Use '0' or 'Unlimited' to disable limitation.",
+				Description: "Ingress bandwidth rate in kbps. Use '0' or 'Unlimited' to disable limitation. Both values are equivalent and will be normalized to 'Unlimited' in state.",
 				Required:    true,
 			},
 			"egress_rate": schema.StringAttribute{
-				Description: "Egress bandwidth rate in kbps. Use '0' or 'Unlimited' to disable limitation.",
+				Description: "Egress bandwidth rate in kbps. Use '0' or 'Unlimited' to disable limitation. Both values are equivalent and will be normalized to 'Unlimited' in state.",
 				Required:    true,
 			},
 		},
@@ -93,6 +93,14 @@ func (r *bandwidthControlResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	// Normalize state values: if user set "0", normalize to "Unlimited" in state
+	if data.IngressRate.ValueString() == "0" {
+		data.IngressRate = types.StringValue("Unlimited")
+	}
+	if data.EgressRate.ValueString() == "0" {
+		data.EgressRate = types.StringValue("Unlimited")
+	}
+
 	// Save state
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -133,8 +141,17 @@ func (r *bandwidthControlResource) Read(ctx context.Context, req resource.ReadRe
 	}
 
 	// Update state with the live values
-	state.IngressRate = types.StringValue(foundConfig.IngressRate)
-	state.EgressRate = types.StringValue(foundConfig.EgressRate)
+	// Normalize "0" to "Unlimited" since the device stores unlimited rates as "0"
+	ingressRate := foundConfig.IngressRate
+	if ingressRate == "0" {
+		ingressRate = "Unlimited"
+	}
+	egressRate := foundConfig.EgressRate
+	if egressRate == "0" {
+		egressRate = "Unlimited"
+	}
+	state.IngressRate = types.StringValue(ingressRate)
+	state.EgressRate = types.StringValue(egressRate)
 
 	// Save updated state
 	diags = resp.State.Set(ctx, &state)
@@ -170,6 +187,14 @@ func (r *bandwidthControlResource) Update(ctx context.Context, req resource.Upda
 	); err != nil {
 		resp.Diagnostics.AddError("Failed to update Egress Bandwidth Control", err.Error())
 		return
+	}
+
+	// Normalize state values: if user set "0", normalize to "Unlimited" in state
+	if plan.IngressRate.ValueString() == "0" {
+		plan.IngressRate = types.StringValue("Unlimited")
+	}
+	if plan.EgressRate.ValueString() == "0" {
+		plan.EgressRate = types.StringValue("Unlimited")
 	}
 
 	// Save state
@@ -210,9 +235,11 @@ func (r *bandwidthControlResource) Delete(ctx context.Context, req resource.Dele
 }
 
 // normalizeRate ensures the rate is formatted correctly.
+// Normalizes "0" to "Unlimited" since both mean disable limitation.
 func normalizeRate(rate string) string {
-	if strings.ToLower(rate) == "unlimited" {
-		return "unlimited"
+	rateLower := strings.ToLower(rate)
+	if rateLower == "unlimited" || rate == "0" {
+		return "Unlimited"
 	}
 	return rate
 }

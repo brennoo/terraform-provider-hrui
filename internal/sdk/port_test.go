@@ -332,7 +332,7 @@ func TestPortMirroring(t *testing.T) {
 	}))
 	defer server.Close()
 
-	client, err := NewClient(context.Background(), server.URL, "testuser", "testpassword", false)
+	client, err := NewClient(context.Background(), server.URL, "testuser", "testpassword", false, nil)
 	require.NoError(t, err)
 	require.NotNil(t, client)
 

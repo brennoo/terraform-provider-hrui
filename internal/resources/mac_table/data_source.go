@@ -87,6 +87,7 @@ func (d *macTableDataSource) Read(ctx context.Context, req datasource.ReadReques
 
 	// Transform the fetched data into Terraform state representation
 	var state macTableDataSourceModel
+	state.MacTable = make([]macTableModel, 0, len(macTable))
 	for _, entry := range macTable {
 		state.MacTable = append(state.MacTable, macTableModel{
 			ID:         types.Int64Value(int64(entry.ID)),

@@ -80,6 +80,16 @@ func (r *qosPortQueueResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
+	// Validate queue value (valid range is 1-8)
+	queueValue := int(plan.Queue.ValueInt64())
+	if queueValue < 1 || queueValue > 8 {
+		resp.Diagnostics.AddError(
+			"Invalid Queue Value",
+			fmt.Sprintf("Queue value must be between 1 and 8, got: %d", queueValue),
+		)
+		return
+	}
+
 	// Map the port name to its numeric ID.
 	portID, err := r.client.GetPortByName(ctx, plan.Port.ValueString())
 	if err != nil {
@@ -88,7 +98,7 @@ func (r *qosPortQueueResource) Create(ctx context.Context, req resource.CreateRe
 	}
 
 	// Configure the QoS queue for the resolved port ID.
-	err = r.client.SetQoSPortQueue(ctx, portID, int(plan.Queue.ValueInt64()))
+	err = r.client.SetQoSPortQueue(ctx, portID, queueValue)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create QoS Port Queue: %s", err))
 		return
@@ -106,6 +116,16 @@ func (r *qosPortQueueResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
+	// Validate queue value (valid range is 1-8)
+	queueValue := int(plan.Queue.ValueInt64())
+	if queueValue < 1 || queueValue > 8 {
+		resp.Diagnostics.AddError(
+			"Invalid Queue Value",
+			fmt.Sprintf("Queue value must be between 1 and 8, got: %d", queueValue),
+		)
+		return
+	}
+
 	// Map the port name to its numeric ID.
 	portID, err := r.client.GetPortByName(ctx, plan.Port.ValueString())
 	if err != nil {
@@ -114,7 +134,7 @@ func (r *qosPortQueueResource) Update(ctx context.Context, req resource.UpdateRe
 	}
 
 	// Update the QoS queue for the resolved port ID.
-	err = r.client.SetQoSPortQueue(ctx, portID, int(plan.Queue.ValueInt64()))
+	err = r.client.SetQoSPortQueue(ctx, portID, queueValue)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update QoS Port Queue: %s", err))
 		return

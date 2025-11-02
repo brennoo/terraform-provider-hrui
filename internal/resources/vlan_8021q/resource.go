@@ -198,15 +198,34 @@ func (r *vlan8021qResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	// Set the state with computed fields
-	plan.MemberPorts, diags = types.ListValueFrom(ctx, types.StringType, memberPorts)
+	// Read back from the device to ensure state matches what was actually applied
+	updatedVlan, err := r.client.GetVLAN(ctx, int(plan.VlanID.ValueInt64()))
+	if err != nil {
+		resp.Diagnostics.AddError("Error reading VLAN after update", fmt.Sprintf("Could not read VLAN ID %d after update: %s", plan.VlanID.ValueInt64(), err))
+		return
+	}
+
+	// Update state with values from device
+	state := vlan8021qModel{
+		VlanID: plan.VlanID,
+		Name:   types.StringValue(updatedVlan.Name),
+	}
+
+	state.TaggedPorts, diags = types.ListValueFrom(ctx, types.StringType, updatedVlan.TaggedPorts)
+	resp.Diagnostics.Append(diags...)
+	state.UntaggedPorts, diags = types.ListValueFrom(ctx, types.StringType, updatedVlan.UntaggedPorts)
+	resp.Diagnostics.Append(diags...)
+
+	// Compute member ports from device values
+	allPorts := mergeStringPorts(updatedVlan.TaggedPorts, updatedVlan.UntaggedPorts)
+	state.MemberPorts, diags = types.ListValueFrom(ctx, types.StringType, allPorts)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Update Terraform state with the new VLAN details
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	// Update Terraform state with the actual device state
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 func (r *vlan8021qResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

@@ -128,9 +128,36 @@ func (c *HRUIClient) GetTrunk(ctx context.Context, id int) (*TrunkConfig, error)
 		portsText := strings.TrimSpace(s.Find("td").Eq(2).Text())
 
 		var ports []int
-		for _, p := range strings.Split(portsText, ",") {
-			port := parseInt(p, WithDefaultValue(0))
-			ports = append(ports, *port)
+		// Handle both comma-separated and range formats (e.g., "1,2" or "1-2")
+		// Note: The device returns ports in 1-indexed format already, so we use them as-is
+		if portsText != "" {
+			// Check if it's a range (contains '-')
+			if strings.Contains(portsText, "-") {
+				rangeParts := strings.Split(portsText, "-")
+				if len(rangeParts) == 2 {
+					startPort := parseInt(strings.TrimSpace(rangeParts[0]), WithDefaultValue(0))
+					endPort := parseInt(strings.TrimSpace(rangeParts[1]), WithDefaultValue(0))
+					if startPort != nil && endPort != nil && *startPort <= *endPort {
+						// Expand the range (device returns 1-indexed, use as-is)
+						for i := *startPort; i <= *endPort; i++ {
+							ports = append(ports, i)
+						}
+					}
+				}
+			} else {
+				// Comma-separated list
+				for _, p := range strings.Split(portsText, ",") {
+					p = strings.TrimSpace(p)
+					if p == "" {
+						continue
+					}
+					port := parseInt(p, WithDefaultValue(0))
+					// Device returns 1-indexed, use as-is
+					if port != nil {
+						ports = append(ports, *port)
+					}
+				}
+			}
 		}
 
 		trunk = &TrunkConfig{
@@ -173,9 +200,36 @@ func (c *HRUIClient) ListConfiguredTrunks(ctx context.Context) ([]TrunkConfig, e
 		portsText := strings.TrimSpace(s.Find("td").Eq(2).Text())
 
 		var ports []int
-		for _, p := range strings.Split(portsText, ",") {
-			port := parseInt(p, WithDefaultValue(0))
-			ports = append(ports, *port)
+		// Handle both comma-separated and range formats (e.g., "1,2" or "1-2")
+		// Note: The device returns ports in 1-indexed format already, so we use them as-is
+		if portsText != "" {
+			// Check if it's a range (contains '-')
+			if strings.Contains(portsText, "-") {
+				rangeParts := strings.Split(portsText, "-")
+				if len(rangeParts) == 2 {
+					startPort := parseInt(strings.TrimSpace(rangeParts[0]), WithDefaultValue(0))
+					endPort := parseInt(strings.TrimSpace(rangeParts[1]), WithDefaultValue(0))
+					if startPort != nil && endPort != nil && *startPort <= *endPort {
+						// Expand the range (device returns 1-indexed, use as-is)
+						for i := *startPort; i <= *endPort; i++ {
+							ports = append(ports, i)
+						}
+					}
+				}
+			} else {
+				// Comma-separated list
+				for _, p := range strings.Split(portsText, ",") {
+					p = strings.TrimSpace(p)
+					if p == "" {
+						continue
+					}
+					port := parseInt(p, WithDefaultValue(0))
+					// Device returns 1-indexed, use as-is
+					if port != nil {
+						ports = append(ports, *port)
+					}
+				}
+			}
 		}
 
 		trunkConfigs = append(trunkConfigs, TrunkConfig{

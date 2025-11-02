@@ -510,14 +510,55 @@ func parseIsolationList(raw string) []string {
 
 	for _, token := range tokens {
 		token = strings.TrimSpace(token) // Trim whitespace
+		if token == "" {
+			continue
+		}
 
-		switch {
-		case isNumeric(token): // Numeric port (e.g., "1")
-			isolationList = append(isolationList, fmt.Sprintf("Port %s", token))
-		case strings.HasPrefix(token, "Port "): // Already normalized (e.g., "Port 2")
+		// Handle port ranges (e.g., "2-3" or "Port 2-Port 3")
+		if strings.Contains(token, "-") {
+			rangeParts := strings.Split(token, "-")
+			if len(rangeParts) == 2 {
+				startStr := strings.TrimSpace(rangeParts[0])
+				endStr := strings.TrimSpace(rangeParts[1])
+
+				// Extract numeric values, handling both "2" and "Port 2" formats
+				var startPort, endPort int
+				var err error
+
+				if strings.HasPrefix(startStr, "Port ") {
+					startPort, err = strconv.Atoi(strings.TrimPrefix(startStr, "Port "))
+				} else {
+					startPort, err = strconv.Atoi(startStr)
+				}
+
+				if err == nil {
+					if strings.HasPrefix(endStr, "Port ") {
+						endPort, err = strconv.Atoi(strings.TrimPrefix(endStr, "Port "))
+					} else {
+						endPort, err = strconv.Atoi(endStr)
+					}
+
+					if err == nil && startPort <= endPort {
+						// Expand the range to individual ports
+						for i := startPort; i <= endPort; i++ {
+							isolationList = append(isolationList, fmt.Sprintf("Port %d", i))
+						}
+						continue
+					}
+				}
+			}
+			// If range parsing failed, treat as-is (could be "Trunk1-Trunk2" or similar)
 			isolationList = append(isolationList, token)
-		default: // Non-numeric, e.g., "Trunk2"
-			isolationList = append(isolationList, token)
+		} else {
+			// Handle individual ports
+			switch {
+			case isNumeric(token): // Numeric port (e.g., "1")
+				isolationList = append(isolationList, fmt.Sprintf("Port %s", token))
+			case strings.HasPrefix(token, "Port "): // Already normalized (e.g., "Port 2")
+				isolationList = append(isolationList, token)
+			default: // Non-numeric, e.g., "Trunk2"
+				isolationList = append(isolationList, token)
+			}
 		}
 	}
 

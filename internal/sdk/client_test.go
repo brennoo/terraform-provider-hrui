@@ -13,7 +13,7 @@ import (
 )
 
 func createAuthenticatedClient(t *testing.T, server *httptest.Server) *HRUIClient {
-	clientObj, err := NewClient(context.Background(), server.URL, "testuser", "testpass", false)
+	clientObj, err := NewClient(context.Background(), server.URL, "testuser", "testpass", false, nil)
 	require.NoError(t, err)
 	require.NotNil(t, clientObj)
 	require.NotNil(t, clientObj.HttpClient)
@@ -64,7 +64,7 @@ func TestNewClient_SuccessfulAuthentication(t *testing.T) {
 	}))
 	defer server.Close()
 
-	clientObj, err := NewClient(context.Background(), server.URL, "testuser", "testpass", false)
+	clientObj, err := NewClient(context.Background(), server.URL, "testuser", "testpass", false, nil)
 	require.NoError(t, err, "Failed to authenticate the client")
 	require.NotNil(t, clientObj)
 	require.NotNil(t, clientObj.HttpClient)
@@ -86,7 +86,7 @@ func TestNewClient_FailedAuthentication(t *testing.T) {
 	}))
 	defer server.Close()
 
-	clientObj, err := NewClient(context.Background(), server.URL, "invaliduser", "invalidpass", false)
+	clientObj, err := NewClient(context.Background(), server.URL, "invaliduser", "invalidpass", false, nil)
 	require.Error(t, err)
 	require.Nil(t, clientObj)
 	require.Contains(t, err.Error(), "failed to authenticate HRUIClient")

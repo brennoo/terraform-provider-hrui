@@ -113,29 +113,58 @@ func (r *portSettingResource) Create(ctx context.Context, req resource.CreateReq
 	}
 
 	// Apply configuration using the SDK
+	// Handle optional Speed and FlowControl attributes
+	speedConfig := "Auto" // Default value
+	if plan.Speed != nil && !plan.Speed.Config.IsNull() {
+		speedConfig = plan.Speed.Config.ValueString()
+	}
+
+	flowControlConfig := "Off" // Default value
+	if plan.FlowControl != nil && !plan.FlowControl.Config.IsNull() {
+		flowControlConfig = plan.FlowControl.Config.ValueString()
+	}
+
+	// Handle optional Enabled attribute (default to true if not specified)
+	enabledState := 1
+	if !plan.Enabled.IsNull() {
+		enabledState = boolToInt(plan.Enabled.ValueBool())
+	}
+
 	port := &sdk.Port{
 		ID:                plan.Port.ValueString(),
-		State:             boolToInt(plan.Enabled.ValueBool()),
-		SpeedDuplexConfig: plan.Speed.Config.ValueString(),
-		FlowControlConfig: plan.FlowControl.Config.ValueString(),
+		State:             enabledState,
+		SpeedDuplexConfig: speedConfig,
+		FlowControlConfig: flowControlConfig,
 	}
 
 	// Call API to configure the port
-	finalPort, err := r.client.ConfigurePort(ctx, port)
+	_, err := r.client.ConfigurePort(ctx, port)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to create HRUI port settings: %s", err))
 		return
 	}
 
-	// Populate the plan with actual values fetched after applying
-	plan.Speed = &portSettingSpeed{
-		Config: plan.Speed.Config,
-		Actual: types.StringValue(finalPort.SpeedDuplexActual),
+	// Read back from the device to ensure state matches what was actually applied
+	finalPort, err := r.client.GetPort(ctx, plan.Port.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to read HRUI port settings after creation: %s", err))
+		return
 	}
-	plan.FlowControl = &portSettingFlowControl{
-		Config: plan.FlowControl.Config,
-		Actual: types.StringValue(finalPort.FlowControlActual),
+
+	// Populate the plan with actual values fetched from the device
+	// Always set Speed and FlowControl to ensure they're in state
+	if plan.Speed == nil {
+		plan.Speed = &portSettingSpeed{}
 	}
+	plan.Speed.Config = types.StringValue(finalPort.SpeedDuplexConfig)
+	plan.Speed.Actual = types.StringValue(finalPort.SpeedDuplexActual)
+
+	if plan.FlowControl == nil {
+		plan.FlowControl = &portSettingFlowControl{}
+	}
+	plan.FlowControl.Config = types.StringValue(finalPort.FlowControlConfig)
+	plan.FlowControl.Actual = types.StringValue(finalPort.FlowControlActual)
+
 	plan.Enabled = types.BoolValue(finalPort.State == 1)
 
 	// Save state
@@ -188,28 +217,57 @@ func (r *portSettingResource) Update(ctx context.Context, req resource.UpdateReq
 	}
 
 	// Apply updated configuration using `ConfigurePort`
-	port := &sdk.Port{
-		ID:                plan.Port.ValueString(),
-		State:             boolToInt(plan.Enabled.ValueBool()),
-		SpeedDuplexConfig: plan.Speed.Config.ValueString(),
-		FlowControlConfig: plan.FlowControl.Config.ValueString(),
+	// Handle optional Speed and FlowControl attributes
+	speedConfig := "Auto" // Default value
+	if plan.Speed != nil && !plan.Speed.Config.IsNull() {
+		speedConfig = plan.Speed.Config.ValueString()
 	}
 
-	finalPort, err := r.client.ConfigurePort(ctx, port)
+	flowControlConfig := "Off" // Default value
+	if plan.FlowControl != nil && !plan.FlowControl.Config.IsNull() {
+		flowControlConfig = plan.FlowControl.Config.ValueString()
+	}
+
+	// Handle optional Enabled attribute (default to true if not specified)
+	enabledState := 1
+	if !plan.Enabled.IsNull() {
+		enabledState = boolToInt(plan.Enabled.ValueBool())
+	}
+
+	port := &sdk.Port{
+		ID:                plan.Port.ValueString(),
+		State:             enabledState,
+		SpeedDuplexConfig: speedConfig,
+		FlowControlConfig: flowControlConfig,
+	}
+
+	_, err := r.client.ConfigurePort(ctx, port)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update HRUI port settings, got error: %s", err))
 		return
 	}
 
-	// Update plan with actual values fetched after applying
-	plan.Speed = &portSettingSpeed{
-		Config: plan.Speed.Config,
-		Actual: types.StringValue(finalPort.SpeedDuplexActual),
+	// Read back from the device to ensure state matches what was actually applied
+	finalPort, err := r.client.GetPort(ctx, plan.Port.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to read HRUI port settings after update: %s", err))
+		return
 	}
-	plan.FlowControl = &portSettingFlowControl{
-		Config: plan.FlowControl.Config,
-		Actual: types.StringValue(finalPort.FlowControlActual),
+
+	// Update plan with actual values fetched from the device
+	// Always set Speed and FlowControl to ensure they're in state
+	if plan.Speed == nil {
+		plan.Speed = &portSettingSpeed{}
 	}
+	plan.Speed.Config = types.StringValue(finalPort.SpeedDuplexConfig)
+	plan.Speed.Actual = types.StringValue(finalPort.SpeedDuplexActual)
+
+	if plan.FlowControl == nil {
+		plan.FlowControl = &portSettingFlowControl{}
+	}
+	plan.FlowControl.Config = types.StringValue(finalPort.FlowControlConfig)
+	plan.FlowControl.Actual = types.StringValue(finalPort.FlowControlActual)
+
 	plan.Enabled = types.BoolValue(finalPort.State == 1)
 
 	// Save updated state

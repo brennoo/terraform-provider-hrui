@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // igmpHandlerMock mocks the IGMP-related HTML response for igmp.cgi.
@@ -77,13 +78,13 @@ func TestConfigurePortIGMPSnooping(t *testing.T) {
 			expectedError: false,
 		},
 		{
-			name:   "Invalid Port ID",
+			name:   "Port not in configuration (treated as off, can be enabled)",
 			portID: 99,
 			enable: true,
 			mockPorts: map[int]string{
 				0: "on", 1: "on", 2: "off", 3: "on", 8: "on",
 			},
-			expectedError: true,
+			expectedError: false, // Ports not in config are treated as "off" and can be enabled
 		},
 	}
 
@@ -102,6 +103,65 @@ func TestConfigurePortIGMPSnooping(t *testing.T) {
 				assert.Error(t, err, tc.name)
 			} else {
 				assert.NoError(t, err, tc.name)
+			}
+		})
+	}
+}
+
+// TestGetPortIGMPSnooping tests the GetPortIGMPSnooping function.
+func TestGetPortIGMPSnooping(t *testing.T) {
+	tests := []struct {
+		name          string
+		portID        int
+		mockPorts     map[int]string
+		expectedState bool
+		expectedError bool
+	}{
+		{
+			name:   "Port enabled (on)",
+			portID: 3,
+			mockPorts: map[int]string{
+				0: "off", 1: "off", 2: "off", 3: "on", 8: "off",
+			},
+			expectedState: true,
+			expectedError: false,
+		},
+		{
+			name:   "Port disabled (off)",
+			portID: 1,
+			mockPorts: map[int]string{
+				0: "off", 1: "off", 2: "off", 3: "on", 8: "off",
+			},
+			expectedState: false,
+			expectedError: false,
+		},
+		{
+			name:   "Port not in configuration (returns false, not error)",
+			portID: 99,
+			mockPorts: map[int]string{
+				0: "on", 1: "on", 2: "off", 3: "on", 8: "on",
+			},
+			expectedState: false, // Ports not in config are treated as disabled
+			expectedError: false,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			server := httptest.NewServer(igmpHandlerMock(tc.mockPorts))
+			defer server.Close()
+
+			client := &HRUIClient{
+				URL:        server.URL,
+				HttpClient: server.Client(),
+			}
+
+			enabled, err := client.GetPortIGMPSnooping(context.Background(), tc.portID)
+			if tc.expectedError {
+				require.Error(t, err, tc.name)
+			} else {
+				require.NoError(t, err, tc.name)
+				assert.Equal(t, tc.expectedState, enabled, tc.name)
 			}
 		})
 	}

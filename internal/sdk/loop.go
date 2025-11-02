@@ -89,8 +89,9 @@ func (c *HRUIClient) GetLoopProtocol(ctx context.Context) (*LoopProtocol, error)
 		protocol.LoopFunction = strings.TrimSpace(s.Text())
 	})
 
-	// Parse interval and recovery time if "Loop Prevention" is enabled
-	if protocol.LoopFunction == "Loop Prevention" {
+	// Parse interval and recovery time if "Loop Detection" or "Loop Prevention" is enabled
+	// Both modes use interval_time and recover_time
+	if protocol.LoopFunction == "Loop Detection" || protocol.LoopFunction == "Loop Prevention" {
 		protocol.IntervalTime, err = extractInt(doc, `input[name="interval_time"]`, "attribute", "value")
 		if err != nil {
 			return nil, fmt.Errorf("failed to extract interval time: %w", err)
