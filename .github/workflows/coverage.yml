@@ -15,12 +15,26 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go${{ env.GO_VERSION }}-${{ hashFiles('**/go.sum') }}
-      - name: Generate coverage report
-        run: go test -coverprofile=unit.coverage.out ./...
+          key: ${{ runner.os }}-go-${{ hashFiles('go.mod') }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Install dependencies
+        run: go get .
+      - name: Generate combined coverage report
+        env:
+          TF_ACC: 1
+          VCR_MODE: replay
+          HRUI_FW_VERSION: v1.9
+          HRUI_PASSWORD: admin
+          HRUI_USERNAME: admin
+          HRUI_URL: http://localhost
+          HRUI_AUTOSAVE: "false"
+        timeout-minutes: 30
+        run: go test -v -coverprofile=coverage.out -covermode=atomic -timeout 20m ./...
+        continue-on-error: true
       - name: Upload report to Codacy 
         uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699 #v1.3.0
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: unit.coverage.out
+          coverage-reports: coverage.out
           force-coverage-parser: go

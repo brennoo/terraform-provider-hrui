@@ -26,22 +26,35 @@ type HRUIClient struct {
 }
 
 // NewClient initializes and authenticates a new HRUIClient.
-func NewClient(ctx context.Context, url, username, password string, autosave bool) (*HRUIClient, error) {
+// If httpClient is nil, a new HTTP client will be created. Otherwise, the provided client is used.
+func NewClient(ctx context.Context, url, username, password string, autosave bool, httpClient *http.Client) (*HRUIClient, error) {
 	jar, err := cookiejar.New(nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create cookie jar: %w", err)
 	}
 
-	// Initialize the client
-	client := &HRUIClient{
-		URL:      url,
-		Username: username,
-		Password: password,
-		Autosave: autosave,
-		HttpClient: &http.Client{
+	// Determine which HTTP client to use
+	var clientHttpClient *http.Client
+	if httpClient == nil {
+		// Production: create a new HTTP client
+		clientHttpClient = &http.Client{
 			Jar:     jar,
 			Timeout: 30 * time.Second,
-		},
+		}
+	} else {
+		// Testing: use the provided HTTP client but ensure it has the cookie jar
+		// Always set the jar to the newly created one to ensure proper cookie handling
+		clientHttpClient = httpClient
+		clientHttpClient.Jar = jar
+	}
+
+	// Initialize the client
+	client := &HRUIClient{
+		URL:        url,
+		Username:   username,
+		Password:   password,
+		Autosave:   autosave,
+		HttpClient: clientHttpClient,
 	}
 
 	// Authenticate the client using the provided context

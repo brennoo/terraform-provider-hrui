@@ -120,8 +120,44 @@ func (r *macLimitResource) Create(ctx context.Context, req resource.CreateReques
 		return
 	}
 
-	// Set the Terraform state.
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	// Read back from the device to ensure state matches what was actually applied
+	macLimits, err := r.client.GetMACLimits(ctx)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Client Error",
+			fmt.Sprintf("Failed to fetch MAC limits after creation: %s", err),
+		)
+		return
+	}
+
+	// Find the limit for the specific port
+	var found bool
+	state := macLimitModel{
+		Port: plan.Port,
+	}
+	for _, macLimit := range macLimits {
+		if macLimit.Port == plan.Port.ValueString() {
+			state.Enabled = types.BoolValue(macLimit.Enabled)
+			if macLimit.Limit != nil {
+				state.Limit = types.Int64Value(int64(*macLimit.Limit))
+			} else {
+				state.Limit = types.Int64Null()
+			}
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		resp.Diagnostics.AddError(
+			"State Synchronization Error",
+			fmt.Sprintf("MAC limit for port '%s' was set but not found when reading back", plan.Port.ValueString()),
+		)
+		return
+	}
+
+	// Set the Terraform state based on what was read from the device
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 // Read fetches the current MAC limit configuration for the resource and updates the state.
@@ -198,8 +234,44 @@ func (r *macLimitResource) Update(ctx context.Context, req resource.UpdateReques
 		return
 	}
 
-	// Update the state.
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	// Read back from the device to ensure state matches what was actually applied
+	macLimits, err := r.client.GetMACLimits(ctx)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Client Error",
+			fmt.Sprintf("Failed to fetch MAC limits after update: %s", err),
+		)
+		return
+	}
+
+	// Find the limit for the specific port
+	var found bool
+	state := macLimitModel{
+		Port: plan.Port,
+	}
+	for _, macLimit := range macLimits {
+		if macLimit.Port == plan.Port.ValueString() {
+			state.Enabled = types.BoolValue(macLimit.Enabled)
+			if macLimit.Limit != nil {
+				state.Limit = types.Int64Value(int64(*macLimit.Limit))
+			} else {
+				state.Limit = types.Int64Null()
+			}
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		resp.Diagnostics.AddError(
+			"State Synchronization Error",
+			fmt.Sprintf("MAC limit for port '%s' was updated but not found when reading back", plan.Port.ValueString()),
+		)
+		return
+	}
+
+	// Update the state based on what was read from the device
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 // Delete disables the MAC limit for the specified port.

@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/bandwidth_control"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/eee"
@@ -40,6 +41,8 @@ type hruiProvider struct {
 	// version is set to the provider version on release, "dev" when the
 	// provider is built and ran locally.
 	version string
+	// testHttpClient is used for injecting a custom HTTP client during testing (e.g., go-vcr).
+	testHttpClient *http.Client
 }
 
 // New is a helper function to simplify provider server and testing logic.
@@ -48,6 +51,15 @@ func New(version string) func() provider.Provider {
 		return &hruiProvider{
 			version: version,
 		}
+	}
+}
+
+// NewForTest creates a provider instance with a custom HTTP client for testing.
+// This allows injection of go-vcr clients for acceptance testing.
+func NewForTest(version string, client *http.Client) provider.Provider {
+	return &hruiProvider{
+		version:        version,
+		testHttpClient: client,
 	}
 }
 

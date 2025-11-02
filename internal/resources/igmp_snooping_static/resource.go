@@ -3,6 +3,7 @@ package igmp_snooping_static
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -81,6 +82,29 @@ func (r *igmpSnoopingStaticResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
+	// Ensure global IGMP snooping is enabled before configuring port-level settings
+	igmpConfig, err := r.client.FetchIGMPConfig(ctx)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Reading IGMP Configuration",
+			fmt.Sprintf("Failed to fetch IGMP configuration: %s", err),
+		)
+		return
+	}
+
+	if !igmpConfig.Enabled {
+		// Enable global IGMP snooping first
+		if err := r.client.EnableIGMPSnooping(ctx); err != nil {
+			resp.Diagnostics.AddError(
+				"Error Enabling Global IGMP Snooping",
+				fmt.Sprintf("Global IGMP snooping must be enabled before configuring port-level settings. Failed to enable: %s", err),
+			)
+			return
+		}
+		// Wait a moment for the global setting to take effect
+		time.Sleep(1 * time.Second)
+	}
+
 	// Enable the specified port while preserving other ports
 	if err := r.client.UpdatePortIGMPSnoopingByName(ctx, plan.Port.ValueString(), plan.Enabled.ValueBool()); err != nil {
 		resp.Diagnostics.AddError(
@@ -90,8 +114,27 @@ func (r *igmpSnoopingStaticResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
+	// Wait for the device to reflect the changes
+	time.Sleep(2 * time.Second)
+
+	// Read back the actual state from the device to ensure consistency
+	enabled, err := r.client.GetPortIGMPSnoopingByName(ctx, plan.Port.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Reading IGMP Snooping State",
+			fmt.Sprintf("Failed to read IGMP snooping state for port %s after creation: %s", plan.Port.ValueString(), err),
+		)
+		return
+	}
+
+	// Update state with the actual device value
+	state := igmpSnoopingStaticModel{
+		Port:    plan.Port,
+		Enabled: types.BoolValue(enabled),
+	}
+
 	// Save the state
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 // Read retrieves the current IGMP snooping static configuration for a port.
@@ -133,6 +176,29 @@ func (r *igmpSnoopingStaticResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
+	// Ensure global IGMP snooping is enabled before configuring port-level settings
+	igmpConfig, err := r.client.FetchIGMPConfig(ctx)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Reading IGMP Configuration",
+			fmt.Sprintf("Failed to fetch IGMP configuration: %s", err),
+		)
+		return
+	}
+
+	if !igmpConfig.Enabled {
+		// Enable global IGMP snooping first
+		if err := r.client.EnableIGMPSnooping(ctx); err != nil {
+			resp.Diagnostics.AddError(
+				"Error Enabling Global IGMP Snooping",
+				fmt.Sprintf("Global IGMP snooping must be enabled before configuring port-level settings. Failed to enable: %s", err),
+			)
+			return
+		}
+		// Wait a moment for the global setting to take effect
+		time.Sleep(1 * time.Second)
+	}
+
 	// Update the specified port while preserving other ports
 	if err := r.client.UpdatePortIGMPSnoopingByName(ctx, plan.Port.ValueString(), plan.Enabled.ValueBool()); err != nil {
 		resp.Diagnostics.AddError(
@@ -142,8 +208,27 @@ func (r *igmpSnoopingStaticResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 
+	// Wait for the device to reflect the changes
+	time.Sleep(2 * time.Second)
+
+	// Read back the actual state from the device to ensure consistency
+	enabled, err := r.client.GetPortIGMPSnoopingByName(ctx, plan.Port.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Error Reading IGMP Snooping State",
+			fmt.Sprintf("Failed to read IGMP snooping state for port %s after update: %s", plan.Port.ValueString(), err),
+		)
+		return
+	}
+
+	// Update state with the actual device value
+	state := igmpSnoopingStaticModel{
+		Port:    plan.Port,
+		Enabled: types.BoolValue(enabled),
+	}
+
 	// Save the updated state
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 // Delete disables IGMP snooping for a specific port.

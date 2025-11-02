@@ -1,0 +1,3036 @@
+---
+version: 1
+interactions:
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/port.cgi
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Port Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Port
+      Setting</legend>\n<form method=\"post\" action=\"port.cgi\">\n\t<table border=\"1\">\n\t<tr>\n\t\t<th
+      class=MidSize>Port</th>\n\t\t<th>State</th>\n\t\t<th>Speed/Duplex</th>\n\t\t<th>Flow
+      Control</th>\n\t</tr>\n\t<tr>\n\t\t<td align=\"center\">\n\t\t\t<select name=\"portid\"
+      multiple size=\"4\" >\n\t\t\t<option value=\"0\">Port 1\n\t\t\t<option value=\"1\">Port
+      2\n\t\t\t<option value=\"2\">Port 3\n\t\t\t<option value=\"3\">Port 4\n\t\t</td>\n\t\t<td
+      align=\"center\">\n\t\t\t<select name=\"state\" class=MidSize>\n\t\t\t<option
+      value=\"1\">Enable\n\t\t\t<option value=\"0\">Disable\n\t\t\t</select>\n\t\t</td>\n\t\t<td
+      align=\"center\">\n\t\t\t<select name=\"speed_duplex\" class=MidSize>\n\t\t\t<option
+      value=\"0\">Auto\n\t\t\t<option value=\"1\">10M/Half\n\t\t\t<option value=\"2\">10M/Full\n\t\t\t<option
+      value=\"3\">100M/Half\n\t\t\t<option value=\"4\">100M/Full\n\t\t\t<option value=\"5\">1000M/Full\n\t\t\t<option
+      value=\"6\">2500M/Full\n\t\t\t</select>\n\t\t</td>\n\t\t<td align=\"center\">\n\t\t\t<select
+      name=\"flow\" class=MidSize>\n\t\t\t<option value=\"0\">Off\n\t\t\t<option value=\"1\">On\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t</table>\n<br
+      style=\"line-height:50%\">\n<input type=\"submit\" name=\"submit\" value=\"
+      \  Apply   \">\n<input type=\"hidden\" name=\"cmd\" value=\"port\">\n</form>\n<hr>\n<form
+      method=\"post\" action=\"port.cgi\">\n\t<table border=\"1\">\n\t<tr>\n\t\t<th
+      class=MidSize>Port</th>\n\t\t<th>State</th>\n\t\t<th>Speed/Duplex</th>\n\t\t<th>Flow
+      Control</th>\n\t</tr>\n\t<tr>\n\t\t<td align=\"center\">\n\t\t\t<select name=\"portid\"
+      multiple size=\"2\" >\n\t\t\t<option value=\"4\">Port 5\n\t\t\t<option value=\"5\">Port
+      6\n\t\t</td>\n\t\t<td align=\"center\">\n\t\t\t<select name=\"state\" class=MidSize>\n\t\t\t<option
+      value=\"1\">Enable\n\t\t\t<option value=\"0\">Disable\n\t\t\t</select>\n\t\t</td>\n\t\t<td
+      align=\"center\">\n\t\t\t<select name=\"speed_duplex\" class=MidSize>\n\t\t\t<option
+      value=\"0\">Auto\n\t\t\t<option value=\"4\">100M/Full\n\t\t\t<option value=\"5\">1000M/Full\n\t\t\t<option
+      value=\"6\">2500M/Full\n\t\t\t<option value=\"8\">10G/Full\n\t\t\t</select>\n\t\t</td>\n\t\t<td
+      align=\"center\">\n\t\t\t<select name=\"flow\" class=MidSize>\n\t\t\t<option
+      value=\"0\">Off\n\t\t\t<option value=\"1\">On\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t</table>\n<br
+      style=\"line-height:50%\">\n<input type=\"submit\" name=\"submit\" value=\"
+      \  Apply   \">\n<input type=\"hidden\" name=\"cmd\" value=\"port\">\n</form>\n<hr>\n<br>\n<table
+      border=\"1\">\n  <tr>\n    <th rowspan=\"2\" width=\"90\">Port</th>\n    <th
+      rowspan=\"2\" width=\"90\">State</th>\n    <th colspan=\"2\">Speed/Duplex</th>\n
+      \   <th colspan=\"2\">Flow Control</th>\n  </tr>\n  <tr>\n    <th width=\"90\">Config</th>\n
+      \   <th width=\"90\">Actual</th>\n    <th width=\"90\">Config</th>\n    <th
+      width=\"90\">Actual</th>\n  </tr>\n  <tr>\n    <td>Port 1</td>\n    <td>Enable</td>\n
+      \   <td>Auto</td>\n    <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \ </tr>\n  <tr>\n    <td>Port 2</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
+      \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
+      \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
+      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
+      \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
+      \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=macstatic&mac=00%3A11%3A22%3A33%3A44%3A55&src=0&vlan=10
+    form:
+      cmd:
+      - macstatic
+      mac:
+      - "00:11:22:33:44:55"
+      src:
+      - "0"
+      vlan:
+      - "10"
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/mac.cgi?page=static
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Static MAC Addresses</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Static MAC Setting</legend>
+      <form method="post" action="/mac.cgi?page=static">
+        <table border="1">
+          <tr>
+            <th align="center" width="150">MAC Address</th>
+            <th align="center" width="90">VLAN ID</th>
+            <th align="center" width="90">Port</th>
+          </tr>
+          <tr>
+            <td align="center"><input type="text" name="mac" value="00:00:00:00:00:00"></td>
+            <td align="center"><input type="text" size="5" name="vlan"> (1~4094)</td>
+            <td align="center">
+              <select name="src" size="6">
+                <option value="0">Port 1
+                <option value="1">Port 2
+                <option value="2">Port 3
+                <option value="3">Port 4
+                <option value="4">Port 5
+                <option value="5">Port 6
+              </select>
+            </td>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Add ">
+        <input type="hidden" name="cmd" value="macstatic">
+      </form>
+      <hr>
+      <form method="post" action="/mac.cgi?page=staticdel">
+        <table border="1">
+          <tr>
+          <th width="35">No.</th>
+          <th width="190">MAC Address</th>
+          <th width="80">VLAN ID</th>
+          <th width="190">Port</th>
+          <th width="2">Select</th>
+          </tr>
+        <tr>
+            <td align="center">1</td>
+            <td align="center">00:11:22:33:44:55</td>
+            <td align="center">10</td>
+            <td align="center">1</td>
+            <td align="center"><input type="checkbox" name="del" value="00:11:22:33:44:55_10"></td>
+        </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Delete ">
+        <input type="hidden" name="cmd" value="macstatictbl">
+      </form>
+      </fieldset>
+      <p>
+
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=save
+    form:
+      cmd:
+      - save
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/save.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Save</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Save configuration</legend>
+      <b style="font-weight:normal;font-family: Geneva, Arial, Helvetica, sans-serif;letter-spacing:.45pt">Successfully Saved</b>
+      <p>
+      </fieldset>
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/mac.cgi?page=static
+    method: GET
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Static MAC Addresses</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Static MAC Setting</legend>
+      <form method="post" action="/mac.cgi?page=static">
+        <table border="1">
+          <tr>
+            <th align="center" width="150">MAC Address</th>
+            <th align="center" width="90">VLAN ID</th>
+            <th align="center" width="90">Port</th>
+          </tr>
+          <tr>
+            <td align="center"><input type="text" name="mac" value="00:00:00:00:00:00"></td>
+            <td align="center"><input type="text" size="5" name="vlan"> (1~4094)</td>
+            <td align="center">
+              <select name="src" size="6">
+                <option value="0">Port 1
+                <option value="1">Port 2
+                <option value="2">Port 3
+                <option value="3">Port 4
+                <option value="4">Port 5
+                <option value="5">Port 6
+              </select>
+            </td>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Add ">
+        <input type="hidden" name="cmd" value="macstatic">
+      </form>
+      <hr>
+      <form method="post" action="/mac.cgi?page=staticdel">
+        <table border="1">
+          <tr>
+          <th width="35">No.</th>
+          <th width="190">MAC Address</th>
+          <th width="80">VLAN ID</th>
+          <th width="190">Port</th>
+          <th width="2">Select</th>
+          </tr>
+        <tr>
+            <td align="center">1</td>
+            <td align="center">00:11:22:33:44:55</td>
+            <td align="center">10</td>
+            <td align="center">1</td>
+            <td align="center"><input type="checkbox" name="del" value="00:11:22:33:44:55_10"></td>
+        </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Delete ">
+        <input type="hidden" name="cmd" value="macstatictbl">
+      </form>
+      </fieldset>
+      <p>
+
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/mac.cgi?page=static
+    method: GET
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Static MAC Addresses</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Static MAC Setting</legend>
+      <form method="post" action="/mac.cgi?page=static">
+        <table border="1">
+          <tr>
+            <th align="center" width="150">MAC Address</th>
+            <th align="center" width="90">VLAN ID</th>
+            <th align="center" width="90">Port</th>
+          </tr>
+          <tr>
+            <td align="center"><input type="text" name="mac" value="00:00:00:00:00:00"></td>
+            <td align="center"><input type="text" size="5" name="vlan"> (1~4094)</td>
+            <td align="center">
+              <select name="src" size="6">
+                <option value="0">Port 1
+                <option value="1">Port 2
+                <option value="2">Port 3
+                <option value="3">Port 4
+                <option value="4">Port 5
+                <option value="5">Port 6
+              </select>
+            </td>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Add ">
+        <input type="hidden" name="cmd" value="macstatic">
+      </form>
+      <hr>
+      <form method="post" action="/mac.cgi?page=staticdel">
+        <table border="1">
+          <tr>
+          <th width="35">No.</th>
+          <th width="190">MAC Address</th>
+          <th width="80">VLAN ID</th>
+          <th width="190">Port</th>
+          <th width="2">Select</th>
+          </tr>
+        <tr>
+            <td align="center">1</td>
+            <td align="center">00:11:22:33:44:55</td>
+            <td align="center">10</td>
+            <td align="center">1</td>
+            <td align="center"><input type="checkbox" name="del" value="00:11:22:33:44:55_10"></td>
+        </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Delete ">
+        <input type="hidden" name="cmd" value="macstatictbl">
+      </form>
+      </fieldset>
+      <p>
+
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=macstatictbl&del=00%3A11%3A22%3A33%3A44%3A55_10
+    form:
+      cmd:
+      - macstatictbl
+      del:
+      - 00:11:22:33:44:55_10
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/mac.cgi?page=staticdel
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Static MAC Addresses</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Static MAC Setting</legend>
+      <form method="post" action="/mac.cgi?page=static">
+        <table border="1">
+          <tr>
+            <th align="center" width="150">MAC Address</th>
+            <th align="center" width="90">VLAN ID</th>
+            <th align="center" width="90">Port</th>
+          </tr>
+          <tr>
+            <td align="center"><input type="text" name="mac" value="00:00:00:00:00:00"></td>
+            <td align="center"><input type="text" size="5" name="vlan"> (1~4094)</td>
+            <td align="center">
+              <select name="src" size="6">
+                <option value="0">Port 1
+                <option value="1">Port 2
+                <option value="2">Port 3
+                <option value="3">Port 4
+                <option value="4">Port 5
+                <option value="5">Port 6
+              </select>
+            </td>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Add ">
+        <input type="hidden" name="cmd" value="macstatic">
+      </form>
+      <hr>
+      <form method="post" action="/mac.cgi?page=staticdel">
+        <table border="1">
+          <tr>
+          <th width="35">No.</th>
+          <th width="190">MAC Address</th>
+          <th width="80">VLAN ID</th>
+          <th width="190">Port</th>
+          <th width="2">Select</th>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Delete ">
+        <input type="hidden" name="cmd" value="macstatictbl">
+      </form>
+      </fieldset>
+      <p>
+
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=save
+    form:
+      cmd:
+      - save
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/save.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Save</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Save configuration</legend>
+      <b style="font-weight:normal;font-family: Geneva, Arial, Helvetica, sans-serif;letter-spacing:.45pt">Successfully Saved</b>
+      <p>
+      </fieldset>
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/port.cgi
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Port Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Port
+      Setting</legend>\n<form method=\"post\" action=\"port.cgi\">\n\t<table border=\"1\">\n\t<tr>\n\t\t<th
+      class=MidSize>Port</th>\n\t\t<th>State</th>\n\t\t<th>Speed/Duplex</th>\n\t\t<th>Flow
+      Control</th>\n\t</tr>\n\t<tr>\n\t\t<td align=\"center\">\n\t\t\t<select name=\"portid\"
+      multiple size=\"4\" >\n\t\t\t<option value=\"0\">Port 1\n\t\t\t<option value=\"1\">Port
+      2\n\t\t\t<option value=\"2\">Port 3\n\t\t\t<option value=\"3\">Port 4\n\t\t</td>\n\t\t<td
+      align=\"center\">\n\t\t\t<select name=\"state\" class=MidSize>\n\t\t\t<option
+      value=\"1\">Enable\n\t\t\t<option value=\"0\">Disable\n\t\t\t</select>\n\t\t</td>\n\t\t<td
+      align=\"center\">\n\t\t\t<select name=\"speed_duplex\" class=MidSize>\n\t\t\t<option
+      value=\"0\">Auto\n\t\t\t<option value=\"1\">10M/Half\n\t\t\t<option value=\"2\">10M/Full\n\t\t\t<option
+      value=\"3\">100M/Half\n\t\t\t<option value=\"4\">100M/Full\n\t\t\t<option value=\"5\">1000M/Full\n\t\t\t<option
+      value=\"6\">2500M/Full\n\t\t\t</select>\n\t\t</td>\n\t\t<td align=\"center\">\n\t\t\t<select
+      name=\"flow\" class=MidSize>\n\t\t\t<option value=\"0\">Off\n\t\t\t<option value=\"1\">On\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t</table>\n<br
+      style=\"line-height:50%\">\n<input type=\"submit\" name=\"submit\" value=\"
+      \  Apply   \">\n<input type=\"hidden\" name=\"cmd\" value=\"port\">\n</form>\n<hr>\n<form
+      method=\"post\" action=\"port.cgi\">\n\t<table border=\"1\">\n\t<tr>\n\t\t<th
+      class=MidSize>Port</th>\n\t\t<th>State</th>\n\t\t<th>Speed/Duplex</th>\n\t\t<th>Flow
+      Control</th>\n\t</tr>\n\t<tr>\n\t\t<td align=\"center\">\n\t\t\t<select name=\"portid\"
+      multiple size=\"2\" >\n\t\t\t<option value=\"4\">Port 5\n\t\t\t<option value=\"5\">Port
+      6\n\t\t</td>\n\t\t<td align=\"center\">\n\t\t\t<select name=\"state\" class=MidSize>\n\t\t\t<option
+      value=\"1\">Enable\n\t\t\t<option value=\"0\">Disable\n\t\t\t</select>\n\t\t</td>\n\t\t<td
+      align=\"center\">\n\t\t\t<select name=\"speed_duplex\" class=MidSize>\n\t\t\t<option
+      value=\"0\">Auto\n\t\t\t<option value=\"4\">100M/Full\n\t\t\t<option value=\"5\">1000M/Full\n\t\t\t<option
+      value=\"6\">2500M/Full\n\t\t\t<option value=\"8\">10G/Full\n\t\t\t</select>\n\t\t</td>\n\t\t<td
+      align=\"center\">\n\t\t\t<select name=\"flow\" class=MidSize>\n\t\t\t<option
+      value=\"0\">Off\n\t\t\t<option value=\"1\">On\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t</table>\n<br
+      style=\"line-height:50%\">\n<input type=\"submit\" name=\"submit\" value=\"
+      \  Apply   \">\n<input type=\"hidden\" name=\"cmd\" value=\"port\">\n</form>\n<hr>\n<br>\n<table
+      border=\"1\">\n  <tr>\n    <th rowspan=\"2\" width=\"90\">Port</th>\n    <th
+      rowspan=\"2\" width=\"90\">State</th>\n    <th colspan=\"2\">Speed/Duplex</th>\n
+      \   <th colspan=\"2\">Flow Control</th>\n  </tr>\n  <tr>\n    <th width=\"90\">Config</th>\n
+      \   <th width=\"90\">Actual</th>\n    <th width=\"90\">Config</th>\n    <th
+      width=\"90\">Actual</th>\n  </tr>\n  <tr>\n    <td>Port 1</td>\n    <td>Enable</td>\n
+      \   <td>Auto</td>\n    <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \ </tr>\n  <tr>\n    <td>Port 2</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
+      \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
+      \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
+      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
+      \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
+      \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=macstatic&mac=00%3A11%3A22%3A33%3A44%3A55&src=1&vlan=10
+    form:
+      cmd:
+      - macstatic
+      mac:
+      - "00:11:22:33:44:55"
+      src:
+      - "1"
+      vlan:
+      - "10"
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/mac.cgi?page=static
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Static MAC Addresses</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Static MAC Setting</legend>
+      <form method="post" action="/mac.cgi?page=static">
+        <table border="1">
+          <tr>
+            <th align="center" width="150">MAC Address</th>
+            <th align="center" width="90">VLAN ID</th>
+            <th align="center" width="90">Port</th>
+          </tr>
+          <tr>
+            <td align="center"><input type="text" name="mac" value="00:00:00:00:00:00"></td>
+            <td align="center"><input type="text" size="5" name="vlan"> (1~4094)</td>
+            <td align="center">
+              <select name="src" size="6">
+                <option value="0">Port 1
+                <option value="1">Port 2
+                <option value="2">Port 3
+                <option value="3">Port 4
+                <option value="4">Port 5
+                <option value="5">Port 6
+              </select>
+            </td>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Add ">
+        <input type="hidden" name="cmd" value="macstatic">
+      </form>
+      <hr>
+      <form method="post" action="/mac.cgi?page=staticdel">
+        <table border="1">
+          <tr>
+          <th width="35">No.</th>
+          <th width="190">MAC Address</th>
+          <th width="80">VLAN ID</th>
+          <th width="190">Port</th>
+          <th width="2">Select</th>
+          </tr>
+        <tr>
+            <td align="center">1</td>
+            <td align="center">00:11:22:33:44:55</td>
+            <td align="center">10</td>
+            <td align="center">2</td>
+            <td align="center"><input type="checkbox" name="del" value="00:11:22:33:44:55_10"></td>
+        </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Delete ">
+        <input type="hidden" name="cmd" value="macstatictbl">
+      </form>
+      </fieldset>
+      <p>
+
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=save
+    form:
+      cmd:
+      - save
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/save.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Save</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Save configuration</legend>
+      <b style="font-weight:normal;font-family: Geneva, Arial, Helvetica, sans-serif;letter-spacing:.45pt">Successfully Saved</b>
+      <p>
+      </fieldset>
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/mac.cgi?page=static
+    method: GET
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Static MAC Addresses</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Static MAC Setting</legend>
+      <form method="post" action="/mac.cgi?page=static">
+        <table border="1">
+          <tr>
+            <th align="center" width="150">MAC Address</th>
+            <th align="center" width="90">VLAN ID</th>
+            <th align="center" width="90">Port</th>
+          </tr>
+          <tr>
+            <td align="center"><input type="text" name="mac" value="00:00:00:00:00:00"></td>
+            <td align="center"><input type="text" size="5" name="vlan"> (1~4094)</td>
+            <td align="center">
+              <select name="src" size="6">
+                <option value="0">Port 1
+                <option value="1">Port 2
+                <option value="2">Port 3
+                <option value="3">Port 4
+                <option value="4">Port 5
+                <option value="5">Port 6
+              </select>
+            </td>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Add ">
+        <input type="hidden" name="cmd" value="macstatic">
+      </form>
+      <hr>
+      <form method="post" action="/mac.cgi?page=staticdel">
+        <table border="1">
+          <tr>
+          <th width="35">No.</th>
+          <th width="190">MAC Address</th>
+          <th width="80">VLAN ID</th>
+          <th width="190">Port</th>
+          <th width="2">Select</th>
+          </tr>
+        <tr>
+            <td align="center">1</td>
+            <td align="center">00:11:22:33:44:55</td>
+            <td align="center">10</td>
+            <td align="center">2</td>
+            <td align="center"><input type="checkbox" name="del" value="00:11:22:33:44:55_10"></td>
+        </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Delete ">
+        <input type="hidden" name="cmd" value="macstatictbl">
+      </form>
+      </fieldset>
+      <p>
+
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/mac.cgi?page=static
+    method: GET
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Static MAC Addresses</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Static MAC Setting</legend>
+      <form method="post" action="/mac.cgi?page=static">
+        <table border="1">
+          <tr>
+            <th align="center" width="150">MAC Address</th>
+            <th align="center" width="90">VLAN ID</th>
+            <th align="center" width="90">Port</th>
+          </tr>
+          <tr>
+            <td align="center"><input type="text" name="mac" value="00:00:00:00:00:00"></td>
+            <td align="center"><input type="text" size="5" name="vlan"> (1~4094)</td>
+            <td align="center">
+              <select name="src" size="6">
+                <option value="0">Port 1
+                <option value="1">Port 2
+                <option value="2">Port 3
+                <option value="3">Port 4
+                <option value="4">Port 5
+                <option value="5">Port 6
+              </select>
+            </td>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Add ">
+        <input type="hidden" name="cmd" value="macstatic">
+      </form>
+      <hr>
+      <form method="post" action="/mac.cgi?page=staticdel">
+        <table border="1">
+          <tr>
+          <th width="35">No.</th>
+          <th width="190">MAC Address</th>
+          <th width="80">VLAN ID</th>
+          <th width="190">Port</th>
+          <th width="2">Select</th>
+          </tr>
+        <tr>
+            <td align="center">1</td>
+            <td align="center">00:11:22:33:44:55</td>
+            <td align="center">10</td>
+            <td align="center">2</td>
+            <td align="center"><input type="checkbox" name="del" value="00:11:22:33:44:55_10"></td>
+        </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Delete ">
+        <input type="hidden" name="cmd" value="macstatictbl">
+      </form>
+      </fieldset>
+      <p>
+
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=macstatictbl&del=00%3A11%3A22%3A33%3A44%3A55_10
+    form:
+      cmd:
+      - macstatictbl
+      del:
+      - 00:11:22:33:44:55_10
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/mac.cgi?page=staticdel
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Static MAC Addresses</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Static MAC Setting</legend>
+      <form method="post" action="/mac.cgi?page=static">
+        <table border="1">
+          <tr>
+            <th align="center" width="150">MAC Address</th>
+            <th align="center" width="90">VLAN ID</th>
+            <th align="center" width="90">Port</th>
+          </tr>
+          <tr>
+            <td align="center"><input type="text" name="mac" value="00:00:00:00:00:00"></td>
+            <td align="center"><input type="text" size="5" name="vlan"> (1~4094)</td>
+            <td align="center">
+              <select name="src" size="6">
+                <option value="0">Port 1
+                <option value="1">Port 2
+                <option value="2">Port 3
+                <option value="3">Port 4
+                <option value="4">Port 5
+                <option value="5">Port 6
+              </select>
+            </td>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Add ">
+        <input type="hidden" name="cmd" value="macstatic">
+      </form>
+      <hr>
+      <form method="post" action="/mac.cgi?page=staticdel">
+        <table border="1">
+          <tr>
+          <th width="35">No.</th>
+          <th width="190">MAC Address</th>
+          <th width="80">VLAN ID</th>
+          <th width="190">Port</th>
+          <th width="2">Select</th>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Delete ">
+        <input type="hidden" name="cmd" value="macstatictbl">
+      </form>
+      </fieldset>
+      <p>
+
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=save
+    form:
+      cmd:
+      - save
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/save.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Save</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Save configuration</legend>
+      <b style="font-weight:normal;font-family: Geneva, Arial, Helvetica, sans-serif;letter-spacing:.45pt">Successfully Saved</b>
+      <p>
+      </fieldset>
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/port.cgi
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Port Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Port
+      Setting</legend>\n<form method=\"post\" action=\"port.cgi\">\n\t<table border=\"1\">\n\t<tr>\n\t\t<th
+      class=MidSize>Port</th>\n\t\t<th>State</th>\n\t\t<th>Speed/Duplex</th>\n\t\t<th>Flow
+      Control</th>\n\t</tr>\n\t<tr>\n\t\t<td align=\"center\">\n\t\t\t<select name=\"portid\"
+      multiple size=\"4\" >\n\t\t\t<option value=\"0\">Port 1\n\t\t\t<option value=\"1\">Port
+      2\n\t\t\t<option value=\"2\">Port 3\n\t\t\t<option value=\"3\">Port 4\n\t\t</td>\n\t\t<td
+      align=\"center\">\n\t\t\t<select name=\"state\" class=MidSize>\n\t\t\t<option
+      value=\"1\">Enable\n\t\t\t<option value=\"0\">Disable\n\t\t\t</select>\n\t\t</td>\n\t\t<td
+      align=\"center\">\n\t\t\t<select name=\"speed_duplex\" class=MidSize>\n\t\t\t<option
+      value=\"0\">Auto\n\t\t\t<option value=\"1\">10M/Half\n\t\t\t<option value=\"2\">10M/Full\n\t\t\t<option
+      value=\"3\">100M/Half\n\t\t\t<option value=\"4\">100M/Full\n\t\t\t<option value=\"5\">1000M/Full\n\t\t\t<option
+      value=\"6\">2500M/Full\n\t\t\t</select>\n\t\t</td>\n\t\t<td align=\"center\">\n\t\t\t<select
+      name=\"flow\" class=MidSize>\n\t\t\t<option value=\"0\">Off\n\t\t\t<option value=\"1\">On\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t</table>\n<br
+      style=\"line-height:50%\">\n<input type=\"submit\" name=\"submit\" value=\"
+      \  Apply   \">\n<input type=\"hidden\" name=\"cmd\" value=\"port\">\n</form>\n<hr>\n<form
+      method=\"post\" action=\"port.cgi\">\n\t<table border=\"1\">\n\t<tr>\n\t\t<th
+      class=MidSize>Port</th>\n\t\t<th>State</th>\n\t\t<th>Speed/Duplex</th>\n\t\t<th>Flow
+      Control</th>\n\t</tr>\n\t<tr>\n\t\t<td align=\"center\">\n\t\t\t<select name=\"portid\"
+      multiple size=\"2\" >\n\t\t\t<option value=\"4\">Port 5\n\t\t\t<option value=\"5\">Port
+      6\n\t\t</td>\n\t\t<td align=\"center\">\n\t\t\t<select name=\"state\" class=MidSize>\n\t\t\t<option
+      value=\"1\">Enable\n\t\t\t<option value=\"0\">Disable\n\t\t\t</select>\n\t\t</td>\n\t\t<td
+      align=\"center\">\n\t\t\t<select name=\"speed_duplex\" class=MidSize>\n\t\t\t<option
+      value=\"0\">Auto\n\t\t\t<option value=\"4\">100M/Full\n\t\t\t<option value=\"5\">1000M/Full\n\t\t\t<option
+      value=\"6\">2500M/Full\n\t\t\t<option value=\"8\">10G/Full\n\t\t\t</select>\n\t\t</td>\n\t\t<td
+      align=\"center\">\n\t\t\t<select name=\"flow\" class=MidSize>\n\t\t\t<option
+      value=\"0\">Off\n\t\t\t<option value=\"1\">On\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t</table>\n<br
+      style=\"line-height:50%\">\n<input type=\"submit\" name=\"submit\" value=\"
+      \  Apply   \">\n<input type=\"hidden\" name=\"cmd\" value=\"port\">\n</form>\n<hr>\n<br>\n<table
+      border=\"1\">\n  <tr>\n    <th rowspan=\"2\" width=\"90\">Port</th>\n    <th
+      rowspan=\"2\" width=\"90\">State</th>\n    <th colspan=\"2\">Speed/Duplex</th>\n
+      \   <th colspan=\"2\">Flow Control</th>\n  </tr>\n  <tr>\n    <th width=\"90\">Config</th>\n
+      \   <th width=\"90\">Actual</th>\n    <th width=\"90\">Config</th>\n    <th
+      width=\"90\">Actual</th>\n  </tr>\n  <tr>\n    <td>Port 1</td>\n    <td>Enable</td>\n
+      \   <td>Auto</td>\n    <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \ </tr>\n  <tr>\n    <td>Port 2</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
+      \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
+      \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
+      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
+      \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
+      \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=macstatic&mac=00%3A11%3A22%3A33%3A44%3A66&src=0&vlan=20
+    form:
+      cmd:
+      - macstatic
+      mac:
+      - 00:11:22:33:44:66
+      src:
+      - "0"
+      vlan:
+      - "20"
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/mac.cgi?page=static
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Static MAC Addresses</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Static MAC Setting</legend>
+      <form method="post" action="/mac.cgi?page=static">
+        <table border="1">
+          <tr>
+            <th align="center" width="150">MAC Address</th>
+            <th align="center" width="90">VLAN ID</th>
+            <th align="center" width="90">Port</th>
+          </tr>
+          <tr>
+            <td align="center"><input type="text" name="mac" value="00:00:00:00:00:00"></td>
+            <td align="center"><input type="text" size="5" name="vlan"> (1~4094)</td>
+            <td align="center">
+              <select name="src" size="6">
+                <option value="0">Port 1
+                <option value="1">Port 2
+                <option value="2">Port 3
+                <option value="3">Port 4
+                <option value="4">Port 5
+                <option value="5">Port 6
+              </select>
+            </td>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Add ">
+        <input type="hidden" name="cmd" value="macstatic">
+      </form>
+      <hr>
+      <form method="post" action="/mac.cgi?page=staticdel">
+        <table border="1">
+          <tr>
+          <th width="35">No.</th>
+          <th width="190">MAC Address</th>
+          <th width="80">VLAN ID</th>
+          <th width="190">Port</th>
+          <th width="2">Select</th>
+          </tr>
+        <tr>
+            <td align="center">1</td>
+            <td align="center">00:11:22:33:44:66</td>
+            <td align="center">20</td>
+            <td align="center">1</td>
+            <td align="center"><input type="checkbox" name="del" value="00:11:22:33:44:66_20"></td>
+        </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Delete ">
+        <input type="hidden" name="cmd" value="macstatictbl">
+      </form>
+      </fieldset>
+      <p>
+
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=save
+    form:
+      cmd:
+      - save
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/save.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Save</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Save configuration</legend>
+      <b style="font-weight:normal;font-family: Geneva, Arial, Helvetica, sans-serif;letter-spacing:.45pt">Successfully Saved</b>
+      <p>
+      </fieldset>
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/mac.cgi?page=static
+    method: GET
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Static MAC Addresses</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Static MAC Setting</legend>
+      <form method="post" action="/mac.cgi?page=static">
+        <table border="1">
+          <tr>
+            <th align="center" width="150">MAC Address</th>
+            <th align="center" width="90">VLAN ID</th>
+            <th align="center" width="90">Port</th>
+          </tr>
+          <tr>
+            <td align="center"><input type="text" name="mac" value="00:00:00:00:00:00"></td>
+            <td align="center"><input type="text" size="5" name="vlan"> (1~4094)</td>
+            <td align="center">
+              <select name="src" size="6">
+                <option value="0">Port 1
+                <option value="1">Port 2
+                <option value="2">Port 3
+                <option value="3">Port 4
+                <option value="4">Port 5
+                <option value="5">Port 6
+              </select>
+            </td>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Add ">
+        <input type="hidden" name="cmd" value="macstatic">
+      </form>
+      <hr>
+      <form method="post" action="/mac.cgi?page=staticdel">
+        <table border="1">
+          <tr>
+          <th width="35">No.</th>
+          <th width="190">MAC Address</th>
+          <th width="80">VLAN ID</th>
+          <th width="190">Port</th>
+          <th width="2">Select</th>
+          </tr>
+        <tr>
+            <td align="center">1</td>
+            <td align="center">00:11:22:33:44:66</td>
+            <td align="center">20</td>
+            <td align="center">1</td>
+            <td align="center"><input type="checkbox" name="del" value="00:11:22:33:44:66_20"></td>
+        </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Delete ">
+        <input type="hidden" name="cmd" value="macstatictbl">
+      </form>
+      </fieldset>
+      <p>
+
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=macstatictbl&del=00%3A11%3A22%3A33%3A44%3A66_20
+    form:
+      cmd:
+      - macstatictbl
+      del:
+      - 00:11:22:33:44:66_20
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/mac.cgi?page=staticdel
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Static MAC Addresses</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Static MAC Setting</legend>
+      <form method="post" action="/mac.cgi?page=static">
+        <table border="1">
+          <tr>
+            <th align="center" width="150">MAC Address</th>
+            <th align="center" width="90">VLAN ID</th>
+            <th align="center" width="90">Port</th>
+          </tr>
+          <tr>
+            <td align="center"><input type="text" name="mac" value="00:00:00:00:00:00"></td>
+            <td align="center"><input type="text" size="5" name="vlan"> (1~4094)</td>
+            <td align="center">
+              <select name="src" size="6">
+                <option value="0">Port 1
+                <option value="1">Port 2
+                <option value="2">Port 3
+                <option value="3">Port 4
+                <option value="4">Port 5
+                <option value="5">Port 6
+              </select>
+            </td>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Add ">
+        <input type="hidden" name="cmd" value="macstatic">
+      </form>
+      <hr>
+      <form method="post" action="/mac.cgi?page=staticdel">
+        <table border="1">
+          <tr>
+          <th width="35">No.</th>
+          <th width="190">MAC Address</th>
+          <th width="80">VLAN ID</th>
+          <th width="190">Port</th>
+          <th width="2">Select</th>
+          </tr>
+        </table>
+        <br style="line-height:50%">
+        <input type="submit" value=" Delete ">
+        <input type="hidden" name="cmd" value="macstatictbl">
+      </form>
+      </fieldset>
+      <p>
+
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=save
+    form:
+      cmd:
+      - save
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/save.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Save</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Save configuration</legend>
+      <b style="font-weight:normal;font-family: Geneva, Arial, Helvetica, sans-serif;letter-spacing:.45pt">Successfully Saved</b>
+      <p>
+      </fieldset>
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""

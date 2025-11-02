@@ -1,0 +1,648 @@
+---
+version: 1
+interactions:
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/port.cgi?page=stats
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Port Stistics</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Port
+      Statistics</legend>\n<form method=\"post\" action=\"/port.cgi?page=stats\">\n<table>\n\t<tr>\n\t\t<th
+      style=\"width:80px;\">Port</th>\n\t\t<th style=\"width:80px;\">State</th>\n\t\t<th
+      style=\"width:80px;\">Link Status</th>\n\t\t<th style=\"width:100px;\">TxGoodPkt</th>\n\t\t<th
+      style=\"width:100px;\">TxBadPkt</th>\n\t\t<th style=\"width:100px;\">RxGoodPkt</th>\n\t\t<th
+      style=\"width:100px;\">RxBadPkt</th>\n\t</tr>\n\t<tr>\n\t\t<td>Port 1</td>\n\t\t<td>Enable</td>\n\t\t<td>Link
+      Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      2</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      3</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      4</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Up</td>\n\t\t<td>14384</td>\n\t\t<td>0</td>\n\t\t<td>21564</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      5</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      6</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n</table>\n<br
+      style=\"line-height:50%\">\n<input type=\"submit\" name=\"submit\" value=\"
+      \  Clear   \">\n<input type=\"hidden\" name=\"cmd\" value=\"stats\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/port.cgi?page=stats
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Port Stistics</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Port
+      Statistics</legend>\n<form method=\"post\" action=\"/port.cgi?page=stats\">\n<table>\n\t<tr>\n\t\t<th
+      style=\"width:80px;\">Port</th>\n\t\t<th style=\"width:80px;\">State</th>\n\t\t<th
+      style=\"width:80px;\">Link Status</th>\n\t\t<th style=\"width:100px;\">TxGoodPkt</th>\n\t\t<th
+      style=\"width:100px;\">TxBadPkt</th>\n\t\t<th style=\"width:100px;\">RxGoodPkt</th>\n\t\t<th
+      style=\"width:100px;\">RxBadPkt</th>\n\t</tr>\n\t<tr>\n\t\t<td>Port 1</td>\n\t\t<td>Enable</td>\n\t\t<td>Link
+      Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      2</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      3</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      4</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Up</td>\n\t\t<td>14422</td>\n\t\t<td>0</td>\n\t\t<td>21612</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      5</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      6</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n</table>\n<br
+      style=\"line-height:50%\">\n<input type=\"submit\" name=\"submit\" value=\"
+      \  Clear   \">\n<input type=\"hidden\" name=\"cmd\" value=\"stats\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/port.cgi?page=stats
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Port Stistics</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Port
+      Statistics</legend>\n<form method=\"post\" action=\"/port.cgi?page=stats\">\n<table>\n\t<tr>\n\t\t<th
+      style=\"width:80px;\">Port</th>\n\t\t<th style=\"width:80px;\">State</th>\n\t\t<th
+      style=\"width:80px;\">Link Status</th>\n\t\t<th style=\"width:100px;\">TxGoodPkt</th>\n\t\t<th
+      style=\"width:100px;\">TxBadPkt</th>\n\t\t<th style=\"width:100px;\">RxGoodPkt</th>\n\t\t<th
+      style=\"width:100px;\">RxBadPkt</th>\n\t</tr>\n\t<tr>\n\t\t<td>Port 1</td>\n\t\t<td>Enable</td>\n\t\t<td>Link
+      Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      2</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      3</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      4</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Up</td>\n\t\t<td>14445</td>\n\t\t<td>0</td>\n\t\t<td>21639</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      5</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n\t<tr>\n\t\t<td>Port
+      6</td>\n\t\t<td>Enable</td>\n\t\t<td>Link Down</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t\t<td>0</td>\n\t</tr>\n</table>\n<br
+      style=\"line-height:50%\">\n<input type=\"submit\" name=\"submit\" value=\"
+      \  Clear   \">\n<input type=\"hidden\" name=\"cmd\" value=\"stats\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""

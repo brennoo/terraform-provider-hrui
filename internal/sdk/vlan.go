@@ -248,7 +248,8 @@ func (c *HRUIClient) SetPortVLANConfig(ctx context.Context, config *PortVLANConf
 	}
 
 	// Resolve PortID if it's invalid or missing
-	if config.PortID <= 0 {
+	// Note: PortID 0 is valid (Port 1 uses 0-based indexing)
+	if config.PortID < 0 {
 		if config.PortName == "" {
 			return fmt.Errorf("invalid configuration: both PortID and Name are missing")
 		}
@@ -261,8 +262,8 @@ func (c *HRUIClient) SetPortVLANConfig(ctx context.Context, config *PortVLANConf
 		config.PortID = portID
 	}
 
-	// Validate that PortID is now valid
-	if config.PortID <= 0 {
+	// Validate that PortID is now valid (device uses 0-based indexing, so 0 is valid)
+	if config.PortID < 0 {
 		return fmt.Errorf("invalid PortID after resolution: %d", config.PortID)
 	}
 
