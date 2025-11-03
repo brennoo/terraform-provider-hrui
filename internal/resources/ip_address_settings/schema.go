@@ -14,10 +14,6 @@ func (r *ipAddressResource) Schema(ctx context.Context, req resource.SchemaReque
 	resp.Schema = schema.Schema{
 		Description: "Configures IP address settings.",
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Computed:    true,
-				Description: "The ID of the IP address settings resource.",
-			},
 			"dhcp_enabled": schema.BoolAttribute{
 				Optional: true,
 				Computed: true,

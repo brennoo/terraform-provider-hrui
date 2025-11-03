@@ -3,7 +3,6 @@ package mac_static
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -37,10 +36,6 @@ func (r *macStaticResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 	resp.Schema = schema.Schema{
 		Description: "Manages static MAC address entries.",
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "Unique identifier of the resource, used internally. Format: mac_address_vlan_id",
-				Computed:    true,
-			},
 			"mac_address": schema.StringAttribute{
 				Description: "The MAC address in the format xx:xx:xx:xx:xx:xx.",
 				Required:    true,
@@ -86,9 +81,6 @@ func (r *macStaticResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	// Set resource ID to a composite of MAC and VLAN ID
-	data.ID = types.StringValue(fmt.Sprintf("%s_%d", data.MACAddress.ValueString(), data.VLANID.ValueInt64()))
-
 	// Save the state
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
@@ -104,15 +96,9 @@ func (r *macStaticResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	// Split the ID to fetch MAC address and VLAN info
-	parts := strings.Split(state.ID.ValueString(), "_")
-	if len(parts) != 2 {
-		resp.Diagnostics.AddError("Invalid Resource ID", "Expected format <mac_address>_<vlan_id>")
-		return
-	}
-
-	macAddress := parts[0]
-	vlanID := parts[1] // VLAN is extracted as string for validation later.
+	// Use MAC address and VLAN ID directly from state
+	macAddress := state.MACAddress.ValueString()
+	vlanIDStr := fmt.Sprintf("%d", state.VLANID.ValueInt64())
 
 	// Fetch current MAC table from the SDK
 	macTable, err := r.client.GetStaticMACAddressTable(ctx)
@@ -123,7 +109,7 @@ func (r *macStaticResource) Read(ctx context.Context, req resource.ReadRequest, 
 
 	// Look for the specific entry
 	for _, entry := range macTable {
-		if entry.MACAddress == macAddress && fmt.Sprintf("%d", entry.VLANID) == vlanID {
+		if entry.MACAddress == macAddress && fmt.Sprintf("%d", entry.VLANID) == vlanIDStr {
 			state.MACAddress = types.StringValue(entry.MACAddress)
 			state.VLANID = types.Int64Value(int64(entry.VLANID))
 			state.Port = types.StringValue(entry.Port)
@@ -179,9 +165,6 @@ func (r *macStaticResource) Update(ctx context.Context, req resource.UpdateReque
 			resp.Diagnostics.AddError("Failed to create updated static MAC entry", err.Error())
 			return
 		}
-
-		// Update the ID to reflect changes
-		plan.ID = types.StringValue(fmt.Sprintf("%s_%d", plan.MACAddress.ValueString(), plan.VLANID.ValueInt64()))
 	}
 
 	// Save the updated state

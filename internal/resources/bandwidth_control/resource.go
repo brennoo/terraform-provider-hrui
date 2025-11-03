@@ -39,11 +39,11 @@ func (r *bandwidthControlResource) Schema(_ context.Context, req resource.Schema
 				Required:    true,
 			},
 			"ingress_rate": schema.StringAttribute{
-				Description: "Ingress bandwidth rate in kbps. Use '0' or 'Unlimited' to disable limitation. Both values are equivalent and will be normalized to 'Unlimited' in state.",
+				Description: "Ingress bandwidth rate in kbps. Use '0' or 'Unlimited' to disable limitation.",
 				Required:    true,
 			},
 			"egress_rate": schema.StringAttribute{
-				Description: "Egress bandwidth rate in kbps. Use '0' or 'Unlimited' to disable limitation. Both values are equivalent and will be normalized to 'Unlimited' in state.",
+				Description: "Egress bandwidth rate in kbps. Use '0' or 'Unlimited' to disable limitation.",
 				Required:    true,
 			},
 		},

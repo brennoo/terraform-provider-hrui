@@ -36,10 +36,6 @@ func (r *eeeResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 	resp.Schema = schema.Schema{
 		Description: "Manages the Energy Efficient Ethernet (EEE) settings.",
 		Attributes: map[string]schema.Attribute{
-			"id": schema.StringAttribute{
-				Description: "Unique identifier for the EEE resource. Set to 'eee' for singleton resource.",
-				Computed:    true,
-			},
 			"enabled": schema.BoolAttribute{
 				Required:    true,
 				Description: "Whether EEE is enabled (`true`) or disabled (`false`).",
@@ -86,9 +82,6 @@ func (r *eeeResource) Create(ctx context.Context, req resource.CreateRequest, re
 		return
 	}
 
-	// Set the ID for the singleton resource
-	plan.ID = types.StringValue("eee")
-
 	// Set the state equal to the plan, as the actual value is expected to match the user's input
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
@@ -113,7 +106,6 @@ func (r *eeeResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	}
 
 	// Update the state with the current value
-	state.ID = types.StringValue("eee")
 	state.Enabled = types.BoolValue(enabled)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
@@ -136,9 +128,6 @@ func (r *eeeResource) Update(ctx context.Context, req resource.UpdateRequest, re
 		)
 		return
 	}
-
-	// Set the ID for the singleton resource
-	plan.ID = types.StringValue("eee")
 
 	// Set the state equal to the plan, as the actual value is expected to match the user's input
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
