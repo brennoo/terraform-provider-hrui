@@ -81,7 +81,6 @@ func (r *ipAddressResource) Create(ctx context.Context, req resource.CreateReque
 	data.Gateway = types.StringValue(updatedSettings.Gateway)
 
 	// Set state
-	data.ID = types.StringValue("ip_address_settings")
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
@@ -98,7 +97,6 @@ func (r *ipAddressResource) Read(ctx context.Context, req resource.ReadRequest, 
 	data.IPAddress = types.StringValue(settings.IPAddress)
 	data.Netmask = types.StringValue(settings.Netmask)
 	data.Gateway = types.StringValue(settings.Gateway)
-	data.ID = types.StringValue("ip_address_settings")
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -138,7 +136,6 @@ func (r *ipAddressResource) Update(ctx context.Context, req resource.UpdateReque
 	data.IPAddress = types.StringValue(updatedSettings.IPAddress)
 	data.Netmask = types.StringValue(updatedSettings.Netmask)
 	data.Gateway = types.StringValue(updatedSettings.Gateway)
-	data.ID = types.StringValue("ip_address_settings")
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -153,7 +150,17 @@ func (r *ipAddressResource) Delete(ctx context.Context, req resource.DeleteReque
 }
 
 func (r *ipAddressResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	// ImportState is not needed for singleton resources
+	// The resource will be read from the device on the next refresh
 	var data ipAddressModel
-	data.ID = types.StringValue(req.ID)
+	settings, err := r.client.GetIPAddressSettings(ctx)
+	if err != nil {
+		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read IP address settings during import: %s", err))
+		return
+	}
+	data.DHCPEnabled = types.BoolValue(settings.DHCPEnabled)
+	data.IPAddress = types.StringValue(settings.IPAddress)
+	data.Netmask = types.StringValue(settings.Netmask)
+	data.Gateway = types.StringValue(settings.Gateway)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

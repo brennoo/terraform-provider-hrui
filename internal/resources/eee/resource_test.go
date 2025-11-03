@@ -27,8 +27,6 @@ func TestAccEeeResource(t *testing.T) {
 				Config: testAccEeeResourceConfig(true),
 				// Check functions to verify the state after apply
 				Check: resource.ComposeTestCheckFunc(
-					// Check that the resource "hrui_eee.test" exists
-					resource.TestCheckResourceAttr("hrui_eee.test", "id", "eee"), // Assuming a static ID
 					// Check that the 'enabled' attribute is 'true'
 					resource.TestCheckResourceAttr("hrui_eee.test", "enabled", "true"),
 				),

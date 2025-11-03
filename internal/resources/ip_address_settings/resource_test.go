@@ -17,7 +17,6 @@ func TestAccIPAddressSettingsResource(t *testing.T) {
 			{
 				Config: testAccIPAddressSettingsResourceConfig(false, "192.168.178.30", "255.255.255.0", "192.168.178.1"),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("hrui_ip_address_settings.test", "id", "ip_address_settings"),
 					resource.TestCheckResourceAttr("hrui_ip_address_settings.test", "dhcp_enabled", "false"),
 					resource.TestCheckResourceAttr("hrui_ip_address_settings.test", "ip_address", "192.168.178.30"),
 					resource.TestCheckResourceAttr("hrui_ip_address_settings.test", "netmask", "255.255.255.0"),

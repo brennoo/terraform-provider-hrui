@@ -4,7 +4,6 @@ import "github.com/hashicorp/terraform-plugin-framework/types"
 
 // macStaticModel represents the resource schema state.
 type macStaticModel struct {
-	ID         types.String `tfsdk:"id"`
 	MACAddress types.String `tfsdk:"mac_address"`
 	VLANID     types.Int64  `tfsdk:"vlan_id"`
 	Port       types.String `tfsdk:"port"`

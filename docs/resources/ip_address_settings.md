@@ -41,8 +41,4 @@ resource "hrui_ip_address_settings" "static" {
 - `ip_address` (String) The IP address of the HRUI switch.
 - `netmask` (String) The netmask of the HRUI switch.
 
-### Read-Only
-
-- `id` (String) The ID of the IP address settings resource.
-
 

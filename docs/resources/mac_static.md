@@ -31,8 +31,4 @@ resource "hrui_mac_static" "example" {
 - `port` (String) The port to associate with the MAC address (e.g., 'Port 1', 'Trunk2').
 - `vlan_id` (Number) The VLAN ID to associate with the MAC address.
 
-### Read-Only
-
-- `id` (String) Unique identifier of the resource, used internally. Format: mac_address_vlan_id
-
 
