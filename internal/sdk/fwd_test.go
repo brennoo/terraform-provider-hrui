@@ -228,38 +228,61 @@ func TestGetJumboFrame(t *testing.T) {
 func TestSetJumboFrame(t *testing.T) {
 	expectedFrameSize := 9216 // The frame size we are setting (mapped to "3" in the form)
 
-	// Mock server for handling POST request
+	responseHTML := `
+<html>
+<head><title>Jumbo Frame Setting</title></head>
+<body>
+<center>
+<fieldset>
+<legend>Jumbo Frame Setting</legend>
+<form method="post" name="jumboframe" action="/fwd.cgi?page=jumboframe">
+<select name="jumboframe">
+  <option value="0">1522</option>
+  <option value="1">1536</option>
+  <option value="2">1552</option>
+  <option value="3" selected>9216</option>
+  <option value="4">16383</option>
+</select>
+</form>
+</fieldset>
+</center>
+</body>
+</html>`
+
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			t.Errorf("expected POST request, got %v", r.Method)
-		}
+		switch r.Method {
+		case http.MethodPost:
+			if err := r.ParseForm(); err != nil {
+				t.Fatalf("failed to parse form data: %v", err)
+			}
+			cmd := r.FormValue("cmd")
+			jumboframe := r.FormValue("jumboframe")
 
-		// Parse the POST form data
-		if err := r.ParseForm(); err != nil {
-			t.Fatalf("failed to parse form data: %v", err)
-		}
+			if cmd != "jumboframe" {
+				t.Errorf("expected cmd to be 'jumboframe', got %v", cmd)
+			}
+			if jumboframe != "3" { // "3" corresponds to 9216 in dropdown mapping
+				t.Errorf("expected jumboframe to be '3', got %v", jumboframe)
+			}
 
-		cmd := r.FormValue("cmd")
-		jumboframe := r.FormValue("jumboframe")
-
-		// Assert the form data values
-		if cmd != "jumboframe" {
-			t.Errorf("expected cmd to be 'jumboframe', got %v", cmd)
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(responseHTML))
+		case http.MethodGet:
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(responseHTML))
+		default:
+			t.Fatalf("unexpected method %s", r.Method)
 		}
-		if jumboframe != "3" { // "3" corresponds to 9216 in dropdown mapping
-			t.Errorf("expected jumboframe to be '3', got %v", jumboframe)
-		}
-
-		// Respond with a success page (acknowledgment)
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte(`<title>Jumbo Frame Setting</title>`))
 	}))
 	defer server.Close()
 
 	client := &HRUIClient{HttpClient: server.Client(), URL: server.URL}
-	err := client.SetJumboFrame(context.Background(), expectedFrameSize)
+	appliedSize, err := client.SetJumboFrame(context.Background(), expectedFrameSize)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
+	}
+	if appliedSize != expectedFrameSize {
+		t.Fatalf("expected applied size %d, got %d", expectedFrameSize, appliedSize)
 	}
 }
 
@@ -267,7 +290,7 @@ func TestSetJumboFrameInvalidSize(t *testing.T) {
 	client := &HRUIClient{HttpClient: http.DefaultClient, URL: "http://example.com"}
 
 	invalidFrameSize := 1500 // This size is not supported
-	err := client.SetJumboFrame(context.Background(), invalidFrameSize)
+	_, err := client.SetJumboFrame(context.Background(), invalidFrameSize)
 	if err == nil {
 		t.Fatalf("expected error for invalid frame size, got nil")
 	}

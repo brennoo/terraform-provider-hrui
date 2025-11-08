@@ -238,6 +238,20 @@ func (r *vlan8021qResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
+	// Before deleting the VLAN, clear all port memberships to satisfy firmware requirements.
+	clearVLAN := &sdk.Vlan{
+		VlanID:        int(state.VlanID.ValueInt64()),
+		Name:          state.Name.ValueString(),
+		UntaggedPorts: []string{},
+		TaggedPorts:   []string{},
+		MemberPorts:   []string{},
+	}
+
+	if err := r.client.AddVLAN(ctx, clearVLAN); err != nil {
+		resp.Diagnostics.AddError("Error clearing VLAN memberships", fmt.Sprintf("Failed to clear members for VLAN ID %d: %s", state.VlanID.ValueInt64(), err))
+		return
+	}
+
 	// Delete the VLAN using the SDK
 	if err := r.client.RemoveVLAN(ctx, int(state.VlanID.ValueInt64())); err != nil {
 		resp.Diagnostics.AddError("Error deleting VLAN", fmt.Sprintf("Failed to delete VLAN ID %d: %s", state.VlanID.ValueInt64(), err))

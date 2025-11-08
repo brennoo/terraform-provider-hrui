@@ -6,8 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # To support multiple firmware versions
-        firmware: [ "v1.9" ]
+        firmware: [ "v1.9", "v1.9.1" ]
 
     steps:
       - uses: actions/checkout@v4
