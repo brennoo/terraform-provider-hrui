@@ -1,0 +1,2246 @@
+---
+version: 1
+interactions:
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=stp&delay=15&hello=2&maxage=20&priority=32768&version=1
+    form:
+      cmd:
+      - stp
+      delay:
+      - "15"
+      hello:
+      - "2"
+      maxage:
+      - "20"
+      priority:
+      - "32768"
+      version:
+      - "1"
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/loop.cgi?page=stp_global
+    method: POST
+  response:
+    body: "<html>\n\n<head>\n<title>Spanning Tree Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<center>\n\n<fieldset>\n<legend>Spanning
+      Tree Setting</legend>\n<form method=\"post\" name=\"stp\" action=\"/loop.cgi?page=stp_global\">\n<table
+      border=\"1\">\n\t<tr>\n\t\t<th width=\"150\">Spanning Tree Status</th>\n\t\t<td
+      style=\"text-align:left;\">Disable</td>\n\t</tr>\n\t<tr>\n\t\t<th>Force Version</th>\n\t\t<td
+      width=\"200px\">\n\t\t\t<select style=\"text-align:left;\" name=\"version\">\n\t\t\t<option
+      value=\"0\">STP\n\t\t\t<option value=\"1\" selected>RSTP\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Priority</th>\n\t\t<td>\n\t\t\t<select
+      style=\"text-align:left;\" name=\"priority\">\n  <option value=\"0\">0\n  <option
+      value=\"4096\">4096\n  <option value=\"8192\">8192\n  <option value=\"12288\">12288\n
+      \ <option value=\"16384\">16384\n  <option value=\"20480\">20480\n  <option
+      value=\"24576\">24576\n  <option value=\"28672\">28672\n  <option value=\"32768\"
+      selected>32768\n  <option value=\"36864\">36864\n  <option value=\"40960\">40960\n
+      \ <option value=\"45056\">45056\n  <option value=\"49152\">49152\n  <option
+      value=\"53248\">53248\n  <option value=\"57344\">57344\n  <option value=\"61440\">61440\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Maximum
+      Age</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"maxage\" value=\"20\" maxlength=\"2\">(6~40 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Hello
+      Time</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"hello\" value=\"2\" maxlength=\"2\">(1~10 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Forward
+      Delay</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"delay\" value=\"15\" maxlength=\"2\">(4~30 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Priority</th>\n\t\t<td style=\"text-align:left;\">32768</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      MAC Address</th>\n\t\t<td style=\"text-align:left;\">1C:2A:A3:23:D1:BA</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Path Cost</th>\n\t\t<td style=\"text-align:left;\">0</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Port</th>\n\t\t<td style=\"text-align:left;\">-</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Maximum Age</th>\n\t\t<td style=\"text-align:left;\">20 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Hello Time</th>\n\t\t<td style=\"text-align:left;\">2 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Forward Delay</th>\n\t\t<td style=\"text-align:left;\">15 Sec</td>\n\t</tr>\n</table>\n<br>\n
+      \ <input type=\"submit\" value=\"   Apply   \">\n  <input type=\"hidden\" name=\"cmd\"
+      value=\"stp\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=save
+    form:
+      cmd:
+      - save
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/save.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Save</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Save configuration</legend>
+      <b style="font-weight:normal;font-family: Geneva, Arial, Helvetica, sans-serif;letter-spacing:.45pt">Successfully Saved</b>
+      <p>
+      </fieldset>
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/loop.cgi?page=stp_global
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Spanning Tree Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<center>\n\n<fieldset>\n<legend>Spanning
+      Tree Setting</legend>\n<form method=\"post\" name=\"stp\" action=\"/loop.cgi?page=stp_global\">\n<table
+      border=\"1\">\n\t<tr>\n\t\t<th width=\"150\">Spanning Tree Status</th>\n\t\t<td
+      style=\"text-align:left;\">Disable</td>\n\t</tr>\n\t<tr>\n\t\t<th>Force Version</th>\n\t\t<td
+      width=\"200px\">\n\t\t\t<select style=\"text-align:left;\" name=\"version\">\n\t\t\t<option
+      value=\"0\">STP\n\t\t\t<option value=\"1\" selected>RSTP\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Priority</th>\n\t\t<td>\n\t\t\t<select
+      style=\"text-align:left;\" name=\"priority\">\n  <option value=\"0\">0\n  <option
+      value=\"4096\">4096\n  <option value=\"8192\">8192\n  <option value=\"12288\">12288\n
+      \ <option value=\"16384\">16384\n  <option value=\"20480\">20480\n  <option
+      value=\"24576\">24576\n  <option value=\"28672\">28672\n  <option value=\"32768\"
+      selected>32768\n  <option value=\"36864\">36864\n  <option value=\"40960\">40960\n
+      \ <option value=\"45056\">45056\n  <option value=\"49152\">49152\n  <option
+      value=\"53248\">53248\n  <option value=\"57344\">57344\n  <option value=\"61440\">61440\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Maximum
+      Age</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"maxage\" value=\"20\" maxlength=\"2\">(6~40 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Hello
+      Time</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"hello\" value=\"2\" maxlength=\"2\">(1~10 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Forward
+      Delay</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"delay\" value=\"15\" maxlength=\"2\">(4~30 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Priority</th>\n\t\t<td style=\"text-align:left;\">32768</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      MAC Address</th>\n\t\t<td style=\"text-align:left;\">1C:2A:A3:23:D1:BA</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Path Cost</th>\n\t\t<td style=\"text-align:left;\">0</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Port</th>\n\t\t<td style=\"text-align:left;\">-</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Maximum Age</th>\n\t\t<td style=\"text-align:left;\">20 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Hello Time</th>\n\t\t<td style=\"text-align:left;\">2 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Forward Delay</th>\n\t\t<td style=\"text-align:left;\">15 Sec</td>\n\t</tr>\n</table>\n<br>\n
+      \ <input type=\"submit\" value=\"   Apply   \">\n  <input type=\"hidden\" name=\"cmd\"
+      value=\"stp\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/loop.cgi?page=stp_global
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Spanning Tree Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<center>\n\n<fieldset>\n<legend>Spanning
+      Tree Setting</legend>\n<form method=\"post\" name=\"stp\" action=\"/loop.cgi?page=stp_global\">\n<table
+      border=\"1\">\n\t<tr>\n\t\t<th width=\"150\">Spanning Tree Status</th>\n\t\t<td
+      style=\"text-align:left;\">Disable</td>\n\t</tr>\n\t<tr>\n\t\t<th>Force Version</th>\n\t\t<td
+      width=\"200px\">\n\t\t\t<select style=\"text-align:left;\" name=\"version\">\n\t\t\t<option
+      value=\"0\">STP\n\t\t\t<option value=\"1\" selected>RSTP\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Priority</th>\n\t\t<td>\n\t\t\t<select
+      style=\"text-align:left;\" name=\"priority\">\n  <option value=\"0\">0\n  <option
+      value=\"4096\">4096\n  <option value=\"8192\">8192\n  <option value=\"12288\">12288\n
+      \ <option value=\"16384\">16384\n  <option value=\"20480\">20480\n  <option
+      value=\"24576\">24576\n  <option value=\"28672\">28672\n  <option value=\"32768\"
+      selected>32768\n  <option value=\"36864\">36864\n  <option value=\"40960\">40960\n
+      \ <option value=\"45056\">45056\n  <option value=\"49152\">49152\n  <option
+      value=\"53248\">53248\n  <option value=\"57344\">57344\n  <option value=\"61440\">61440\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Maximum
+      Age</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"maxage\" value=\"20\" maxlength=\"2\">(6~40 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Hello
+      Time</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"hello\" value=\"2\" maxlength=\"2\">(1~10 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Forward
+      Delay</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"delay\" value=\"15\" maxlength=\"2\">(4~30 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Priority</th>\n\t\t<td style=\"text-align:left;\">32768</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      MAC Address</th>\n\t\t<td style=\"text-align:left;\">1C:2A:A3:23:D1:BA</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Path Cost</th>\n\t\t<td style=\"text-align:left;\">0</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Port</th>\n\t\t<td style=\"text-align:left;\">-</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Maximum Age</th>\n\t\t<td style=\"text-align:left;\">20 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Hello Time</th>\n\t\t<td style=\"text-align:left;\">2 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Forward Delay</th>\n\t\t<td style=\"text-align:left;\">15 Sec</td>\n\t</tr>\n</table>\n<br>\n
+      \ <input type=\"submit\" value=\"   Apply   \">\n  <input type=\"hidden\" name=\"cmd\"
+      value=\"stp\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/loop.cgi?page=stp_global
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Spanning Tree Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<center>\n\n<fieldset>\n<legend>Spanning
+      Tree Setting</legend>\n<form method=\"post\" name=\"stp\" action=\"/loop.cgi?page=stp_global\">\n<table
+      border=\"1\">\n\t<tr>\n\t\t<th width=\"150\">Spanning Tree Status</th>\n\t\t<td
+      style=\"text-align:left;\">Disable</td>\n\t</tr>\n\t<tr>\n\t\t<th>Force Version</th>\n\t\t<td
+      width=\"200px\">\n\t\t\t<select style=\"text-align:left;\" name=\"version\">\n\t\t\t<option
+      value=\"0\">STP\n\t\t\t<option value=\"1\" selected>RSTP\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Priority</th>\n\t\t<td>\n\t\t\t<select
+      style=\"text-align:left;\" name=\"priority\">\n  <option value=\"0\">0\n  <option
+      value=\"4096\">4096\n  <option value=\"8192\">8192\n  <option value=\"12288\">12288\n
+      \ <option value=\"16384\">16384\n  <option value=\"20480\">20480\n  <option
+      value=\"24576\">24576\n  <option value=\"28672\">28672\n  <option value=\"32768\"
+      selected>32768\n  <option value=\"36864\">36864\n  <option value=\"40960\">40960\n
+      \ <option value=\"45056\">45056\n  <option value=\"49152\">49152\n  <option
+      value=\"53248\">53248\n  <option value=\"57344\">57344\n  <option value=\"61440\">61440\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Maximum
+      Age</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"maxage\" value=\"20\" maxlength=\"2\">(6~40 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Hello
+      Time</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"hello\" value=\"2\" maxlength=\"2\">(1~10 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Forward
+      Delay</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"delay\" value=\"15\" maxlength=\"2\">(4~30 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Priority</th>\n\t\t<td style=\"text-align:left;\">32768</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      MAC Address</th>\n\t\t<td style=\"text-align:left;\">1C:2A:A3:23:D1:BA</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Path Cost</th>\n\t\t<td style=\"text-align:left;\">0</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Port</th>\n\t\t<td style=\"text-align:left;\">-</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Maximum Age</th>\n\t\t<td style=\"text-align:left;\">20 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Hello Time</th>\n\t\t<td style=\"text-align:left;\">2 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Forward Delay</th>\n\t\t<td style=\"text-align:left;\">15 Sec</td>\n\t</tr>\n</table>\n<br>\n
+      \ <input type=\"submit\" value=\"   Apply   \">\n  <input type=\"hidden\" name=\"cmd\"
+      value=\"stp\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=stp&delay=15&hello=2&maxage=20&priority=32768&version=0
+    form:
+      cmd:
+      - stp
+      delay:
+      - "15"
+      hello:
+      - "2"
+      maxage:
+      - "20"
+      priority:
+      - "32768"
+      version:
+      - "0"
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/loop.cgi?page=stp_global
+    method: POST
+  response:
+    body: "<html>\n\n<head>\n<title>Spanning Tree Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<center>\n\n<fieldset>\n<legend>Spanning
+      Tree Setting</legend>\n<form method=\"post\" name=\"stp\" action=\"/loop.cgi?page=stp_global\">\n<table
+      border=\"1\">\n\t<tr>\n\t\t<th width=\"150\">Spanning Tree Status</th>\n\t\t<td
+      style=\"text-align:left;\">Disable</td>\n\t</tr>\n\t<tr>\n\t\t<th>Force Version</th>\n\t\t<td
+      width=\"200px\">\n\t\t\t<select style=\"text-align:left;\" name=\"version\">\n\t\t\t<option
+      value=\"0\" selected>STP\n\t\t\t<option value=\"1\">RSTP\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Priority</th>\n\t\t<td>\n\t\t\t<select
+      style=\"text-align:left;\" name=\"priority\">\n  <option value=\"0\">0\n  <option
+      value=\"4096\">4096\n  <option value=\"8192\">8192\n  <option value=\"12288\">12288\n
+      \ <option value=\"16384\">16384\n  <option value=\"20480\">20480\n  <option
+      value=\"24576\">24576\n  <option value=\"28672\">28672\n  <option value=\"32768\"
+      selected>32768\n  <option value=\"36864\">36864\n  <option value=\"40960\">40960\n
+      \ <option value=\"45056\">45056\n  <option value=\"49152\">49152\n  <option
+      value=\"53248\">53248\n  <option value=\"57344\">57344\n  <option value=\"61440\">61440\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Maximum
+      Age</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"maxage\" value=\"20\" maxlength=\"2\">(6~40 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Hello
+      Time</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"hello\" value=\"2\" maxlength=\"2\">(1~10 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Forward
+      Delay</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"delay\" value=\"15\" maxlength=\"2\">(4~30 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Priority</th>\n\t\t<td style=\"text-align:left;\">32768</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      MAC Address</th>\n\t\t<td style=\"text-align:left;\">1C:2A:A3:23:D1:BA</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Path Cost</th>\n\t\t<td style=\"text-align:left;\">0</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Port</th>\n\t\t<td style=\"text-align:left;\">-</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Maximum Age</th>\n\t\t<td style=\"text-align:left;\">20 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Hello Time</th>\n\t\t<td style=\"text-align:left;\">2 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Forward Delay</th>\n\t\t<td style=\"text-align:left;\">15 Sec</td>\n\t</tr>\n</table>\n<br>\n
+      \ <input type=\"submit\" value=\"   Apply   \">\n  <input type=\"hidden\" name=\"cmd\"
+      value=\"stp\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=save
+    form:
+      cmd:
+      - save
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/save.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Save</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Save configuration</legend>
+      <b style="font-weight:normal;font-family: Geneva, Arial, Helvetica, sans-serif;letter-spacing:.45pt">Successfully Saved</b>
+      <p>
+      </fieldset>
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/loop.cgi?page=stp_global
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Spanning Tree Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<center>\n\n<fieldset>\n<legend>Spanning
+      Tree Setting</legend>\n<form method=\"post\" name=\"stp\" action=\"/loop.cgi?page=stp_global\">\n<table
+      border=\"1\">\n\t<tr>\n\t\t<th width=\"150\">Spanning Tree Status</th>\n\t\t<td
+      style=\"text-align:left;\">Disable</td>\n\t</tr>\n\t<tr>\n\t\t<th>Force Version</th>\n\t\t<td
+      width=\"200px\">\n\t\t\t<select style=\"text-align:left;\" name=\"version\">\n\t\t\t<option
+      value=\"0\" selected>STP\n\t\t\t<option value=\"1\">RSTP\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Priority</th>\n\t\t<td>\n\t\t\t<select
+      style=\"text-align:left;\" name=\"priority\">\n  <option value=\"0\">0\n  <option
+      value=\"4096\">4096\n  <option value=\"8192\">8192\n  <option value=\"12288\">12288\n
+      \ <option value=\"16384\">16384\n  <option value=\"20480\">20480\n  <option
+      value=\"24576\">24576\n  <option value=\"28672\">28672\n  <option value=\"32768\"
+      selected>32768\n  <option value=\"36864\">36864\n  <option value=\"40960\">40960\n
+      \ <option value=\"45056\">45056\n  <option value=\"49152\">49152\n  <option
+      value=\"53248\">53248\n  <option value=\"57344\">57344\n  <option value=\"61440\">61440\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Maximum
+      Age</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"maxage\" value=\"20\" maxlength=\"2\">(6~40 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Hello
+      Time</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"hello\" value=\"2\" maxlength=\"2\">(1~10 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Forward
+      Delay</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"delay\" value=\"15\" maxlength=\"2\">(4~30 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Priority</th>\n\t\t<td style=\"text-align:left;\">32768</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      MAC Address</th>\n\t\t<td style=\"text-align:left;\">1C:2A:A3:23:D1:BA</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Path Cost</th>\n\t\t<td style=\"text-align:left;\">0</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Port</th>\n\t\t<td style=\"text-align:left;\">-</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Maximum Age</th>\n\t\t<td style=\"text-align:left;\">20 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Hello Time</th>\n\t\t<td style=\"text-align:left;\">2 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Forward Delay</th>\n\t\t<td style=\"text-align:left;\">15 Sec</td>\n\t</tr>\n</table>\n<br>\n
+      \ <input type=\"submit\" value=\"   Apply   \">\n  <input type=\"hidden\" name=\"cmd\"
+      value=\"stp\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/loop.cgi?page=stp_global
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Spanning Tree Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<center>\n\n<fieldset>\n<legend>Spanning
+      Tree Setting</legend>\n<form method=\"post\" name=\"stp\" action=\"/loop.cgi?page=stp_global\">\n<table
+      border=\"1\">\n\t<tr>\n\t\t<th width=\"150\">Spanning Tree Status</th>\n\t\t<td
+      style=\"text-align:left;\">Disable</td>\n\t</tr>\n\t<tr>\n\t\t<th>Force Version</th>\n\t\t<td
+      width=\"200px\">\n\t\t\t<select style=\"text-align:left;\" name=\"version\">\n\t\t\t<option
+      value=\"0\" selected>STP\n\t\t\t<option value=\"1\">RSTP\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Priority</th>\n\t\t<td>\n\t\t\t<select
+      style=\"text-align:left;\" name=\"priority\">\n  <option value=\"0\">0\n  <option
+      value=\"4096\">4096\n  <option value=\"8192\">8192\n  <option value=\"12288\">12288\n
+      \ <option value=\"16384\">16384\n  <option value=\"20480\">20480\n  <option
+      value=\"24576\">24576\n  <option value=\"28672\">28672\n  <option value=\"32768\"
+      selected>32768\n  <option value=\"36864\">36864\n  <option value=\"40960\">40960\n
+      \ <option value=\"45056\">45056\n  <option value=\"49152\">49152\n  <option
+      value=\"53248\">53248\n  <option value=\"57344\">57344\n  <option value=\"61440\">61440\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Maximum
+      Age</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"maxage\" value=\"20\" maxlength=\"2\">(6~40 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Hello
+      Time</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"hello\" value=\"2\" maxlength=\"2\">(1~10 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Forward
+      Delay</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"delay\" value=\"15\" maxlength=\"2\">(4~30 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Priority</th>\n\t\t<td style=\"text-align:left;\">32768</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      MAC Address</th>\n\t\t<td style=\"text-align:left;\">1C:2A:A3:23:D1:BA</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Path Cost</th>\n\t\t<td style=\"text-align:left;\">0</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Port</th>\n\t\t<td style=\"text-align:left;\">-</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Maximum Age</th>\n\t\t<td style=\"text-align:left;\">20 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Hello Time</th>\n\t\t<td style=\"text-align:left;\">2 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Forward Delay</th>\n\t\t<td style=\"text-align:left;\">15 Sec</td>\n\t</tr>\n</table>\n<br>\n
+      \ <input type=\"submit\" value=\"   Apply   \">\n  <input type=\"hidden\" name=\"cmd\"
+      value=\"stp\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/loop.cgi?page=stp_global
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Spanning Tree Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<center>\n\n<fieldset>\n<legend>Spanning
+      Tree Setting</legend>\n<form method=\"post\" name=\"stp\" action=\"/loop.cgi?page=stp_global\">\n<table
+      border=\"1\">\n\t<tr>\n\t\t<th width=\"150\">Spanning Tree Status</th>\n\t\t<td
+      style=\"text-align:left;\">Disable</td>\n\t</tr>\n\t<tr>\n\t\t<th>Force Version</th>\n\t\t<td
+      width=\"200px\">\n\t\t\t<select style=\"text-align:left;\" name=\"version\">\n\t\t\t<option
+      value=\"0\" selected>STP\n\t\t\t<option value=\"1\">RSTP\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Priority</th>\n\t\t<td>\n\t\t\t<select
+      style=\"text-align:left;\" name=\"priority\">\n  <option value=\"0\">0\n  <option
+      value=\"4096\">4096\n  <option value=\"8192\">8192\n  <option value=\"12288\">12288\n
+      \ <option value=\"16384\">16384\n  <option value=\"20480\">20480\n  <option
+      value=\"24576\">24576\n  <option value=\"28672\">28672\n  <option value=\"32768\"
+      selected>32768\n  <option value=\"36864\">36864\n  <option value=\"40960\">40960\n
+      \ <option value=\"45056\">45056\n  <option value=\"49152\">49152\n  <option
+      value=\"53248\">53248\n  <option value=\"57344\">57344\n  <option value=\"61440\">61440\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Maximum
+      Age</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"maxage\" value=\"20\" maxlength=\"2\">(6~40 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Hello
+      Time</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"hello\" value=\"2\" maxlength=\"2\">(1~10 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Forward
+      Delay</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"delay\" value=\"15\" maxlength=\"2\">(4~30 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Priority</th>\n\t\t<td style=\"text-align:left;\">32768</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      MAC Address</th>\n\t\t<td style=\"text-align:left;\">1C:2A:A3:23:D1:BA</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Path Cost</th>\n\t\t<td style=\"text-align:left;\">0</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Port</th>\n\t\t<td style=\"text-align:left;\">-</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Maximum Age</th>\n\t\t<td style=\"text-align:left;\">20 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Hello Time</th>\n\t\t<td style=\"text-align:left;\">2 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Forward Delay</th>\n\t\t<td style=\"text-align:left;\">15 Sec</td>\n\t</tr>\n</table>\n<br>\n
+      \ <input type=\"submit\" value=\"   Apply   \">\n  <input type=\"hidden\" name=\"cmd\"
+      value=\"stp\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=stp&delay=15&hello=2&maxage=20&priority=4096&version=1
+    form:
+      cmd:
+      - stp
+      delay:
+      - "15"
+      hello:
+      - "2"
+      maxage:
+      - "20"
+      priority:
+      - "4096"
+      version:
+      - "1"
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/loop.cgi?page=stp_global
+    method: POST
+  response:
+    body: "<html>\n\n<head>\n<title>Spanning Tree Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<center>\n\n<fieldset>\n<legend>Spanning
+      Tree Setting</legend>\n<form method=\"post\" name=\"stp\" action=\"/loop.cgi?page=stp_global\">\n<table
+      border=\"1\">\n\t<tr>\n\t\t<th width=\"150\">Spanning Tree Status</th>\n\t\t<td
+      style=\"text-align:left;\">Disable</td>\n\t</tr>\n\t<tr>\n\t\t<th>Force Version</th>\n\t\t<td
+      width=\"200px\">\n\t\t\t<select style=\"text-align:left;\" name=\"version\">\n\t\t\t<option
+      value=\"0\">STP\n\t\t\t<option value=\"1\" selected>RSTP\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Priority</th>\n\t\t<td>\n\t\t\t<select
+      style=\"text-align:left;\" name=\"priority\">\n  <option value=\"0\">0\n  <option
+      value=\"4096\" selected>4096\n  <option value=\"8192\">8192\n  <option value=\"12288\">12288\n
+      \ <option value=\"16384\">16384\n  <option value=\"20480\">20480\n  <option
+      value=\"24576\">24576\n  <option value=\"28672\">28672\n  <option value=\"32768\">32768\n
+      \ <option value=\"36864\">36864\n  <option value=\"40960\">40960\n  <option
+      value=\"45056\">45056\n  <option value=\"49152\">49152\n  <option value=\"53248\">53248\n
+      \ <option value=\"57344\">57344\n  <option value=\"61440\">61440\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Maximum
+      Age</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"maxage\" value=\"20\" maxlength=\"2\">(6~40 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Hello
+      Time</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"hello\" value=\"2\" maxlength=\"2\">(1~10 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Forward
+      Delay</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"delay\" value=\"15\" maxlength=\"2\">(4~30 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Priority</th>\n\t\t<td style=\"text-align:left;\">4096</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      MAC Address</th>\n\t\t<td style=\"text-align:left;\">1C:2A:A3:23:D1:BA</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Path Cost</th>\n\t\t<td style=\"text-align:left;\">0</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Port</th>\n\t\t<td style=\"text-align:left;\">-</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Maximum Age</th>\n\t\t<td style=\"text-align:left;\">20 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Hello Time</th>\n\t\t<td style=\"text-align:left;\">2 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Forward Delay</th>\n\t\t<td style=\"text-align:left;\">15 Sec</td>\n\t</tr>\n</table>\n<br>\n
+      \ <input type=\"submit\" value=\"   Apply   \">\n  <input type=\"hidden\" name=\"cmd\"
+      value=\"stp\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=save
+    form:
+      cmd:
+      - save
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/save.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Save</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Save configuration</legend>
+      <b style="font-weight:normal;font-family: Geneva, Arial, Helvetica, sans-serif;letter-spacing:.45pt">Successfully Saved</b>
+      <p>
+      </fieldset>
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/loop.cgi?page=stp_global
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Spanning Tree Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<center>\n\n<fieldset>\n<legend>Spanning
+      Tree Setting</legend>\n<form method=\"post\" name=\"stp\" action=\"/loop.cgi?page=stp_global\">\n<table
+      border=\"1\">\n\t<tr>\n\t\t<th width=\"150\">Spanning Tree Status</th>\n\t\t<td
+      style=\"text-align:left;\">Disable</td>\n\t</tr>\n\t<tr>\n\t\t<th>Force Version</th>\n\t\t<td
+      width=\"200px\">\n\t\t\t<select style=\"text-align:left;\" name=\"version\">\n\t\t\t<option
+      value=\"0\">STP\n\t\t\t<option value=\"1\" selected>RSTP\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Priority</th>\n\t\t<td>\n\t\t\t<select
+      style=\"text-align:left;\" name=\"priority\">\n  <option value=\"0\">0\n  <option
+      value=\"4096\" selected>4096\n  <option value=\"8192\">8192\n  <option value=\"12288\">12288\n
+      \ <option value=\"16384\">16384\n  <option value=\"20480\">20480\n  <option
+      value=\"24576\">24576\n  <option value=\"28672\">28672\n  <option value=\"32768\">32768\n
+      \ <option value=\"36864\">36864\n  <option value=\"40960\">40960\n  <option
+      value=\"45056\">45056\n  <option value=\"49152\">49152\n  <option value=\"53248\">53248\n
+      \ <option value=\"57344\">57344\n  <option value=\"61440\">61440\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Maximum
+      Age</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"maxage\" value=\"20\" maxlength=\"2\">(6~40 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Hello
+      Time</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"hello\" value=\"2\" maxlength=\"2\">(1~10 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Forward
+      Delay</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"delay\" value=\"15\" maxlength=\"2\">(4~30 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Priority</th>\n\t\t<td style=\"text-align:left;\">4096</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      MAC Address</th>\n\t\t<td style=\"text-align:left;\">1C:2A:A3:23:D1:BA</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Path Cost</th>\n\t\t<td style=\"text-align:left;\">0</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Port</th>\n\t\t<td style=\"text-align:left;\">-</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Maximum Age</th>\n\t\t<td style=\"text-align:left;\">20 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Hello Time</th>\n\t\t<td style=\"text-align:left;\">2 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Forward Delay</th>\n\t\t<td style=\"text-align:left;\">15 Sec</td>\n\t</tr>\n</table>\n<br>\n
+      \ <input type=\"submit\" value=\"   Apply   \">\n  <input type=\"hidden\" name=\"cmd\"
+      value=\"stp\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/loop.cgi?page=stp_global
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Spanning Tree Setting</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\n</script>\n</head>\n\n<center>\n\n<fieldset>\n<legend>Spanning
+      Tree Setting</legend>\n<form method=\"post\" name=\"stp\" action=\"/loop.cgi?page=stp_global\">\n<table
+      border=\"1\">\n\t<tr>\n\t\t<th width=\"150\">Spanning Tree Status</th>\n\t\t<td
+      style=\"text-align:left;\">Disable</td>\n\t</tr>\n\t<tr>\n\t\t<th>Force Version</th>\n\t\t<td
+      width=\"200px\">\n\t\t\t<select style=\"text-align:left;\" name=\"version\">\n\t\t\t<option
+      value=\"0\">STP\n\t\t\t<option value=\"1\" selected>RSTP\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Priority</th>\n\t\t<td>\n\t\t\t<select
+      style=\"text-align:left;\" name=\"priority\">\n  <option value=\"0\">0\n  <option
+      value=\"4096\" selected>4096\n  <option value=\"8192\">8192\n  <option value=\"12288\">12288\n
+      \ <option value=\"16384\">16384\n  <option value=\"20480\">20480\n  <option
+      value=\"24576\">24576\n  <option value=\"28672\">28672\n  <option value=\"32768\">32768\n
+      \ <option value=\"36864\">36864\n  <option value=\"40960\">40960\n  <option
+      value=\"45056\">45056\n  <option value=\"49152\">49152\n  <option value=\"53248\">53248\n
+      \ <option value=\"57344\">57344\n  <option value=\"61440\">61440\n\t\t\t</select>\n\t\t</td>\n\t</tr>\n\t<tr>\n\t\t<th>Maximum
+      Age</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"maxage\" value=\"20\" maxlength=\"2\">(6~40 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Hello
+      Time</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"hello\" value=\"2\" maxlength=\"2\">(1~10 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Forward
+      Delay</th>\n\t\t<td style=\"text-align:left;\"><input type=\"text\" size=\"2\"
+      name=\"delay\" value=\"15\" maxlength=\"2\">(4~30 Sec)</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Priority</th>\n\t\t<td style=\"text-align:left;\">4096</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      MAC Address</th>\n\t\t<td style=\"text-align:left;\">1C:2A:A3:23:D1:BA</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Path Cost</th>\n\t\t<td style=\"text-align:left;\">0</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Port</th>\n\t\t<td style=\"text-align:left;\">-</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Maximum Age</th>\n\t\t<td style=\"text-align:left;\">20 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Hello Time</th>\n\t\t<td style=\"text-align:left;\">2 Sec</td>\n\t</tr>\n\t<tr>\n\t\t<th>Root
+      Forward Delay</th>\n\t\t<td style=\"text-align:left;\">15 Sec</td>\n\t</tr>\n</table>\n<br>\n
+      \ <input type=\"submit\" value=\"   Apply   \">\n  <input type=\"hidden\" name=\"cmd\"
+      value=\"stp\">\n</form>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=stp&delay=0&hello=0&maxage=0&priority=0&version=0
+    form:
+      cmd:
+      - stp
+      delay:
+      - "0"
+      hello:
+      - "0"
+      maxage:
+      - "0"
+      priority:
+      - "0"
+      version:
+      - "0"
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/loop.cgi?page=stp_global
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Message</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.location.replace("/goback.cgi");
+      window.open('/alert.cgi?alertmsg=Invalid Maximum Age','hidden_frame','');
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""

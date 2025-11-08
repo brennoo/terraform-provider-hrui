@@ -1,0 +1,2993 @@
+---
+version: 1
+interactions:
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: action=1&cmd=storm&portid=Port%2B1&rate=1000&storm_filter=3
+    form:
+      action:
+      - "1"
+      cmd:
+      - storm
+      portid:
+      - Port+1
+      rate:
+      - "1000"
+      storm_filter:
+      - "3"
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: POST
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">1000</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=save
+    form:
+      cmd:
+      - save
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/save.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Save</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Save configuration</legend>
+      <b style="font-weight:normal;font-family: Geneva, Arial, Helvetica, sans-serif;letter-spacing:.45pt">Successfully Saved</b>
+      <p>
+      </fieldset>
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">1000</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">1000</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">1000</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">1000</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">1000</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: action=1&cmd=storm&portid=Port%2B1&rate=2000&storm_filter=3
+    form:
+      action:
+      - "1"
+      cmd:
+      - storm
+      portid:
+      - Port+1
+      rate:
+      - "2000"
+      storm_filter:
+      - "3"
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: POST
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">2000</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=save
+    form:
+      cmd:
+      - save
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/save.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Save</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Save configuration</legend>
+      <b style="font-weight:normal;font-family: Geneva, Arial, Helvetica, sans-serif;letter-spacing:.45pt">Successfully Saved</b>
+      <p>
+      </fieldset>
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">2000</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">2000</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">2000</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">2000</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: action=0&cmd=storm&portid=Port%2B1&storm_filter=3
+    form:
+      action:
+      - "0"
+      cmd:
+      - storm
+      portid:
+      - Port+1
+      storm_filter:
+      - "3"
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: POST
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=save
+    form:
+      cmd:
+      - save
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/save.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Save</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Save configuration</legend>
+      <b style="font-weight:normal;font-family: Geneva, Arial, Helvetica, sans-serif;letter-spacing:.45pt">Successfully Saved</b>
+      <p>
+      </fieldset>
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: GET
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: Response=f6fdffe48c908deb0f4c3bd36c032e72&language=EN&username=admin
+    form:
+      Response:
+      - f6fdffe48c908deb0f4c3bd36c032e72
+      language:
+      - EN
+      username:
+      - admin
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <body>
+      <script type="text/javascript">
+      window.top.location.replace("/");
+      </script>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/login.cgi
+    method: GET
+  response:
+    body: "<html>\n<head>\n<title>ZX-SWTG124AS</title>\n<script language=\"javascript\"
+      src=\"md5.js\"></script>\n<script language=\"JavaScript\">\nfunction SetBtnVal()\n{\n\tdocument.cookie
+      = \"admin=\";\n};\nfunction formSubmit()\n{\n\tvar str = document.login.username.value
+      + document.login.password.value \n\tdocument.login.Response.value = hex_md5(str);\n\tdocument.cookie
+      = \"admin=\"+document.login.Response.value;\n\tdocument.login.submit();\n}\nfunction
+      radio_ch_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML = \"用户
+      \  <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"密码   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"登录\";\n}\nfunction radio_en_sel()\n{\n\tdocument.getElementById(\"div_name\").innerHTML
+      = \"Username   <input id='inname' type='text' name='username'>\";\n\tdocument.getElementById(\"div_pwd\").innerHTML
+      = \"Password   <input id='inpwd' type='password' name='password'>\";\n\tdocument.getElementById(\"div_lgi\").value
+      = \"Login\";\n}\nfunction on_return(event)\n{\n\tif(event.keyCode == 13){\n\t\tif
+      (document.getElementById(\"div_lgi\") != null) {\n\t\t\tif (document.activeElement
+      == document.getElementById(\"inname\") || \n\t\t\t\tdocument.activeElement ==
+      document.getElementById(\"inpwd\"))\n\t\t\t\tdocument.getElementById(\"div_lgi\").click();\n\t\t}\n\t}\n}\n</script>\n</head>\n<body
+      onload=\"SetBtnVal()\" onkeydown=\"on_return(event);\">\n<center>\n<br><br><br><br><br><br>\n<form
+      method=\"post\" name = \"login\" action=\"login.cgi\">\n<div id=\"log_image\"
+      style=\"background-color:#F2F2F3; font-size:16px; color: #000000; width:350px;
+      height:250px\";>\n\t<div id=\"text_box\" style=\"position: relative; left:0px;
+      top:30px\";>\n\t\t<div id=\"div_name\">Username   <input id=\"inname\" type=\"text\"
+      name=\"username\"></div>\n\t\t<br><br>\n\t\t<div id=\"div_pwd\">Password  <input
+      id=\"inpwd\" type=\"password\" name=\"password\"></div>\n\t\t<br><br>\n\t\t<input
+      id=\"div_lgi\" type=\"button\" onclick=\"formSubmit()\" value=\" Login \">\n\t\t<input
+      type=\"hidden\" name=\"language\" value=\"EN\">\n\t</div>\n</div>\n<input type=\"hidden\"
+      name=\"Response\" value=\"\">\n</form>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html; charset=utf-8
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: ""
+    form: {}
+    headers:
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost
+    method: GET
+  response:
+    body: |
+      <html>
+      <head>
+      <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+      <title>ZX-SWTG124AS</title>
+      </head>
+
+      <frameset cols="0, 250,*">
+      <frame name="hidden_frame" frameborder="0" src="hidden.cgi" >
+      <frame name="menu-frame" target="main-frame" src="menu.cgi" >
+      <frameset rows="130,*">
+      <frame name="panel-frame" scrolling="no" src="panel.cgi" noresize>
+      <frame name="main-frame" src="info.cgi" noresize>
+      <noframes>
+      <body>
+      <p>This page uses frames, but the browser does not support them.</p>
+      </body>
+      </noframes>
+      </frameset>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: action=0&cmd=storm&portid=Port%2B1&storm_filter=3
+    form:
+      action:
+      - "0"
+      cmd:
+      - storm
+      portid:
+      - Port+1
+      storm_filter:
+      - "3"
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/fwd.cgi?page=storm_ctrl
+    method: POST
+  response:
+    body: "<html>\n\n<head>\n<title>Storm Control</title>\n<link rel=\"stylesheet\"
+      type=\"text/css\" href=\"/style.css\">\n<script type=\"text/javascript\">\nfunction
+      chkEnable(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = true;\n\t}\nelse { \n\t\tdocument.getElementById('rate').value
+      = '';\n\t\tdocument.getElementById('rate').disabled = false;\n\t}\n}\nfunction
+      chkEnableExt(value)\n{\n\tif ( value == '0' ) {\n\t\tdocument.getElementById('rateExt').value
+      = '';\n\t\tdocument.getElementById('rateExt').disabled = true;\n\t}\nelse {
+      \n\t\tdocument.getElementById('rateExt').value = '';\n\t\tdocument.getElementById('rateExt').disabled
+      = false;\n\t}\n}\n</script>\n</head>\n\n<body>\n<center>\n\n<fieldset>\n<legend>Storm
+      Control Setting</legend>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"6\">\n          <option value=\"Port 1\">Port
+      1\n          <option value=\"Port 2\">Port 2\n          <option value=\"Port
+      3\">Port 3\n          <option value=\"Port 4\">Port 4\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnable(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rate\" value = '' disabled = true> (1-2500000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n<form method=\"post\" action=\"/fwd.cgi?page=storm_ctrl\">\n
+      \ <table border=\"1\">\n    <tr>\n      <th align=\"center\">Storm Type</th>\n
+      \     <th align=\"center\">Port</th>\n      <th align=\"center\">State</th>\n
+      \     <th align=\"center\">Rate (kbps)</th>\n    </tr>\n    <tr>\n      <td>\n
+      \       <select name=\"storm_filter\" style=\"width:150px;\">\n          <option
+      value=\"3\">Broadcast\n          <option value=\"2\">Known Multicast\n          <option
+      value=\"0\">Unknown Unicast\n          <option value=\"1\">Unknown Multicast\n
+      \       </select>\n      </td>\n      <td align=\"center\">\n        <select
+      name=\"portid\" multiple size=\"2\">\n          <option value=\"Port 5\">Port
+      5\n          <option value=\"Port 6\">Port 6\n        </select>\n      </td>\n
+      \     <td>\n        <select name=\"action\" onchange=\"chkEnableExt(this.value)\"
+      style=\"width:80px;\">\n          <option value=\"0\">Off\n          <option
+      value=\"1\">On\n        </select>\n      </td>\n      <td align=\"center\"><input
+      type=\"text\" name=\"rate\" id=\"rateExt\" value = '' disabled = true> (1-10000000)(kbps)</td>\n
+      \   </tr>\n  </table>\n  <br style=\"line-height:50%\">\n  <input type=\"submit\"
+      value=\" Apply \">\n  <input type=\"hidden\" name=\"cmd\" value=\"storm\">\n</form>\n
+      \ <hr>\n  <br>\n  <table border=\"1\">\n    <tr>\n    <th align=\"center\" style=\"width:80px;\">
+      Port </th>\n    <th align=\"center\" >Broadcast (kbps)</th>\n    <th align=\"center\"
+      >Known Multicast (kbps)</th>\n    <th align=\"center\" >Unknown Unicast (kbps)</th>\n
+      \   <th align=\"center\" >Unknown Multicast (kbps)</th>\n    </tr>\n    <tr>\n
+      \     <td align=\"center\">Port 1</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      2</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 3</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      4</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \   <tr>\n      <td align=\"center\">Port 5</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n      <td
+      align=\"center\">Off</td>\n    </tr>\n    <tr>\n      <td align=\"center\">Port
+      6</td>\n      <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n
+      \     <td align=\"center\">Off</td>\n      <td align=\"center\">Off</td>\n    </tr>\n
+      \ </table>\n  <br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""
+- request:
+    body: cmd=save
+    form:
+      cmd:
+      - save
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - admin=f6fdffe48c908deb0f4c3bd36c032e72
+    url: http://localhost/save.cgi
+    method: POST
+  response:
+    body: |
+      <html>
+
+      <head>
+      <title>Save</title>
+      <link rel="stylesheet" type="text/css" href="/style.css">
+      <script type="text/javascript">
+      </script>
+      </head>
+
+      <body>
+      <center>
+
+      <fieldset>
+      <legend>Save configuration</legend>
+      <b style="font-weight:normal;font-family: Geneva, Arial, Helvetica, sans-serif;letter-spacing:.45pt">Successfully Saved</b>
+      <p>
+      </fieldset>
+      </center>
+      </body>
+      </html>
+    headers:
+      Content-Type:
+      - text/html
+    status: 200 OK
+    code: 200
+    duration: ""

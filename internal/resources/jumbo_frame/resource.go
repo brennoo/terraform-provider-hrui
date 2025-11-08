@@ -72,8 +72,7 @@ func (r *jumboFrameResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	// Call the SDK to set the Jumbo Frame size
-	err := r.client.SetJumboFrame(ctx, int(plan.Size.ValueInt64()))
+	appliedSize, err := r.client.SetJumboFrame(ctx, int(plan.Size.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",
@@ -82,8 +81,10 @@ func (r *jumboFrameResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	// Set the state equal to the plan because the actual value is expected to be what was set.
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	var state jumboFrameModel
+	state.Size = types.Int64Value(int64(appliedSize))
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 // Read retrieves the current Jumbo Frame size from the device and updates the state.
@@ -119,8 +120,7 @@ func (r *jumboFrameResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	// Call the SDK to set the new Jumbo Frame size
-	err := r.client.SetJumboFrame(ctx, int(plan.Size.ValueInt64()))
+	appliedSize, err := r.client.SetJumboFrame(ctx, int(plan.Size.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",
@@ -129,8 +129,10 @@ func (r *jumboFrameResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	// Set the state equal to the plan because the actual value is expected to be what was set
-	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+	var state jumboFrameModel
+	state.Size = types.Int64Value(int64(appliedSize))
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }
 
 // Delete resets the Jumbo Frame size to its default (if applicable).
@@ -138,7 +140,7 @@ func (r *jumboFrameResource) Delete(ctx context.Context, req resource.DeleteRequ
 	defaultFrameSize := 16383
 
 	// Call the SDK to reset the Jumbo Frame size to the default
-	err := r.client.SetJumboFrame(ctx, defaultFrameSize)
+	_, err := r.client.SetJumboFrame(ctx, defaultFrameSize)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Client Error",

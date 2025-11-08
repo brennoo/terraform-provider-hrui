@@ -376,11 +376,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -435,11 +435,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -494,11 +494,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -553,11 +553,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -612,11 +612,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -671,11 +671,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -1763,11 +1763,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -1822,11 +1822,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -1881,11 +1881,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -1940,11 +1940,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -1999,11 +1999,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -2058,11 +2058,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -3292,11 +3292,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -3351,11 +3351,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -3410,11 +3410,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -3469,11 +3469,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -3528,11 +3528,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -3587,11 +3587,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -4679,11 +4679,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -4738,11 +4738,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -4797,11 +4797,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -4856,11 +4856,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -4915,11 +4915,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html
@@ -4974,11 +4974,11 @@ interactions:
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 3</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
       \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n    <td>Port 4</td>\n    <td>Enable</td>\n
-      \   <td>Auto</td>\n    <td>100Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
+      \   <td>Auto</td>\n    <td>1000Full</td>\n    <td>Off</td>\n    <td>Off</td>\n
       \ </tr>\n  <tr>\n    <td>Port 5</td>\n    <td>Enable</td>\n    <td>Auto</td>\n
       \   <td>Link Down</td>\n    <td>Off</td>\n    <td>Off</td>\n  </tr>\n  <tr>\n
       \   <td>Port 6</td>\n    <td>Enable</td>\n    <td>Auto</td>\n    <td>Link Down</td>\n
-      \   <td>On</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
+      \   <td>Off</td>\n    <td>Off</td>\n  </tr>\n</table>\n<br>\n</fieldset>\n</center>\n</body>\n</html>\n"
     headers:
       Content-Type:
       - text/html

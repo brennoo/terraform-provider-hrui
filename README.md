@@ -27,7 +27,7 @@ This provider is developed using a Horaco (ZX-SWTG124AS) switch. Other brands th
 * AmpCom
 
 > [!NOTE]
-> Using firmware v1.9.
+> Supports firmware v1.9 and v1.9.1
 
 ## Getting Started
 
@@ -38,7 +38,7 @@ This provider is developed using a Horaco (ZX-SWTG124AS) switch. Other brands th
       required_providers {
         hrui = {
           source  = "brennoo/hrui"
-          version = "= 0.1.0"
+          version = "= 0.1.2"
         }
       }
     }

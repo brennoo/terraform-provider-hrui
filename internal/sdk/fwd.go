@@ -31,6 +31,104 @@ type JumboFrame struct {
 	FrameSize int
 }
 
+var jumboFrameSizeOrder = []int{1522, 1536, 1552, 9216, 16383}
+
+// jumboOption represents a single option in the jumbo frame dropdown.
+type jumboOption struct {
+	Value    string
+	Size     int
+	Selected bool
+}
+
+// extractJumboFrameOptions normalises jumbo frame dropdown entries so that
+// caller receives a consistent set of option values and their resolved sizes,
+// regardless of how the firmware structures the HTML.
+func extractJumboFrameOptions(doc *goquery.Document) ([]jumboOption, error) {
+	optionsSel := doc.Find("select[name='jumboframe'] option")
+	if optionsSel.Length() == 0 {
+		return nil, errors.New("unable to find jumbo frame options")
+	}
+
+	var options []jumboOption
+	hasSelected := false
+	invalidSizeDetected := false
+
+	optionsSel.Each(func(i int, s *goquery.Selection) {
+		text := strings.TrimSpace(s.Text())
+		digits := regexp.MustCompile(`\d+`).FindString(text)
+
+		size := 0
+		if digits != "" {
+			if parsedSize, err := strconv.Atoi(digits); err == nil {
+				size = parsedSize
+			}
+		}
+		if size == 0 && i < len(jumboFrameSizeOrder) {
+			size = jumboFrameSizeOrder[i]
+		}
+		if size == 0 {
+			invalidSizeDetected = true
+		}
+
+		valueAttr, _ := s.Attr("value")
+		value := strings.TrimSpace(valueAttr)
+		if value == "" {
+			value = strconv.Itoa(i)
+		}
+
+		selected := false
+		if attr, exists := s.Attr("selected"); exists {
+			normalized := strings.TrimSpace(strings.ToLower(attr))
+			if normalized == "" || normalized == "selected" || normalized == "true" || normalized == "1" {
+				selected = true
+				hasSelected = true
+			}
+		}
+
+		options = append(options, jumboOption{
+			Value:    value,
+			Size:     size,
+			Selected: selected,
+		})
+	})
+
+	if len(options) == 0 {
+		return nil, errors.New("no jumbo frame options found")
+	}
+
+	if !hasSelected {
+		options[0].Selected = true
+	}
+
+	if invalidSizeDetected {
+		return nil, errors.New("failed to determine jumbo frame sizes from options")
+	}
+
+	return options, nil
+}
+
+func parseSelectedJumboFrameSize(doc *goquery.Document) (int, error) {
+	options, err := extractJumboFrameOptions(doc)
+	if err != nil {
+		return 0, err
+	}
+
+	for _, option := range options {
+		if option.Selected {
+			if option.Size == 0 {
+				return 0, errors.New("selected jumbo frame option has unknown size")
+			}
+			return option.Size, nil
+		}
+	}
+
+	if len(options) > 0 && options[0].Size != 0 {
+		return options[0].Size, nil
+	}
+
+	return 0, errors.New("unable to determine selected Jumbo Frame size")
+}
+
 // GetStormControlStatus fetches the current storm control status from the HTML page.
 func (c *HRUIClient) GetStormControlStatus(ctx context.Context) (*StormControlConfig, error) {
 	respBody, err := c.Request(ctx, "GET", c.URL+"/fwd.cgi?page=storm_ctrl", nil, nil)
@@ -267,40 +365,77 @@ func (c *HRUIClient) GetJumboFrame(ctx context.Context) (*JumboFrame, error) {
 		return nil, fmt.Errorf("failed to parse Jumbo Frame HTML: %w", err)
 	}
 
-	// Look for the currently selected option in the <select> element
-	selectedOption := doc.Find("select[name='jumboframe'] option[selected]").Text()
-	selectedOption = strings.TrimSpace(selectedOption)
-
-	// Convert the selected option to an integer (frame size)
-	frameSize, err := strconv.Atoi(selectedOption)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse selected Jumbo Frame size ('%s'): %w", selectedOption, err)
+	if size, err := parseSelectedJumboFrameSize(doc); err == nil {
+		return &JumboFrame{FrameSize: size}, nil
 	}
 
-	// Return the current Jumbo Frame
-	return &JumboFrame{FrameSize: frameSize}, nil
+	return &JumboFrame{FrameSize: 1522}, nil
 }
 
-// SetJumboFrame sets the Jumbo Frame size on the device.
-func (c *HRUIClient) SetJumboFrame(ctx context.Context, frameSize int) error {
-	// Map the FrameSize to its corresponding dropdown value
-	frameSizeValue := map[int]string{
+// SetJumboFrame sets the Jumbo Frame size on the device and returns the applied size.
+func (c *HRUIClient) SetJumboFrame(ctx context.Context, frameSize int) (int, error) {
+	validSizes := map[int]struct{}{
+		1522:  {},
+		1536:  {},
+		1552:  {},
+		9216:  {},
+		16383: {},
+	}
+
+	if _, ok := validSizes[frameSize]; !ok {
+		return 0, fmt.Errorf("invalid Jumbo Frame size '%d': supported sizes are 1522, 1536, 1552, 9216, 16383", frameSize)
+	}
+
+	legacyMapA := map[int]string{
 		1522:  "0",
 		1536:  "1",
 		1552:  "2",
 		9216:  "3",
 		16383: "4",
-	}[frameSize]
-
-	// Ensure the frameSize is valid, and the value exists in the mapping
-	if frameSizeValue == "" {
-		return fmt.Errorf("invalid Jumbo Frame size '%d': supported sizes are 1522, 1536, 1552, 9216, 16383", frameSize)
 	}
 
-	// Construct the POST form data
+	legacyMapB := map[int]string{
+		1522:  "1",
+		1536:  "2",
+		1552:  "3",
+		9216:  "4",
+		16383: "5",
+	}
+
+	var lastErr error
+
+	if val, ok := legacyMapA[frameSize]; ok {
+		if err := c.submitJumboFrame(ctx, val, frameSize); err == nil {
+			return frameSize, nil
+		} else {
+			lastErr = errors.Join(lastErr, err)
+		}
+	}
+
+	if val, ok := legacyMapB[frameSize]; ok {
+		if err := c.submitJumboFrame(ctx, val, frameSize); err == nil {
+			return frameSize, nil
+		} else {
+			lastErr = errors.Join(lastErr, err)
+		}
+	}
+
+	frameSizeValue, err := c.resolveJumboFrameOptionValue(ctx, frameSize)
+	if err != nil {
+		return 0, fmt.Errorf("failed to resolve jumbo frame option value: %w", errors.Join(lastErr, err))
+	}
+
+	if err := c.submitJumboFrame(ctx, frameSizeValue, frameSize); err != nil {
+		return 0, fmt.Errorf("failed to apply jumbo frame size: %w", errors.Join(lastErr, err))
+	}
+
+	return frameSize, nil
+}
+
+func (c *HRUIClient) submitJumboFrame(ctx context.Context, optionValue string, frameSize int) error {
 	formData := url.Values{}
 	formData.Set("cmd", "jumboframe")
-	formData.Set("jumboframe", frameSizeValue) // Selected value from the mapping
+	formData.Set("jumboframe", optionValue)
 
 	// URL of the Jumbo Frame page
 	endpoint := fmt.Sprintf("%s/fwd.cgi?page=jumboframe", c.URL)
@@ -308,7 +443,7 @@ func (c *HRUIClient) SetJumboFrame(ctx context.Context, frameSize int) error {
 	// Send the POST request
 	respBody, err := c.FormRequest(ctx, endpoint, formData)
 	if err != nil {
-		return fmt.Errorf("failed to set Jumbo Frame size '%d': %w", frameSize, err)
+		return fmt.Errorf("failed to set Jumbo Frame value '%s': %w", optionValue, err)
 	}
 
 	// Parse the response to check for issues
@@ -322,5 +457,43 @@ func (c *HRUIClient) SetJumboFrame(ctx context.Context, frameSize int) error {
 		return errors.New("unexpected response after setting Jumbo Frame")
 	}
 
+	appliedSize, err := parseSelectedJumboFrameSize(doc)
+	if err != nil {
+		return fmt.Errorf("failed to determine applied Jumbo Frame size after setting value '%s': %w", optionValue, err)
+	}
+
+	if appliedSize != frameSize {
+		return fmt.Errorf("jumbo frame size '%d' was not applied; option value '%s' resulted in '%d'", frameSize, optionValue, appliedSize)
+	}
+
 	return nil
+}
+
+// resolveJumboFrameOptionValue resolves the option value that corresponds to the desired frame size.
+// Firmware versions may change the option value indexes, so we inspect the current page to determine
+// the correct value to post back.
+func (c *HRUIClient) resolveJumboFrameOptionValue(ctx context.Context, frameSize int) (string, error) {
+	urlJumbo := fmt.Sprintf("%s/fwd.cgi?page=jumboframe", c.URL)
+	respBody, err := c.Request(ctx, "GET", urlJumbo, nil, nil)
+	if err != nil {
+		return "", fmt.Errorf("failed to fetch Jumbo Frame page: %w", err)
+	}
+
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
+	if err != nil {
+		return "", fmt.Errorf("failed to parse Jumbo Frame HTML: %w", err)
+	}
+
+	options, err := extractJumboFrameOptions(doc)
+	if err != nil {
+		return "", err
+	}
+
+	for _, option := range options {
+		if option.Size == frameSize {
+			return option.Value, nil
+		}
+	}
+
+	return "", fmt.Errorf("invalid Jumbo Frame size '%d': unable to resolve option value from device", frameSize)
 }
