@@ -3,6 +3,7 @@ package mac_static
 import (
 	"context"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -69,15 +70,8 @@ func (d *macStaticDataSource) Schema(ctx context.Context, req datasource.SchemaR
 }
 
 // Configure assigns the SDK client from provider configuration.
-func (d *macStaticDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData != nil {
-		client, ok := req.ProviderData.(*sdk.HRUIClient)
-		if !ok {
-			resp.Diagnostics.AddError("Unexpected Provider Data", "Expected *sdk.HRUIClient")
-			return
-		}
-		d.client = client
-	}
+func (d *macStaticDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Read queries static MAC addresses and returns the filtered results.
@@ -93,7 +87,7 @@ func (d *macStaticDataSource) Read(ctx context.Context, req datasource.ReadReque
 	// Retrieve the static MAC address table from the SDK
 	macTable, err := d.client.GetStaticMACAddressTable(ctx)
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to fetch static MAC table", err.Error())
+		resp.Diagnostics.AddError("Error Reading Static MAC Table", err.Error())
 		return
 	}
 

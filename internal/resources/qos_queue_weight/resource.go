@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -13,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure the implementation satisfies expected interfaces.
@@ -61,21 +63,8 @@ func (r *qosQueueWeightResource) Schema(ctx context.Context, req resource.Schema
 }
 
 // Configure stores the provider's configured SDK client.
-func (r *qosQueueWeightResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *sdk.HRUIClient, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = client
+func (r *qosQueueWeightResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Create creates the resource by posting necessary data to apply a queue weight.
@@ -89,6 +78,8 @@ func (r *qosQueueWeightResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
+	tflog.Debug(ctx, "Creating QoS queue weight", map[string]any{"queue_id": plan.QueueID.ValueInt64()})
+
 	queueID := int(plan.QueueID.ValueInt64())
 	weightStr := plan.Weight.ValueString()
 
@@ -100,7 +91,7 @@ func (r *qosQueueWeightResource) Create(ctx context.Context, req resource.Create
 		// Convert string weight (which should be numeric) to an integer
 		parsedWeight, err := strconv.Atoi(weightStr)
 		if err != nil {
-			resp.Diagnostics.AddError("Weight Error", fmt.Sprintf("Unable to parse queue weight '%s' as an integer.", weightStr))
+			resp.Diagnostics.AddError("Error Creating QoS Queue Weight", fmt.Sprintf("Unable to parse queue weight '%s' as an integer.", weightStr))
 			return
 		}
 		weight = parsedWeight
@@ -109,12 +100,14 @@ func (r *qosQueueWeightResource) Create(ctx context.Context, req resource.Create
 	// Apply the weight configuration using the SDK client
 	err := r.client.SetQoSQueueWeight(ctx, queueID, weight)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to set QoS Queue Weight: %s", err))
+		resp.Diagnostics.AddError("Error Creating QoS Queue Weight", fmt.Sprintf("Unable to set QoS Queue Weight: %s", err))
 		return
 	}
 
 	// Set the new state of the resource in Terraform
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+
+	tflog.Debug(ctx, "QoS queue weight created", map[string]any{"queue_id": plan.QueueID.ValueInt64()})
 }
 
 // Read reads the current state of a queue weight.
@@ -128,11 +121,13 @@ func (r *qosQueueWeightResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 
+	tflog.Debug(ctx, "Reading QoS queue weight", map[string]any{"queue_id": state.QueueID.ValueInt64()})
+
 	// Use SDK to get current queue weights and update state
 	queueID := int(state.QueueID.ValueInt64())
 	queueWeights, err := r.client.ListQoSQueueWeights(ctx)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to fetch QoS Queue Weights: %s", err))
+		resp.Diagnostics.AddError("Error Reading QoS Queue Weight", fmt.Sprintf("Unable to fetch QoS Queue Weights: %s", err))
 		return
 	}
 
@@ -150,6 +145,8 @@ func (r *qosQueueWeightResource) Read(ctx context.Context, req resource.ReadRequ
 
 	// Persist new state in resource
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+
+	tflog.Debug(ctx, "QoS queue weight read", map[string]any{"queue_id": state.QueueID.ValueInt64()})
 }
 
 // Update updates the queue weight.
@@ -163,6 +160,8 @@ func (r *qosQueueWeightResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
+	tflog.Debug(ctx, "Updating QoS queue weight", map[string]any{"queue_id": plan.QueueID.ValueInt64()})
+
 	queueID := int(plan.QueueID.ValueInt64())
 	weightStr := plan.Weight.ValueString()
 
@@ -172,7 +171,7 @@ func (r *qosQueueWeightResource) Update(ctx context.Context, req resource.Update
 	} else {
 		parsedWeight, err := strconv.Atoi(weightStr)
 		if err != nil {
-			resp.Diagnostics.AddError("Weight Error", fmt.Sprintf("Unable to parse queue weight '%s' as an integer.", weightStr))
+			resp.Diagnostics.AddError("Error Updating QoS Queue Weight", fmt.Sprintf("Unable to parse queue weight '%s' as an integer.", weightStr))
 			return
 		}
 		weight = parsedWeight
@@ -181,12 +180,14 @@ func (r *qosQueueWeightResource) Update(ctx context.Context, req resource.Update
 	// Apply the update using the SDK
 	err := r.client.SetQoSQueueWeight(ctx, queueID, weight)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update QoS Queue Weight: %s", err))
+		resp.Diagnostics.AddError("Error Updating QoS Queue Weight", fmt.Sprintf("Unable to update QoS Queue Weight: %s", err))
 		return
 	}
 
 	// Persist the latest state to Terraform
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+
+	tflog.Debug(ctx, "QoS queue weight updated", map[string]any{"queue_id": plan.QueueID.ValueInt64()})
 }
 
 // Delete resets a queue to default weight.
@@ -200,12 +201,14 @@ func (r *qosQueueWeightResource) Delete(ctx context.Context, req resource.Delete
 		return
 	}
 
+	tflog.Debug(ctx, "Deleting QoS queue weight", map[string]any{"queue_id": state.QueueID.ValueInt64()})
+
 	queueID := int(state.QueueID.ValueInt64())
 
 	// Reset the weight to default (strict priority)
 	err := r.client.SetQoSQueueWeight(ctx, queueID, 0)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to reset QoS Queue Weight: %s", err))
+		resp.Diagnostics.AddError("Error Deleting QoS Queue Weight", fmt.Sprintf("Unable to reset QoS Queue Weight: %s", err))
 		return
 	}
 
@@ -215,6 +218,8 @@ func (r *qosQueueWeightResource) Delete(ctx context.Context, req resource.Delete
 
 // ImportState allows importing existing configurations via "terraform import".
 func (r *qosQueueWeightResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing QoS queue weight", map[string]any{"id": req.ID})
+
 	queueID, err := strconv.ParseInt(req.ID, 10, 64)
 	if err != nil {
 		resp.Diagnostics.AddError("Invalid ID format", fmt.Sprintf("Expected an integer for queue_id, got: %s", req.ID))

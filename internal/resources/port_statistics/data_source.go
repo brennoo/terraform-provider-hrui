@@ -3,6 +3,7 @@ package port_statistics
 import (
 	"context"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -88,22 +89,8 @@ func (d *portStatisticsDataSource) Schema(_ context.Context, _ datasource.Schema
 }
 
 // Configure associates the client to the data source.
-func (d *portStatisticsDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok || client == nil {
-		resp.Diagnostics.AddError(
-			"Invalid Provider Client",
-			"The provider client could not be configured. Please ensure the provider is correctly set up.",
-		)
-		return
-	}
-
-	// Assign the configured client to the data source
-	d.client = client
+func (d *portStatisticsDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Read fetches the port statistics from the switch.
@@ -120,7 +107,7 @@ func (d *portStatisticsDataSource) Read(ctx context.Context, req datasource.Read
 	// Fetch port statistics from the SDK client
 	portStats, err := d.client.GetPortStatistics(ctx)
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to fetch port statistics", err.Error())
+		resp.Diagnostics.AddError("Error Reading Port Statistics", err.Error())
 		return
 	}
 

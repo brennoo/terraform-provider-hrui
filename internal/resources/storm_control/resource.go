@@ -5,16 +5,22 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure implementation satisfies the resource.Resource interface.
-var _ resource.Resource = &stormControlResource{}
+var (
+	_ resource.Resource                = &stormControlResource{}
+	_ resource.ResourceWithImportState = &stormControlResource{}
+)
 
 type stormControlResource struct {
 	client *sdk.HRUIClient
@@ -77,15 +83,8 @@ func (r *stormControlResource) Schema(_ context.Context, _ resource.SchemaReques
 }
 
 // Configure assigns the SDK client from provider configuration.
-func (r *stormControlResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData != nil {
-		client, ok := req.ProviderData.(*sdk.HRUIClient)
-		if !ok {
-			resp.Diagnostics.AddError("Unexpected Provider Data", "Expected *sdk.HRUIClient")
-			return
-		}
-		r.client = client
-	}
+func (r *stormControlResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Create a new storm control configuration.
@@ -97,11 +96,13 @@ func (r *stormControlResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
+	tflog.Debug(ctx, "Creating storm control", map[string]any{"port": data.Port.ValueString()})
+
 	// Only validate rate if storm control is enabled
 	if data.State.ValueBool() {
 		maxRate, err := r.client.GetPortMaxRate(ctx, data.Port.ValueString())
 		if err != nil {
-			resp.Diagnostics.AddError("Failed to fetch maximum rate", err.Error())
+			resp.Diagnostics.AddError("Error Creating Storm Control", err.Error())
 			return
 		}
 
@@ -119,11 +120,13 @@ func (r *stormControlResource) Create(ctx context.Context, req resource.CreateRe
 		toIntPointer(data.Rate),
 	)
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to configure storm control", err.Error())
+		resp.Diagnostics.AddError("Error Creating Storm Control", err.Error())
 		return
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+
+	tflog.Debug(ctx, "Storm control created", map[string]any{"port": data.Port.ValueString()})
 }
 
 // Read the current storm control configuration.
@@ -135,15 +138,17 @@ func (r *stormControlResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
+	tflog.Debug(ctx, "Reading storm control", map[string]any{"port": state.Port.ValueString()})
+
 	config, err := r.client.GetStormControlStatus(ctx)
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to fetch storm control status", err.Error())
+		resp.Diagnostics.AddError("Error Reading Storm Control", err.Error())
 		return
 	}
 
 	maxRate, err := r.client.GetPortMaxRate(ctx, state.Port.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to fetch max rate for port", err.Error())
+		resp.Diagnostics.AddError("Error Reading Storm Control", err.Error())
 		return
 	}
 
@@ -186,6 +191,8 @@ func (r *stormControlResource) Read(ctx context.Context, req resource.ReadReques
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+
+	tflog.Debug(ctx, "Storm control read", map[string]any{"port": state.Port.ValueString()})
 }
 
 // Update modifies an existing storm control configuration.
@@ -197,11 +204,13 @@ func (r *stormControlResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
+	tflog.Debug(ctx, "Updating storm control", map[string]any{"port": plan.Port.ValueString()})
+
 	// Only validate rate if storm control is enabled
 	if plan.State.ValueBool() {
 		maxRate, err := r.client.GetPortMaxRate(ctx, plan.Port.ValueString())
 		if err != nil {
-			resp.Diagnostics.AddError("Failed to fetch maximum rate", err.Error())
+			resp.Diagnostics.AddError("Error Updating Storm Control", err.Error())
 			return
 		}
 
@@ -219,11 +228,13 @@ func (r *stormControlResource) Update(ctx context.Context, req resource.UpdateRe
 		toIntPointer(plan.Rate),
 	)
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to update storm control", err.Error())
+		resp.Diagnostics.AddError("Error Updating Storm Control", err.Error())
 		return
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+
+	tflog.Debug(ctx, "Storm control updated", map[string]any{"port": plan.Port.ValueString()})
 }
 
 // Delete disables storm control for the given port and storm type.
@@ -235,6 +246,8 @@ func (r *stormControlResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
+	tflog.Debug(ctx, "Deleting storm control", map[string]any{"port": state.Port.ValueString()})
+
 	err := r.client.SetStormControlConfig(ctx,
 		state.StormType.ValueString(),
 		[]string{state.Port.ValueString()},
@@ -242,8 +255,21 @@ func (r *stormControlResource) Delete(ctx context.Context, req resource.DeleteRe
 		nil,
 	)
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to reset storm control configuration", err.Error())
+		resp.Diagnostics.AddError("Error Deleting Storm Control", err.Error())
 	}
+}
+
+// ImportState imports an existing Storm Control resource by port/storm_type composite ID.
+func (r *stormControlResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing storm control", map[string]any{"id": req.ID})
+
+	parts := strings.SplitN(req.ID, "/", 2)
+	if len(parts) != 2 {
+		resp.Diagnostics.AddError("Error Importing Storm Control", `Expected import ID format: "<port>/<storm_type>"`)
+		return
+	}
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("port"), parts[0])...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("storm_type"), parts[1])...)
 }
 
 // toIntPointer converts a types.Int64 to *int64.

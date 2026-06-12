@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
+	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-
-	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 )
 
 // vlan8021qDataSource defines the VLAN data source.
@@ -61,22 +61,8 @@ func (d *vlan8021qDataSource) Schema(ctx context.Context, req datasource.SchemaR
 	}
 }
 
-func (d *vlan8021qDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok || client == nil {
-		resp.Diagnostics.AddError(
-			"Missing HRUI Client",
-			"The client has not been properly initialized in the Configure method.",
-		)
-		return
-	}
-
-	// Set the client in the data source.
-	d.client = client
+func (d *vlan8021qDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Read fetches the VLAN information and sets it in the Terraform state.
@@ -100,7 +86,7 @@ func (d *vlan8021qDataSource) Read(ctx context.Context, req datasource.ReadReque
 	vlanID := model.VlanID.ValueInt64()
 	vlan, err := d.client.GetVLAN(ctx, int(vlanID))
 	if err != nil {
-		resp.Diagnostics.AddError("Error fetching VLAN", fmt.Sprintf("Could not fetch VLAN with ID %d: %s", vlanID, err.Error()))
+		resp.Diagnostics.AddError("Error Reading VLAN", fmt.Sprintf("Could not fetch VLAN with ID %d: %s", vlanID, err.Error()))
 		return
 	}
 

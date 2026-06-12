@@ -39,4 +39,11 @@ resource "hrui_loop_protocol" "protocol_stp" {
 - `loop_function` (String) Specifies the loop function mode. Valid options are 'Off', 'Loop Detection', 'Loop Prevention', and 'Spanning Tree'.
 - `recover_time` (Number) Recovery time in seconds for detection/prevention modes. Must be 0 or between 4-255 seconds.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Loop Protocol settings are a singleton — any import ID works
+terraform import hrui_loop_protocol.main placeholder
+```

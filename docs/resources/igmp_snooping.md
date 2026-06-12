@@ -27,4 +27,11 @@ resource "hrui_igmp_snooping" "example" {
 
 - `enabled` (Boolean) Specifies whether IGMP snooping is enabled or disabled globally.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# IGMP Snooping is a singleton — any import ID works
+terraform import hrui_igmp_snooping.main placeholder
+```

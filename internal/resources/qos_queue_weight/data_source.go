@@ -3,6 +3,7 @@ package qos_queue_weight
 import (
 	"context"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -42,16 +43,8 @@ func (d *qosQueueWeightDataSource) Schema(_ context.Context, _ datasource.Schema
 }
 
 // Configure associates the client to the data source.
-func (d *qosQueueWeightDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData != nil {
-		// Set the SDK client
-		client, ok := req.ProviderData.(*sdk.HRUIClient)
-		if !ok {
-			resp.Diagnostics.AddError("Unexpected Provider Data", "Expected *sdk.HRUIClient")
-			return
-		}
-		d.client = client
-	}
+func (d *qosQueueWeightDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Read retrieves the weight of a specific queue based on the queue_id.
@@ -67,7 +60,7 @@ func (d *qosQueueWeightDataSource) Read(ctx context.Context, req datasource.Read
 	// Call the SDK to fetch all QoS Queue Weights
 	fetchedQueues, err := d.client.ListQoSQueueWeights(ctx)
 	if err != nil {
-		resp.Diagnostics.AddError("Unable to list QoS Queue Weights", err.Error())
+		resp.Diagnostics.AddError("Error Reading QoS Queue Weights", err.Error())
 		return
 	}
 

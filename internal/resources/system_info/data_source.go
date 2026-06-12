@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
+	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-
-	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -27,24 +27,8 @@ func NewDataSource() datasource.DataSource {
 }
 
 // Configure assigns the provider-configured client to the data source.
-func (d *systemInfoDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	// Ensure that the client exists before making assignments.
-	if req.ProviderData == nil {
-		return
-	}
-
-	// Cast req.ProviderData to sdk.HRUIClient instead of client.Client.
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok || client == nil {
-		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *sdk.HRUIClient, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	// Assign the client instance to the data source.
-	d.client = client
+func (d *systemInfoDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Metadata defines the schema type name.
@@ -66,7 +50,7 @@ func (d *systemInfoDataSource) Read(ctx context.Context, req datasource.ReadRequ
 
 	systemInfo, err := d.client.GetSystemInfo(ctx)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read HRUI system info, got error: %s", err))
+		resp.Diagnostics.AddError("Error Reading System Info", fmt.Sprintf("Unable to read HRUI system info, got error: %s", err))
 		return
 	}
 

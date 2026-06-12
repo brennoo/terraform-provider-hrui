@@ -31,4 +31,11 @@ resource "hrui_mac_static" "example" {
 - `port` (String) The port to associate with the MAC address (e.g., 'Port 1', 'Trunk2').
 - `vlan_id` (Number) The VLAN ID to associate with the MAC address.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using "<mac_address>/<vlan_id>" as the ID
+terraform import hrui_mac_static.example "aa:bb:cc:dd:ee:ff/1"
+```

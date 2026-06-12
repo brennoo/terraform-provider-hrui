@@ -29,4 +29,11 @@ resource "hrui_qos_port_queue" "example" {
 - `port` (String) The port name for which the QoS queue is being configured (e.g., 'Port 1', 'Trunk2').
 - `queue` (Number) The QoS queue setting for the specified port.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using the port name as the ID
+terraform import hrui_qos_port_queue.example "Port 1"
+```

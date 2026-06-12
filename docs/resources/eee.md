@@ -27,4 +27,11 @@ resource "hrui_eee" "example" {
 
 - `enabled` (Boolean) Whether EEE is enabled (`true`) or disabled (`false`).
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# EEE settings are a singleton — any import ID works
+terraform import hrui_eee.main placeholder
+```

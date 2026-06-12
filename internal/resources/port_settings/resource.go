@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -11,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -81,22 +83,8 @@ func (r *portSettingResource) Schema(ctx context.Context, req resource.SchemaReq
 }
 
 // Configure assigns the provider-configured client to the resource.
-func (r *portSettingResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *sdk.HRUIClient, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-
-		return
-	}
-
-	r.client = client
+func (r *portSettingResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Metadata sets the resource name.
@@ -111,6 +99,8 @@ func (r *portSettingResource) Create(ctx context.Context, req resource.CreateReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Creating port settings", map[string]any{"port": plan.Port.ValueString()})
 
 	// Apply configuration using the SDK
 	// Handle optional Speed and FlowControl attributes
@@ -140,14 +130,14 @@ func (r *portSettingResource) Create(ctx context.Context, req resource.CreateReq
 	// Call API to configure the port
 	_, err := r.client.ConfigurePort(ctx, port)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to create HRUI port settings: %s", err))
+		resp.Diagnostics.AddError("Error Creating Port Settings", fmt.Sprintf("Failed to create HRUI port settings: %s", err))
 		return
 	}
 
 	// Read back from the device to ensure state matches what was actually applied
 	finalPort, err := r.client.GetPort(ctx, plan.Port.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to read HRUI port settings after creation: %s", err))
+		resp.Diagnostics.AddError("Error Reading Port Settings", fmt.Sprintf("Failed to read HRUI port settings after creation: %s", err))
 		return
 	}
 
@@ -169,6 +159,8 @@ func (r *portSettingResource) Create(ctx context.Context, req resource.CreateReq
 
 	// Save state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+
+	tflog.Debug(ctx, "Port settings created", map[string]any{"port": plan.Port.ValueString()})
 }
 
 // Read fetches the current port settings and updates state.
@@ -179,10 +171,12 @@ func (r *portSettingResource) Read(ctx context.Context, req resource.ReadRequest
 		return
 	}
 
+	tflog.Debug(ctx, "Reading port settings", map[string]any{"port": state.Port.ValueString()})
+
 	// Fetch the current data for the port from the switch
 	port, err := r.client.GetPort(ctx, state.Port.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to read HRUI port settings: %s", err))
+		resp.Diagnostics.AddError("Error Reading Port Settings", fmt.Sprintf("Failed to read HRUI port settings: %s", err))
 		return
 	}
 
@@ -206,6 +200,8 @@ func (r *portSettingResource) Read(ctx context.Context, req resource.ReadRequest
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Port settings read", map[string]any{"port": state.Port.ValueString()})
 }
 
 // Update applies changes to the port settings.
@@ -215,6 +211,8 @@ func (r *portSettingResource) Update(ctx context.Context, req resource.UpdateReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Updating port settings", map[string]any{"port": plan.Port.ValueString()})
 
 	// Apply updated configuration using `ConfigurePort`
 	// Handle optional Speed and FlowControl attributes
@@ -243,14 +241,14 @@ func (r *portSettingResource) Update(ctx context.Context, req resource.UpdateReq
 
 	_, err := r.client.ConfigurePort(ctx, port)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update HRUI port settings, got error: %s", err))
+		resp.Diagnostics.AddError("Error Updating Port Settings", fmt.Sprintf("Unable to update HRUI port settings, got error: %s", err))
 		return
 	}
 
 	// Read back from the device to ensure state matches what was actually applied
 	finalPort, err := r.client.GetPort(ctx, plan.Port.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Failed to read HRUI port settings after update: %s", err))
+		resp.Diagnostics.AddError("Error Reading Port Settings", fmt.Sprintf("Failed to read HRUI port settings after update: %s", err))
 		return
 	}
 
@@ -272,6 +270,8 @@ func (r *portSettingResource) Update(ctx context.Context, req resource.UpdateReq
 
 	// Save updated state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+
+	tflog.Debug(ctx, "Port settings updated", map[string]any{"port": plan.Port.ValueString()})
 }
 
 func (r *portSettingResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -280,6 +280,8 @@ func (r *portSettingResource) Delete(ctx context.Context, req resource.DeleteReq
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Deleting port settings", map[string]any{"port": state.Port.ValueString()})
 
 	// Default settings to restore
 	defaultPort := &sdk.Port{
@@ -293,7 +295,7 @@ func (r *portSettingResource) Delete(ctx context.Context, req resource.DeleteReq
 	_, err := r.client.ConfigurePort(ctx, defaultPort)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Failed to Reset Port to Default",
+			"Error Deleting Port Settings",
 			fmt.Sprintf("Unable to reset port '%s' to its default settings: %s", state.Port.ValueString(), err),
 		)
 		return
@@ -305,6 +307,8 @@ func (r *portSettingResource) Delete(ctx context.Context, req resource.DeleteReq
 
 // ImportState maps the imported ID to the `port` field.
 func (r *portSettingResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing port settings", map[string]any{"id": req.ID})
+
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("port"), req.ID)...) // Use `port` as the unique ID
 }
 

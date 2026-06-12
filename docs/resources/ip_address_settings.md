@@ -41,4 +41,11 @@ resource "hrui_ip_address_settings" "static" {
 - `ip_address` (String) The IP address of the HRUI switch.
 - `netmask` (String) The netmask of the HRUI switch.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# IP Address Settings are a singleton — any import ID works
+terraform import hrui_ip_address_settings.main placeholder
+```

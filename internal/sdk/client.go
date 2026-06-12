@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Client handles communication with the HRUI device, managing VLANs and other networking functionality.
@@ -175,10 +176,14 @@ func (c *HRUIClient) Request(ctx context.Context, method, endpoint string, body 
 		req.Header.Set(key, value)
 	}
 
+	tflog.Debug(ctx, "HTTP request", map[string]any{"method": method, "endpoint": endpoint})
+
 	resp, err := c.HttpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute %s request to %s: %w", method, endpoint, err)
 	}
+
+	tflog.Debug(ctx, "HTTP response", map[string]any{"status": resp.StatusCode})
 
 	// Ensure Body.Close() is called and its error is checked
 	defer func() {
@@ -258,6 +263,8 @@ func (c *HRUIClient) CommitChanges(ctx context.Context) error {
 
 	var lastError error
 	for attempt := 1; attempt <= maxRetries; attempt++ {
+		tflog.Debug(ctx, "Saving configuration", map[string]any{"attempt": attempt})
+
 		// Execute the POST request using Request
 		respBody, err := c.Request(ctx, "POST", url, strings.NewReader("cmd=save"), headers)
 		if err == nil {
