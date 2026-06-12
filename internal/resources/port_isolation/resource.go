@@ -4,13 +4,23 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
+)
+
+// Ensure the implementation satisfies the required interfaces.
+var (
+	_ resource.Resource                = &portIsolationResource{}
+	_ resource.ResourceWithConfigure   = &portIsolationResource{}
+	_ resource.ResourceWithImportState = &portIsolationResource{}
 )
 
 // portIsolationResource defines the resource implementation.
@@ -51,20 +61,7 @@ func (r *portIsolationResource) Schema(_ context.Context, _ resource.SchemaReque
 
 // Configure assigns the provider-configured client to the resource.
 func (r *portIsolationResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Provider Data Type",
-			fmt.Sprintf("Expected *sdk.HRUIClient, got: %T", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = client
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Read fetches the current port isolation and updates the state.
@@ -76,6 +73,8 @@ func (r *portIsolationResource) Read(ctx context.Context, req resource.ReadReque
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Reading port isolation", map[string]any{"port": state.Port.ValueString()})
 
 	// Fetch port isolation configuration from the SDK
 	portIsolations, err := r.client.GetPortIsolation(ctx)
@@ -102,6 +101,8 @@ func (r *portIsolationResource) Read(ctx context.Context, req resource.ReadReque
 	state.IsolationList = convertToTerraformList(isolationList)
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Port isolation read", map[string]any{"port": state.Port.ValueString()})
 }
 
 // Create sets up the port isolation using the given plan values.
@@ -113,6 +114,8 @@ func (r *portIsolationResource) Create(ctx context.Context, req resource.CreateR
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Creating port isolation", map[string]any{"port": plan.Port.ValueString()})
 
 	// Call SDK to configure port isolation
 	port := plan.Port.ValueString()
@@ -130,6 +133,8 @@ func (r *portIsolationResource) Create(ctx context.Context, req resource.CreateR
 	// Save the state
 	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Port isolation created", map[string]any{"port": plan.Port.ValueString()})
 }
 
 // Update modifies the port isolation.
@@ -141,6 +146,8 @@ func (r *portIsolationResource) Update(ctx context.Context, req resource.UpdateR
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Updating port isolation", map[string]any{"port": plan.Port.ValueString()})
 
 	// Call SDK to update port isolation
 	port := plan.Port.ValueString()
@@ -158,6 +165,8 @@ func (r *portIsolationResource) Update(ctx context.Context, req resource.UpdateR
 	// Save the updated state
 	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Port isolation updated", map[string]any{"port": plan.Port.ValueString()})
 }
 
 // Delete removes the port isolation.
@@ -170,6 +179,8 @@ func (r *portIsolationResource) Delete(ctx context.Context, req resource.DeleteR
 		return
 	}
 
+	tflog.Debug(ctx, "Deleting port isolation", map[string]any{"port": state.Port.ValueString()})
+
 	// Clear the port isolation
 	port := state.Port.ValueString()
 	err := r.client.DeletePortIsolation(ctx, port)
@@ -180,6 +191,13 @@ func (r *portIsolationResource) Delete(ctx context.Context, req resource.DeleteR
 		)
 		return
 	}
+}
+
+// ImportState imports an existing Port Isolation resource by port name.
+func (r *portIsolationResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing port isolation", map[string]any{"id": req.ID})
+
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("port"), req.ID)...)
 }
 
 // extractStrings extracts Go strings from a Terraform List attribute.

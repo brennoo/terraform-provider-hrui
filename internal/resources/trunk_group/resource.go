@@ -3,19 +3,26 @@ package trunk_group
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure implementation satisfies the resource.Resource interface.
-var _ resource.Resource = &trunkGroupResource{}
+var (
+	_ resource.Resource                = &trunkGroupResource{}
+	_ resource.ResourceWithImportState = &trunkGroupResource{}
+)
 
 // trunkGroupResource manages trunk groups on the HRUI switch.
 type trunkGroupResource struct {
@@ -58,15 +65,8 @@ func (r *trunkGroupResource) Schema(ctx context.Context, req resource.SchemaRequ
 }
 
 // Configure assigns the SDK client from provider configuration.
-func (r *trunkGroupResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData != nil {
-		client, ok := req.ProviderData.(*sdk.HRUIClient)
-		if !ok {
-			resp.Diagnostics.AddError("Unexpected Provider Data", "Expected *sdk.HRUIClient")
-			return
-		}
-		r.client = client
-	}
+func (r *trunkGroupResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Create a new trunk group.
@@ -78,10 +78,12 @@ func (r *trunkGroupResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
+	tflog.Debug(ctx, "Creating trunk group", map[string]any{"id": data.ID.ValueInt64()})
+
 	// Validate if the trunk ID is part of the available trunks.
 	availableTrunks, err := r.client.ListAvailableTrunks(ctx)
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to list available trunks", err.Error())
+		resp.Diagnostics.AddError("Error Reading Trunk Group", err.Error())
 		return
 	}
 
@@ -156,7 +158,7 @@ func (r *trunkGroupResource) Create(ctx context.Context, req resource.CreateRequ
 		Ports: sdkPorts,
 	})
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to create Trunk Group", err.Error())
+		resp.Diagnostics.AddError("Error Creating Trunk Group", err.Error())
 		return
 	}
 
@@ -166,7 +168,7 @@ func (r *trunkGroupResource) Create(ctx context.Context, req resource.CreateRequ
 	// Read back from the device to ensure state matches what was actually applied
 	trunkGroup, err := r.client.GetTrunk(ctx, int(data.ID.ValueInt64()))
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to fetch Trunk Group details after creation", err.Error())
+		resp.Diagnostics.AddError("Error Reading Trunk Group", err.Error())
 		return
 	}
 
@@ -190,6 +192,8 @@ func (r *trunkGroupResource) Create(ctx context.Context, req resource.CreateRequ
 	// Save the state based on what was read from the device
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Trunk group created", map[string]any{"id": data.ID.ValueInt64()})
 }
 
 // Read retrieves the trunk group details.
@@ -201,10 +205,12 @@ func (r *trunkGroupResource) Read(ctx context.Context, req resource.ReadRequest,
 		return
 	}
 
+	tflog.Debug(ctx, "Reading trunk group", map[string]any{"id": state.ID.ValueInt64()})
+
 	// Fetch trunk group details from the SDK
 	trunkGroup, err := r.client.GetTrunk(ctx, int(state.ID.ValueInt64()))
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to fetch Trunk Group details", err.Error())
+		resp.Diagnostics.AddError("Error Reading Trunk Group", err.Error())
 		return
 	}
 
@@ -219,6 +225,8 @@ func (r *trunkGroupResource) Read(ctx context.Context, req resource.ReadRequest,
 	// Save the updated state
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Trunk group read", map[string]any{"id": state.ID.ValueInt64()})
 }
 
 // Update modifies an existing trunk group.
@@ -229,6 +237,8 @@ func (r *trunkGroupResource) Update(ctx context.Context, req resource.UpdateRequ
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Updating trunk group", map[string]any{"id": plan.ID.ValueInt64()})
 
 	// Extract ports from the plan
 	var ports []int64
@@ -285,7 +295,7 @@ func (r *trunkGroupResource) Update(ctx context.Context, req resource.UpdateRequ
 		Ports: sdkPorts,
 	})
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to update Trunk Group", err.Error())
+		resp.Diagnostics.AddError("Error Updating Trunk Group", err.Error())
 		return
 	}
 
@@ -295,7 +305,7 @@ func (r *trunkGroupResource) Update(ctx context.Context, req resource.UpdateRequ
 	// Read back from the device to ensure state matches what was actually applied
 	trunkGroup, err := r.client.GetTrunk(ctx, int(plan.ID.ValueInt64()))
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to fetch Trunk Group details after update", err.Error())
+		resp.Diagnostics.AddError("Error Reading Trunk Group", err.Error())
 		return
 	}
 
@@ -319,6 +329,8 @@ func (r *trunkGroupResource) Update(ctx context.Context, req resource.UpdateRequ
 	// Save the updated state based on what was read from the device
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Trunk group updated", map[string]any{"id": plan.ID.ValueInt64()})
 }
 
 // Delete removes a trunk group.
@@ -330,9 +342,23 @@ func (r *trunkGroupResource) Delete(ctx context.Context, req resource.DeleteRequ
 		return
 	}
 
+	tflog.Debug(ctx, "Deleting trunk group", map[string]any{"id": state.ID.ValueInt64()})
+
 	// SDK Call to delete the trunk group
 	err := r.client.DeleteTrunk(ctx, int(state.ID.ValueInt64()))
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to delete Trunk Group", err.Error())
+		resp.Diagnostics.AddError("Error Deleting Trunk Group", err.Error())
 	}
+}
+
+// ImportState imports an existing Trunk Group resource by numeric trunk ID.
+func (r *trunkGroupResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing trunk group", map[string]any{"id": req.ID})
+
+	id, err := strconv.ParseInt(req.ID, 10, 64)
+	if err != nil {
+		resp.Diagnostics.AddError("Error Importing Trunk Group", fmt.Sprintf("Expected a numeric trunk group ID, got %q: %s", req.ID, err))
+		return
+	}
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), types.Int64Value(id))...)
 }

@@ -29,4 +29,11 @@ resource "hrui_qos_queue_weight" "example" {
 - `queue_id` (Number) The queue ID for which the weight is being configured.
 - `weight` (String) The weight for the queue. Can be a numerical weight from "1" to "15" or the string value "Strict priority".
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using the queue ID in the format "queue_<n>"
+terraform import hrui_qos_queue_weight.example "queue_1"
+```

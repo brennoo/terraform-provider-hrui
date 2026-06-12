@@ -31,4 +31,11 @@ resource "hrui_port_mirroring" "example" {
 - `mirrored_port` (String) The port being mirrored (e.g., 'Port 2').
 - `mirroring_port` (String) The port performing the mirroring (e.g., 'Port 1').
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Port mirroring is a singleton — any import ID works
+terraform import hrui_port_mirroring.main placeholder
+```

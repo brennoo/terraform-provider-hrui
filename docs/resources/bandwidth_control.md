@@ -33,4 +33,11 @@ resource "hrui_bandwidth_control" "example" {
 - `ingress_rate` (String) Ingress bandwidth rate in kbps. Use '0' or 'Unlimited' to disable limitation.
 - `port` (String) Port where bandwidth control is configured (e.g., 'Port 1', 'Trunk2').
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using the port name as the ID
+terraform import hrui_bandwidth_control.example "Port 1"
+```

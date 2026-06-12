@@ -32,7 +32,7 @@ resource "hrui_stp_global_settings" "example" {
 - `force_version` (String) Specifies whether to use STP ('STP') or RSTP ('RSTP').
 - `forward_delay` (Number) Forward delay (in seconds).
 - `hello_time` (Number) Time interval (in seconds) between Hello messages.
-- `max_age` (Number) Maximum age for STP information before it’s discarded (in seconds).
+- `max_age` (Number) Maximum age for STP information before it's discarded (in seconds).
 - `priority` (Number) The bridge priority for the STP instance.
 
 ### Read-Only
@@ -42,4 +42,11 @@ resource "hrui_stp_global_settings" "example" {
 - `root_port` (String) Root port (read-only).
 - `stp_status` (String) Specifies whether STP is enabled or disabled. This is read-only.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# STP Global settings are a singleton — any import ID works
+terraform import hrui_stp_global.main placeholder
+```

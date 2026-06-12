@@ -31,4 +31,11 @@ resource "hrui_vlan_vid" "example" {
 - `port` (String) The name of the port (e.g., 'Port 1', 'Trunk2').
 - `vlan_id` (Number) VLAN ID to assign to the port.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using the port or trunk name as the ID
+terraform import hrui_vlan_vid.example "Trunk1"
+```

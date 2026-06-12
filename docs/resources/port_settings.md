@@ -65,4 +65,11 @@ Read-Only:
 
 - `actual` (String) Actual speed and duplex mode returned by the system.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using the port name as the ID
+terraform import hrui_port_settings.example "Port 1"
+```

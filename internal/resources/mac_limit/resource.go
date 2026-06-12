@@ -4,19 +4,23 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure the implementation satisfies the required interfaces.
 var (
-	_ resource.Resource              = &macLimitResource{}
-	_ resource.ResourceWithConfigure = &macLimitResource{}
+	_ resource.Resource                = &macLimitResource{}
+	_ resource.ResourceWithConfigure   = &macLimitResource{}
+	_ resource.ResourceWithImportState = &macLimitResource{}
 )
 
 // macLimitResource is the implementation of the MAC Limit Terraform resource.
@@ -59,21 +63,8 @@ func (r *macLimitResource) Schema(ctx context.Context, req resource.SchemaReques
 }
 
 // Configure assigns the provider-configured client to the resource.
-func (r *macLimitResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *sdk.HRUIClient, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = client
+func (r *macLimitResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // retrievePortID resolves the port name to a numeric PortID using the SDK.
@@ -81,7 +72,7 @@ func (r *macLimitResource) retrievePortID(ctx context.Context, portName string, 
 	portID, err := r.client.GetPortByName(ctx, portName)
 	if err != nil {
 		diagnostics.AddError(
-			"Port Resolution Error",
+			"Error Reading MAC Limit",
 			fmt.Sprintf("Failed to resolve port name '%s': %s", portName, err),
 		)
 		return 0, false
@@ -96,6 +87,8 @@ func (r *macLimitResource) Create(ctx context.Context, req resource.CreateReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Creating MAC limit", map[string]any{"port": plan.Port.ValueString()})
 
 	// Resolve the port name to a numeric PortID.
 	portID, ok := r.retrievePortID(ctx, plan.Port.ValueString(), &resp.Diagnostics)
@@ -114,7 +107,7 @@ func (r *macLimitResource) Create(ctx context.Context, req resource.CreateReques
 	err := r.client.SetMACLimit(ctx, portID, plan.Enabled.ValueBool(), limit)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Client Error",
+			"Error Creating MAC Limit",
 			fmt.Sprintf("Failed to set MAC limit for port '%s' (ID: %d): %s", plan.Port.ValueString(), portID, err),
 		)
 		return
@@ -124,7 +117,7 @@ func (r *macLimitResource) Create(ctx context.Context, req resource.CreateReques
 	macLimits, err := r.client.GetMACLimits(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Client Error",
+			"Error Reading MAC Limit",
 			fmt.Sprintf("Failed to fetch MAC limits after creation: %s", err),
 		)
 		return
@@ -158,6 +151,8 @@ func (r *macLimitResource) Create(ctx context.Context, req resource.CreateReques
 
 	// Set the Terraform state based on what was read from the device
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+
+	tflog.Debug(ctx, "MAC limit created", map[string]any{"port": state.Port.ValueString()})
 }
 
 // Read fetches the current MAC limit configuration for the resource and updates the state.
@@ -168,11 +163,13 @@ func (r *macLimitResource) Read(ctx context.Context, req resource.ReadRequest, r
 		return
 	}
 
+	tflog.Debug(ctx, "Reading MAC limit", map[string]any{"port": state.Port.ValueString()})
+
 	// Get the MAC limits.
 	macLimits, err := r.client.GetMACLimits(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Client Error",
+			"Error Reading MAC Limit",
 			fmt.Sprintf("Failed to fetch MAC limits: %s", err),
 		)
 		return
@@ -201,6 +198,8 @@ func (r *macLimitResource) Read(ctx context.Context, req resource.ReadRequest, r
 
 	// Update the state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+
+	tflog.Debug(ctx, "MAC limit read", map[string]any{"port": state.Port.ValueString()})
 }
 
 // Update modifies the MAC limit for the specified port.
@@ -210,6 +209,8 @@ func (r *macLimitResource) Update(ctx context.Context, req resource.UpdateReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Updating MAC limit", map[string]any{"port": plan.Port.ValueString()})
 
 	// Resolve the port name to a numeric PortID.
 	portID, ok := r.retrievePortID(ctx, plan.Port.ValueString(), &resp.Diagnostics)
@@ -228,7 +229,7 @@ func (r *macLimitResource) Update(ctx context.Context, req resource.UpdateReques
 	err := r.client.SetMACLimit(ctx, portID, plan.Enabled.ValueBool(), limit)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Client Error",
+			"Error Updating MAC Limit",
 			fmt.Sprintf("Failed to update MAC limit for port '%s' (ID: %d): %s", plan.Port.ValueString(), portID, err),
 		)
 		return
@@ -238,7 +239,7 @@ func (r *macLimitResource) Update(ctx context.Context, req resource.UpdateReques
 	macLimits, err := r.client.GetMACLimits(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Client Error",
+			"Error Reading MAC Limit",
 			fmt.Sprintf("Failed to fetch MAC limits after update: %s", err),
 		)
 		return
@@ -272,6 +273,8 @@ func (r *macLimitResource) Update(ctx context.Context, req resource.UpdateReques
 
 	// Update the state based on what was read from the device
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+
+	tflog.Debug(ctx, "MAC limit updated", map[string]any{"port": state.Port.ValueString()})
 }
 
 // Delete disables the MAC limit for the specified port.
@@ -281,6 +284,8 @@ func (r *macLimitResource) Delete(ctx context.Context, req resource.DeleteReques
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Deleting MAC limit", map[string]any{"port": state.Port.ValueString()})
 
 	// Resolve the port name to a numeric PortID.
 	portID, ok := r.retrievePortID(ctx, state.Port.ValueString(), &resp.Diagnostics)
@@ -292,8 +297,15 @@ func (r *macLimitResource) Delete(ctx context.Context, req resource.DeleteReques
 	err := r.client.SetMACLimit(ctx, portID, false, nil)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Client Error",
+			"Error Deleting MAC Limit",
 			fmt.Sprintf("Failed to disable MAC limit for port '%s' (ID: %d): %s", state.Port.ValueString(), portID, err),
 		)
 	}
+}
+
+// ImportState imports an existing MAC Limit resource by port name.
+func (r *macLimitResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing MAC limit", map[string]any{"id": req.ID})
+
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("port"), req.ID)...)
 }

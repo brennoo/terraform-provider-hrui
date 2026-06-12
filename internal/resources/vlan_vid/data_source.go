@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -50,21 +51,8 @@ func (d *vlanVIDDataSource) Schema(ctx context.Context, req datasource.SchemaReq
 }
 
 // Configure initializes the data source with the provided client from the provider.
-func (d *vlanVIDDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok || client == nil {
-		resp.Diagnostics.AddError(
-			"Missing HRUI Client",
-			"The client has not been properly initialized in the Configure method.",
-		)
-		return
-	}
-	// Assign the client to the data source struct for further use.
-	d.client = client
+func (d *vlanVIDDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Read queries the VLAN configuration for the specified port.
@@ -93,7 +81,7 @@ func (d *vlanVIDDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	configs, err := d.client.ListPortVLANConfigs(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error fetching VLAN configuration",
+			"Error Reading VLAN VID",
 			fmt.Sprintf("Could not fetch VLAN configuration: %s", err.Error()),
 		)
 		return

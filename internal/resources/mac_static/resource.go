@@ -3,17 +3,23 @@ package mac_static
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure implementation satisfies the resource.Resource interface.
 var (
-	_ resource.Resource              = &macStaticResource{}
-	_ resource.ResourceWithConfigure = &macStaticResource{}
+	_ resource.Resource                = &macStaticResource{}
+	_ resource.ResourceWithConfigure   = &macStaticResource{}
+	_ resource.ResourceWithImportState = &macStaticResource{}
 )
 
 // macStaticResource manages static MAC entries on the switch.
@@ -53,15 +59,8 @@ func (r *macStaticResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 }
 
 // Configure assigns the SDK client from provider configuration.
-func (r *macStaticResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData != nil {
-		client, ok := req.ProviderData.(*sdk.HRUIClient)
-		if !ok {
-			resp.Diagnostics.AddError("Unexpected Provider Data", "Expected *sdk.HRUIClient")
-			return
-		}
-		r.client = client
-	}
+func (r *macStaticResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Create a new static MAC entry.
@@ -74,16 +73,20 @@ func (r *macStaticResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
+	tflog.Debug(ctx, "Creating static MAC entry", map[string]any{"mac_address": data.MACAddress.ValueString()})
+
 	// Use the SDK to add the static MAC entry
 	err := r.client.AddStaticMACEntry(ctx, data.MACAddress.ValueString(), int(data.VLANID.ValueInt64()), data.Port.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to create static MAC entry", err.Error())
+		resp.Diagnostics.AddError("Error Creating Static MAC Entry", err.Error())
 		return
 	}
 
 	// Save the state
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Static MAC entry created", map[string]any{"mac_address": data.MACAddress.ValueString()})
 }
 
 // Read retrieves the static MAC entry from the device.
@@ -96,6 +99,8 @@ func (r *macStaticResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
+	tflog.Debug(ctx, "Reading static MAC entry", map[string]any{"mac_address": state.MACAddress.ValueString()})
+
 	// Use MAC address and VLAN ID directly from state
 	macAddress := state.MACAddress.ValueString()
 	vlanIDStr := fmt.Sprintf("%d", state.VLANID.ValueInt64())
@@ -103,7 +108,7 @@ func (r *macStaticResource) Read(ctx context.Context, req resource.ReadRequest, 
 	// Fetch current MAC table from the SDK
 	macTable, err := r.client.GetStaticMACAddressTable(ctx)
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to fetch static MAC table", err.Error())
+		resp.Diagnostics.AddError("Error Reading Static MAC Entry", err.Error())
 		return
 	}
 
@@ -117,6 +122,8 @@ func (r *macStaticResource) Read(ctx context.Context, req resource.ReadRequest, 
 			// Update the state
 			diags = resp.State.Set(ctx, &state)
 			resp.Diagnostics.Append(diags...)
+
+			tflog.Debug(ctx, "Static MAC entry read", map[string]any{"mac_address": state.MACAddress.ValueString()})
 			return
 		}
 	}
@@ -143,6 +150,8 @@ func (r *macStaticResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
+	tflog.Debug(ctx, "Updating static MAC entry", map[string]any{"mac_address": plan.MACAddress.ValueString()})
+
 	// Check if attributes have changed
 	if state.MACAddress.ValueString() != plan.MACAddress.ValueString() ||
 		state.VLANID.ValueInt64() != plan.VLANID.ValueInt64() ||
@@ -155,14 +164,14 @@ func (r *macStaticResource) Update(ctx context.Context, req resource.UpdateReque
 			},
 		})
 		if err != nil {
-			resp.Diagnostics.AddError("Failed to delete old static MAC entry", err.Error())
+			resp.Diagnostics.AddError("Error Updating Static MAC Entry", err.Error())
 			return
 		}
 
 		// Add the updated entry
 		err = r.client.AddStaticMACEntry(ctx, plan.MACAddress.ValueString(), int(plan.VLANID.ValueInt64()), plan.Port.ValueString())
 		if err != nil {
-			resp.Diagnostics.AddError("Failed to create updated static MAC entry", err.Error())
+			resp.Diagnostics.AddError("Error Updating Static MAC Entry", err.Error())
 			return
 		}
 	}
@@ -170,6 +179,8 @@ func (r *macStaticResource) Update(ctx context.Context, req resource.UpdateReque
 	// Save the updated state
 	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Static MAC entry updated", map[string]any{"mac_address": plan.MACAddress.ValueString()})
 }
 
 // Delete removes a static MAC entry using the SDK.
@@ -182,6 +193,8 @@ func (r *macStaticResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
+	tflog.Debug(ctx, "Deleting static MAC entry", map[string]any{"mac_address": state.MACAddress.ValueString()})
+
 	// Use the SDK to delete the static MAC entry
 	entry := sdk.StaticMACEntry{
 		MACAddress: state.MACAddress.ValueString(),
@@ -189,6 +202,24 @@ func (r *macStaticResource) Delete(ctx context.Context, req resource.DeleteReque
 	}
 	err := r.client.RemoveStaticMACEntries(ctx, []sdk.StaticMACEntry{entry})
 	if err != nil {
-		resp.Diagnostics.AddError("Failed to delete static MAC entry", err.Error())
+		resp.Diagnostics.AddError("Error Deleting Static MAC Entry", err.Error())
 	}
+}
+
+// ImportState imports an existing Static MAC Entry resource by mac_address/vlan_id composite ID.
+func (r *macStaticResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing static MAC entry", map[string]any{"id": req.ID})
+
+	parts := strings.SplitN(req.ID, "/", 2)
+	if len(parts) != 2 {
+		resp.Diagnostics.AddError("Error Importing Static MAC Entry", `Expected import ID format: "<mac_address>/<vlan_id>"`)
+		return
+	}
+	vlanID, err := strconv.ParseInt(parts[1], 10, 64)
+	if err != nil {
+		resp.Diagnostics.AddError("Error Importing Static MAC Entry", fmt.Sprintf("Invalid VLAN ID %q: %s", parts[1], err))
+		return
+	}
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("mac_address"), parts[0])...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("vlan_id"), types.Int64Value(vlanID))...)
 }

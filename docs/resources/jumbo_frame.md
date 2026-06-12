@@ -27,4 +27,11 @@ resource "hrui_jumbo_frame" "example" {
 
 - `size` (Number) Size of the Jumbo Frame in bytes. Valid options are 1522, 1536, 1552, 9216, and 16383.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Jumbo Frame settings are a singleton — any import ID works
+terraform import hrui_jumbo_frame.main placeholder
+```

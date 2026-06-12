@@ -34,4 +34,11 @@ resource "hrui_mac_limit" "example" {
 
 - `limit` (Number) The MAC limit value, between 0 and 4160. This is required when `enabled` is `true`.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using the port name as the ID
+terraform import hrui_mac_limit.example "Port 1"
+```

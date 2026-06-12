@@ -39,4 +39,11 @@ resource "stp_port" "example" {
 - `role` (String) Current role of the port in the STP topology (e.g., 'Designated', 'Root').
 - `state` (String) Reflects the current spanning-tree protocol (STP) state of the port (e.g., 'Forwarding', 'Blocked').
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using the port name as the ID
+terraform import hrui_stp_port.example "Port 1"
+```

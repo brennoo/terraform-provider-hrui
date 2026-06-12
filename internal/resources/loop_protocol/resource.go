@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -12,12 +13,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure the implementation satisfies the Terraform resource interfaces.
 var (
-	_ resource.Resource              = &loopProtocolResource{}
-	_ resource.ResourceWithConfigure = &loopProtocolResource{}
+	_ resource.Resource                = &loopProtocolResource{}
+	_ resource.ResourceWithConfigure   = &loopProtocolResource{}
+	_ resource.ResourceWithImportState = &loopProtocolResource{}
 )
 
 // loopProtocolResource implements the resource for Loop Protocol configuration.
@@ -120,24 +123,13 @@ func (m *clearTimingIfIrrelevant) PlanModifyInt64(ctx context.Context, req planm
 
 // Configure sets the SDK client for the resource.
 func (r *loopProtocolResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *sdk.HRUIClient. Got: %T. Please contact the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = client
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Create provisions or initializes the resource with the specified settings.
 func (r *loopProtocolResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	tflog.Debug(ctx, "Creating loop protocol settings")
+
 	var plan loopProtocolModel
 
 	diags := req.Plan.Get(ctx, &plan)
@@ -189,10 +181,14 @@ func (r *loopProtocolResource) Create(ctx context.Context, req resource.CreateRe
 	// Set the state based on what was read from the device
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Loop protocol settings created")
 }
 
 // Read synchronizes the Terraform state with current API schema settings.
 func (r *loopProtocolResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	tflog.Debug(ctx, "Reading loop protocol settings")
+
 	var state loopProtocolModel
 
 	diags := req.State.Get(ctx, &state)
@@ -220,10 +216,14 @@ func (r *loopProtocolResource) Read(ctx context.Context, req resource.ReadReques
 
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Loop protocol settings read")
 }
 
 // Update modifies the existing resource configuration.
 func (r *loopProtocolResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	tflog.Debug(ctx, "Updating loop protocol settings")
+
 	var plan loopProtocolModel
 
 	diags := req.Plan.Get(ctx, &plan)
@@ -275,10 +275,14 @@ func (r *loopProtocolResource) Update(ctx context.Context, req resource.UpdateRe
 	// Update the state to match what was read from the device
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Loop protocol settings updated")
 }
 
 // Delete deactivates the protocol and removes the resource from state.
 func (r *loopProtocolResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	tflog.Debug(ctx, "Deleting loop protocol settings")
+
 	// Use an empty slice since port statuses are not handled.
 	portStatuses := []sdk.PortStatus{}
 
@@ -290,4 +294,26 @@ func (r *loopProtocolResource) Delete(ctx context.Context, req resource.DeleteRe
 
 	// Remove resource from Terraform state.
 	resp.State.RemoveResource(ctx)
+}
+
+// ImportState imports an existing Loop Protocol resource by fetching the current state.
+func (r *loopProtocolResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing loop protocol settings", map[string]any{"id": req.ID})
+
+	loopProtocol, err := r.client.GetLoopProtocol(ctx)
+	if err != nil {
+		resp.Diagnostics.AddError("Error Importing Loop Protocol", fmt.Sprintf("Unable to import loop protocol settings: %s", err))
+		return
+	}
+	state := loopProtocolModel{
+		LoopFunction: types.StringValue(loopProtocol.LoopFunction),
+	}
+	if isTimingRelevant(loopProtocol.LoopFunction) {
+		state.IntervalTime = types.Int64Value(int64(loopProtocol.IntervalTime))
+		state.RecoverTime = types.Int64Value(int64(loopProtocol.RecoverTime))
+	} else {
+		state.IntervalTime = types.Int64Null()
+		state.RecoverTime = types.Int64Null()
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

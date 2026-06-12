@@ -29,4 +29,11 @@ resource "hrui_port_isolation" "example" {
 - `isolation_list` (List of String) List of isolated ports for the specified port.
 - `port` (String) The port name for which isolation will be configured. Acts as an implicit identifier.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using the port name as the ID
+terraform import hrui_port_isolation.example "Port 1"
+```

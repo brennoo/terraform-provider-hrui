@@ -6,9 +6,21 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
+	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 )
+
+// ConfigureClient extracts *sdk.HRUIClient from ProviderData for use in resource/datasource Configure methods.
+// Returns nil without error when ProviderData is nil (framework calls Configure before the provider is ready
+// during planning/validation phases).
+//
+// Deprecated: Use providerutil.ConfigureClient directly. Resources and data sources must not import the provider
+// package due to the import cycle it creates.
+func ConfigureClient(providerData any, diags *diag.Diagnostics) *sdk.HRUIClient {
+	return providerutil.ConfigureClient(providerData, diags)
+}
 
 // Configure sets up the client and prepares the provider with credentials, URLs, and optional configuration overrides.
 func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {

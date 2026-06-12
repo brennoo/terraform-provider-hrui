@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -71,22 +72,8 @@ func (d *portSettingDataSource) Schema(ctx context.Context, req datasource.Schem
 }
 
 // Configure assigns the provider-configured client to the data source.
-func (d *portSettingDataSource) Configure(ctx context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok || client == nil {
-		resp.Diagnostics.AddError(
-			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *sdk.HRUIClient, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-
-	// Assign the client to the data source
-	d.client = client
+func (d *portSettingDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Metadata defines the schema type name.
@@ -115,7 +102,7 @@ func (d *portSettingDataSource) Read(ctx context.Context, req datasource.ReadReq
 	port, err := d.client.GetPort(ctx, data.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Client Error",
+			"Error Reading Port Settings",
 			fmt.Sprintf("Unable to read HRUI port settings, got error: %s", err),
 		)
 		return

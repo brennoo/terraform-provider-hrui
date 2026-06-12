@@ -5,14 +5,20 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure implementation satisfies the resource.Resource interface.
-var _ resource.Resource = &bandwidthControlResource{}
+var (
+	_ resource.Resource                = &bandwidthControlResource{}
+	_ resource.ResourceWithImportState = &bandwidthControlResource{}
+)
 
 // bandwidthControlResource is the implementation of the resource.
 type bandwidthControlResource struct {
@@ -52,14 +58,7 @@ func (r *bandwidthControlResource) Schema(_ context.Context, req resource.Schema
 
 // Configure assigns the SDK client from provider configuration.
 func (r *bandwidthControlResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData != nil {
-		client, ok := req.ProviderData.(*sdk.HRUIClient)
-		if !ok {
-			resp.Diagnostics.AddError("Unexpected Provider Data", "Expected *sdk.HRUIClient")
-			return
-		}
-		r.client = client
-	}
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Create sets bandwidth control on a port.
@@ -71,6 +70,8 @@ func (r *bandwidthControlResource) Create(ctx context.Context, req resource.Crea
 		return
 	}
 
+	tflog.Debug(ctx, "Creating bandwidth control", map[string]any{"port": data.Port.ValueString()})
+
 	// Configure ingress rate
 	if err := r.client.ConfigureBandwidthControl(ctx,
 		data.Port.ValueString(),
@@ -78,7 +79,7 @@ func (r *bandwidthControlResource) Create(ctx context.Context, req resource.Crea
 		true, // enable
 		normalizeRate(data.IngressRate.ValueString()),
 	); err != nil {
-		resp.Diagnostics.AddError("Failed to configure Ingress Bandwidth Control", err.Error())
+		resp.Diagnostics.AddError("Error Creating Bandwidth Control", err.Error())
 		return
 	}
 
@@ -89,7 +90,7 @@ func (r *bandwidthControlResource) Create(ctx context.Context, req resource.Crea
 		true,  // enable
 		normalizeRate(data.EgressRate.ValueString()),
 	); err != nil {
-		resp.Diagnostics.AddError("Failed to configure Egress Bandwidth Control", err.Error())
+		resp.Diagnostics.AddError("Error Creating Bandwidth Control", err.Error())
 		return
 	}
 
@@ -104,6 +105,8 @@ func (r *bandwidthControlResource) Create(ctx context.Context, req resource.Crea
 	// Save state
 	diags = resp.State.Set(ctx, &data)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Bandwidth control created", map[string]any{"port": data.Port.ValueString()})
 }
 
 // Read retrieves the current state for the resource.
@@ -115,10 +118,12 @@ func (r *bandwidthControlResource) Read(ctx context.Context, req resource.ReadRe
 		return
 	}
 
+	tflog.Debug(ctx, "Reading bandwidth control", map[string]any{"port": state.Port.ValueString()})
+
 	// Fetch all bandwidth control configurations
 	controls, err := r.client.GetBandwidthControl(ctx)
 	if err != nil {
-		resp.Diagnostics.AddError("Error fetching bandwidth control configurations", err.Error())
+		resp.Diagnostics.AddError("Error Reading Bandwidth Control", err.Error())
 		return
 	}
 
@@ -134,7 +139,7 @@ func (r *bandwidthControlResource) Read(ctx context.Context, req resource.ReadRe
 	// If no matching port was found, return an error
 	if foundConfig.Port == "" {
 		resp.Diagnostics.AddError(
-			"Port not found",
+			"Error Reading Bandwidth Control",
 			fmt.Sprintf("Could not find port '%s' in bandwidth control table", state.Port.ValueString()),
 		)
 		return
@@ -156,6 +161,8 @@ func (r *bandwidthControlResource) Read(ctx context.Context, req resource.ReadRe
 	// Save updated state
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Bandwidth control read", map[string]any{"port": state.Port.ValueString()})
 }
 
 // Update modifies bandwidth control settings.
@@ -167,6 +174,8 @@ func (r *bandwidthControlResource) Update(ctx context.Context, req resource.Upda
 		return
 	}
 
+	tflog.Debug(ctx, "Updating bandwidth control", map[string]any{"port": plan.Port.ValueString()})
+
 	// Update ingress rate
 	if err := r.client.ConfigureBandwidthControl(ctx,
 		plan.Port.ValueString(),
@@ -174,7 +183,7 @@ func (r *bandwidthControlResource) Update(ctx context.Context, req resource.Upda
 		true, // enable
 		normalizeRate(plan.IngressRate.ValueString()),
 	); err != nil {
-		resp.Diagnostics.AddError("Failed to update Ingress Bandwidth Control", err.Error())
+		resp.Diagnostics.AddError("Error Updating Bandwidth Control", err.Error())
 		return
 	}
 
@@ -185,7 +194,7 @@ func (r *bandwidthControlResource) Update(ctx context.Context, req resource.Upda
 		true,  // enable
 		normalizeRate(plan.EgressRate.ValueString()),
 	); err != nil {
-		resp.Diagnostics.AddError("Failed to update Egress Bandwidth Control", err.Error())
+		resp.Diagnostics.AddError("Error Updating Bandwidth Control", err.Error())
 		return
 	}
 
@@ -200,6 +209,8 @@ func (r *bandwidthControlResource) Update(ctx context.Context, req resource.Upda
 	// Save state
 	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "Bandwidth control updated", map[string]any{"port": plan.Port.ValueString()})
 }
 
 // Delete disables bandwidth control on a port.
@@ -211,6 +222,8 @@ func (r *bandwidthControlResource) Delete(ctx context.Context, req resource.Dele
 		return
 	}
 
+	tflog.Debug(ctx, "Deleting bandwidth control", map[string]any{"port": state.Port.ValueString()})
+
 	// Disable ingress rate
 	if err := r.client.ConfigureBandwidthControl(ctx,
 		state.Port.ValueString(),
@@ -218,7 +231,7 @@ func (r *bandwidthControlResource) Delete(ctx context.Context, req resource.Dele
 		false, // disable
 		"0",   // reset rate to 0
 	); err != nil {
-		resp.Diagnostics.AddError("Failed to disable Ingress Bandwidth Control", err.Error())
+		resp.Diagnostics.AddError("Error Deleting Bandwidth Control", err.Error())
 		return
 	}
 
@@ -229,7 +242,7 @@ func (r *bandwidthControlResource) Delete(ctx context.Context, req resource.Dele
 		false, // disable
 		"0",   // reset rate to 0
 	); err != nil {
-		resp.Diagnostics.AddError("Failed to disable Egress Bandwidth Control", err.Error())
+		resp.Diagnostics.AddError("Error Deleting Bandwidth Control", err.Error())
 		return
 	}
 }
@@ -242,4 +255,11 @@ func normalizeRate(rate string) string {
 		return "Unlimited"
 	}
 	return rate
+}
+
+// ImportState imports an existing Bandwidth Control resource by port name.
+func (r *bandwidthControlResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing bandwidth control", map[string]any{"id": req.ID})
+
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("port"), req.ID)...)
 }

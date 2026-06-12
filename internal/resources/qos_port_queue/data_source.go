@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -49,10 +50,8 @@ func (d *qosPortQueueDataSource) Schema(_ context.Context, _ datasource.SchemaRe
 }
 
 // Configure adds the provider configured client to the data source.
-func (d *qosPortQueueDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, _ *datasource.ConfigureResponse) {
-	if req.ProviderData != nil {
-		d.client = req.ProviderData.(*sdk.HRUIClient)
-	}
+func (d *qosPortQueueDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+	d.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Read fetches the latest data for the QoS Port Queue data source.
@@ -76,14 +75,14 @@ func (d *qosPortQueueDataSource) Read(ctx context.Context, req datasource.ReadRe
 	// Resolve the port name to its numeric port ID
 	portID, err := d.client.GetPortByName(ctx, portName)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to resolve port name '%s' to a port ID: %s", portName, err))
+		resp.Diagnostics.AddError("Error Reading QoS Port Queue", fmt.Sprintf("Unable to resolve port name '%s' to a port ID: %s", portName, err))
 		return
 	}
 
 	// Fetch the QoS Port Queue data for the resolved port ID.
 	portQueue, err := d.client.GetQoSPortQueue(ctx, portID)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to fetch QoS Port Queue for port '%s': %s", portName, err))
+		resp.Diagnostics.AddError("Error Reading QoS Port Queue", fmt.Sprintf("Unable to fetch QoS Port Queue for port '%s': %s", portName, err))
 		return
 	}
 

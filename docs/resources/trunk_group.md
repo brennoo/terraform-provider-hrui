@@ -31,4 +31,11 @@ resource "hrui_trunk_group" "example" {
 - `ports` (List of Number) List of ports in the trunk group (1-indexed: Port 1 = 1, Port 2 = 2, etc.).
 - `type` (String) Type of the trunk group ('static' or 'LACP').
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using the numeric trunk group ID
+terraform import hrui_trunk_group.example 1
+```

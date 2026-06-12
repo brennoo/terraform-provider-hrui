@@ -5,16 +5,19 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure that the hruiSTPGlobal implements the Terraform resource interface.
 var (
-	_ resource.Resource              = &stpGlobalResource{}
-	_ resource.ResourceWithConfigure = &stpGlobalResource{}
+	_ resource.Resource                = &stpGlobalResource{}
+	_ resource.ResourceWithConfigure   = &stpGlobalResource{}
+	_ resource.ResourceWithImportState = &stpGlobalResource{}
 )
 
 // stpGlobalResource implements the resource for STP Global configuration.
@@ -50,7 +53,7 @@ func (r *stpGlobalResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 				Required:    true,
 			},
 			"max_age": schema.Int64Attribute{
-				Description: "Maximum age for STP information before it’s discarded (in seconds).",
+				Description: "Maximum age for STP information before it's discarded (in seconds).",
 				Required:    true,
 			},
 			"hello_time": schema.Int64Attribute{
@@ -79,24 +82,13 @@ func (r *stpGlobalResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 
 // Configure binds the provider's client to this resource.
 func (r *stpGlobalResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *sdk.HRUIClient but got %T. Please report this issue.", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = client
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Create provisions the STP Global settings using the provider.
 func (r *stpGlobalResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
+	tflog.Debug(ctx, "Creating STP global settings")
+
 	// Extract the desired configuration from the Terraform plan
 	var plan stpGlobalModel
 	diags := req.Plan.Get(ctx, &plan)
@@ -118,7 +110,7 @@ func (r *stpGlobalResource) Create(ctx context.Context, req resource.CreateReque
 	err := r.client.SetSTPSettingsAsync(ctx, &stpSettings)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Failed to Update STP Settings",
+			"Error Creating STP Global",
 			fmt.Sprintf("An error occurred while updating the STP settings: %v", err),
 		)
 		return
@@ -131,7 +123,7 @@ func (r *stpGlobalResource) Create(ctx context.Context, req resource.CreateReque
 	stpFromBackend, err := r.client.GetSTPSettings(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Failed to Read STP Settings",
+			"Error Reading STP Global",
 			fmt.Sprintf("An error occurred while reading the STP settings from the backend: %v", err),
 		)
 		return
@@ -154,10 +146,14 @@ func (r *stpGlobalResource) Create(ctx context.Context, req resource.CreateReque
 	// Save the state back to Terraform
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "STP global settings created")
 }
 
 // Read fetches the current state for hrui_stp_global.
 func (r *stpGlobalResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
+	tflog.Debug(ctx, "Reading STP global settings")
+
 	var state stpGlobalModel
 
 	// Retrieve the current state
@@ -171,7 +167,7 @@ func (r *stpGlobalResource) Read(ctx context.Context, req resource.ReadRequest, 
 	stpFromBackend, err := r.client.GetSTPSettings(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error Reading STP Settings",
+			"Error Reading STP Global",
 			fmt.Sprintf("Could not retrieve STP settings from the backend: %v", err),
 		)
 		return
@@ -193,10 +189,14 @@ func (r *stpGlobalResource) Read(ctx context.Context, req resource.ReadRequest, 
 	// Save the state back to Terraform
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "STP global settings read")
 }
 
 // Update modifies the STP global settings.
 func (r *stpGlobalResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
+	tflog.Debug(ctx, "Updating STP global settings")
+
 	// Extract the desired plan from the Terraform configuration
 	var plan stpGlobalModel
 	diags := req.Plan.Get(ctx, &plan)
@@ -218,7 +218,7 @@ func (r *stpGlobalResource) Update(ctx context.Context, req resource.UpdateReque
 	err := r.client.SetSTPSettingsAsync(ctx, &stpSettings)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Failed to Update STP Settings",
+			"Error Updating STP Global",
 			fmt.Sprintf("An error occurred while updating STP settings: %v", err),
 		)
 		return
@@ -231,7 +231,7 @@ func (r *stpGlobalResource) Update(ctx context.Context, req resource.UpdateReque
 	stpFromBackend, err := r.client.GetSTPSettings(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Failed to Read Updated STP Settings",
+			"Error Reading STP Global",
 			fmt.Sprintf("An error occurred while reading the updated STP settings from the backend: %v", err),
 		)
 		return
@@ -254,19 +254,46 @@ func (r *stpGlobalResource) Update(ctx context.Context, req resource.UpdateReque
 	// Save the state back to Terraform
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "STP global settings updated")
 }
 
 // Delete disables STP by setting STPStatus to "Disable" and clears state.
 func (r *stpGlobalResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	tflog.Debug(ctx, "Deleting STP global settings")
+
 	stpSettings := sdk.STPGlobalSettings{
 		STPStatus: "Disable",
 	}
 
 	err := r.client.SetSTPSettingsAsync(ctx, &stpSettings)
 	if err != nil {
-		resp.Diagnostics.AddError("Error Deleting STP Global Resource", fmt.Sprintf("Unable to delete STP Global Resource: %s", err))
+		resp.Diagnostics.AddError("Error Deleting STP Global", fmt.Sprintf("Unable to delete STP global settings: %s", err))
 	}
 
 	// Since there's no hard deletion, just remove the resource from state.
 	resp.State.RemoveResource(ctx)
+}
+
+// ImportState imports an existing STP Global resource by fetching the current state.
+func (r *stpGlobalResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing STP global settings", map[string]any{"id": req.ID})
+
+	stpFromBackend, err := r.client.GetSTPSettings(ctx)
+	if err != nil {
+		resp.Diagnostics.AddError("Error Importing STP Global Settings", fmt.Sprintf("Unable to import STP global settings: %s", err))
+		return
+	}
+	state := stpGlobalModel{
+		ForceVersion: types.StringValue(stpFromBackend.ForceVersion),
+		Priority:     types.Int64Value(int64(stpFromBackend.Priority)),
+		MaxAge:       types.Int64Value(int64(stpFromBackend.MaxAge)),
+		HelloTime:    types.Int64Value(int64(stpFromBackend.HelloTime)),
+		ForwardDelay: types.Int64Value(int64(stpFromBackend.ForwardDelay)),
+		STPStatus:    types.StringValue(stpFromBackend.STPStatus),
+		RootMAC:      types.StringValue(stpFromBackend.RootMAC),
+		RootPathCost: types.Int64Value(int64(stpFromBackend.RootPathCost)),
+		RootPort:     types.StringValue(stpFromBackend.RootPort),
+	}
+	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
 }

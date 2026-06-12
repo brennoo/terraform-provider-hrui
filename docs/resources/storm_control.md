@@ -36,4 +36,11 @@ resource "hrui_storm_control" "example" {
 
 - `rate` (Number) The maximum rate (in kbps) for storm control traffic. Valid values are greater than 0 and less than the maximum rate.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using "<port>/<storm_type>" as the ID
+terraform import hrui_storm_control.example "Port 1/Broadcast"
+```

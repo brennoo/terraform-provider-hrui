@@ -40,4 +40,11 @@ resource "hrui_vlan_8021q" "example" {
 
 - `member_ports` (List of String) The list of all ports assigned to the VLAN.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using the numeric VLAN ID
+terraform import hrui_vlan_8021q.example 100
+```

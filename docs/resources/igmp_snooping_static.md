@@ -29,4 +29,11 @@ resource "hrui_igmp_snooping_static" "example" {
 - `enabled` (Boolean) Specifies whether IGMP snooping is enabled (true) or disabled (false) for the given port.
 - `port` (String) The port name for which IGMP snooping static configuration is managed.
 
+## Import
 
+Import is supported using the following syntax:
+
+```shell
+# Import using the port name as the ID
+terraform import hrui_igmp_snooping_static.example "Port 1"
+```

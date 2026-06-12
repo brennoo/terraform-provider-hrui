@@ -4,19 +4,23 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure the resource implements the Terraform interfaces.
 var (
-	_ resource.Resource              = &stpPortResource{}
-	_ resource.ResourceWithConfigure = &stpPortResource{}
+	_ resource.Resource                = &stpPortResource{}
+	_ resource.ResourceWithConfigure   = &stpPortResource{}
+	_ resource.ResourceWithImportState = &stpPortResource{}
 )
 
 type stpPortResource struct {
@@ -79,20 +83,7 @@ func (r *stpPortResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 
 // Configure sets up the client for the resource.
 func (r *stpPortResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *sdk.HRUIClient but got %T", req.ProviderData),
-		)
-		return
-	}
-
-	r.client = client
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Create provisions the STP port settings and synchronizes the Terraform state.
@@ -103,6 +94,8 @@ func (r *stpPortResource) Create(ctx context.Context, req resource.CreateRequest
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Creating STP port settings", map[string]any{"port": plan.Port.ValueString()})
 
 	err := r.client.SetSTPPortSettings(ctx,
 		plan.Port.ValueString(),
@@ -125,6 +118,8 @@ func (r *stpPortResource) Create(ctx context.Context, req resource.CreateRequest
 	// Update the state
 	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "STP port settings created", map[string]any{"port": plan.Port.ValueString()})
 }
 
 // Read fetches the current state of the STP port from the backend.
@@ -137,12 +132,16 @@ func (r *stpPortResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
+	tflog.Debug(ctx, "Reading STP port settings", map[string]any{"port": state.Port.ValueString()})
+
 	// Fetch and set the updated state
 	r.readPortState(ctx, state.Port.ValueString(), &state, &resp.Diagnostics)
 
 	// Write the updated state back to Terraform
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "STP port settings read", map[string]any{"port": state.Port.ValueString()})
 }
 
 // Update modifies the STP port settings in the backend.
@@ -153,6 +152,8 @@ func (r *stpPortResource) Update(ctx context.Context, req resource.UpdateRequest
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Updating STP port settings", map[string]any{"port": plan.Port.ValueString()})
 
 	err := r.client.SetSTPPortSettings(ctx,
 		plan.Port.ValueString(),
@@ -175,6 +176,8 @@ func (r *stpPortResource) Update(ctx context.Context, req resource.UpdateRequest
 	// Update the state
 	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "STP port settings updated", map[string]any{"port": plan.Port.ValueString()})
 }
 
 // Delete resets the STP port settings and removes the resource from the state.
@@ -186,6 +189,8 @@ func (r *stpPortResource) Delete(ctx context.Context, req resource.DeleteRequest
 		return
 	}
 
+	tflog.Debug(ctx, "Deleting STP port settings", map[string]any{"port": state.Port.ValueString()})
+
 	err := r.client.SetSTPPortSettings(ctx,
 		state.Port.ValueString(),
 		20000, // Default path cost
@@ -195,13 +200,20 @@ func (r *stpPortResource) Delete(ctx context.Context, req resource.DeleteRequest
 	)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error Resetting STP Port",
+			"Error Deleting STP Port",
 			fmt.Sprintf("Failed to reset STP settings for port %s: %v", state.Port.ValueString(), err),
 		)
 		return
 	}
 
 	resp.State.RemoveResource(ctx)
+}
+
+// ImportState imports an existing STP Port resource by port name.
+func (r *stpPortResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing STP port settings", map[string]any{"id": req.ID})
+
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("port"), req.ID)...)
 }
 
 // Helper function to fetch the port state and set it in the model.

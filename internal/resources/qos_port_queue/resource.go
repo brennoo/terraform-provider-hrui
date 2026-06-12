@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -11,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 var (
@@ -55,20 +57,8 @@ func (r *qosPortQueueResource) Schema(ctx context.Context, req resource.SchemaRe
 }
 
 // Configure sets up the client for the resource.
-func (r *qosPortQueueResource) Configure(ctx context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *sdk.HRUIClient, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-		return
-	}
-	r.client = client
+func (r *qosPortQueueResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Create creates a new QoS Port Queue resource.
@@ -80,6 +70,8 @@ func (r *qosPortQueueResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
+	tflog.Debug(ctx, "Creating QoS port queue", map[string]any{"port": plan.Port.ValueString()})
+
 	// Validate queue value (valid range is 1-8)
 	queueValue := int(plan.Queue.ValueInt64())
 	if queueValue < 1 || queueValue > 8 {
@@ -93,18 +85,20 @@ func (r *qosPortQueueResource) Create(ctx context.Context, req resource.CreateRe
 	// Map the port name to its numeric ID.
 	portID, err := r.client.GetPortByName(ctx, plan.Port.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Could not resolve port name '%s' to ID: %s", plan.Port.ValueString(), err))
+		resp.Diagnostics.AddError("Error Creating QoS Port Queue", fmt.Sprintf("Could not resolve port name '%s' to ID: %s", plan.Port.ValueString(), err))
 		return
 	}
 
 	// Configure the QoS queue for the resolved port ID.
 	err = r.client.SetQoSPortQueue(ctx, portID, queueValue)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to create QoS Port Queue: %s", err))
+		resp.Diagnostics.AddError("Error Creating QoS Port Queue", fmt.Sprintf("Unable to create QoS Port Queue: %s", err))
 		return
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+
+	tflog.Debug(ctx, "QoS port queue created", map[string]any{"port": plan.Port.ValueString()})
 }
 
 // Update updates the QoS Port Queue resource.
@@ -116,6 +110,8 @@ func (r *qosPortQueueResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
+	tflog.Debug(ctx, "Updating QoS port queue", map[string]any{"port": plan.Port.ValueString()})
+
 	// Validate queue value (valid range is 1-8)
 	queueValue := int(plan.Queue.ValueInt64())
 	if queueValue < 1 || queueValue > 8 {
@@ -129,19 +125,21 @@ func (r *qosPortQueueResource) Update(ctx context.Context, req resource.UpdateRe
 	// Map the port name to its numeric ID.
 	portID, err := r.client.GetPortByName(ctx, plan.Port.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Could not resolve port name '%s' to ID: %s", plan.Port.ValueString(), err))
+		resp.Diagnostics.AddError("Error Updating QoS Port Queue", fmt.Sprintf("Could not resolve port name '%s' to ID: %s", plan.Port.ValueString(), err))
 		return
 	}
 
 	// Update the QoS queue for the resolved port ID.
 	err = r.client.SetQoSPortQueue(ctx, portID, queueValue)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update QoS Port Queue: %s", err))
+		resp.Diagnostics.AddError("Error Updating QoS Port Queue", fmt.Sprintf("Unable to update QoS Port Queue: %s", err))
 		return
 	}
 
 	// Save the updated state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
+
+	tflog.Debug(ctx, "QoS port queue updated", map[string]any{"port": plan.Port.ValueString()})
 }
 
 // Read refreshes the state of the QoS Port Queue resource.
@@ -153,23 +151,27 @@ func (r *qosPortQueueResource) Read(ctx context.Context, req resource.ReadReques
 		return
 	}
 
+	tflog.Debug(ctx, "Reading QoS port queue", map[string]any{"port": state.Port.ValueString()})
+
 	// Map the port name to its numeric ID.
 	portID, err := r.client.GetPortByName(ctx, state.Port.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Could not resolve port name '%s' to ID: %s", state.Port.ValueString(), err))
+		resp.Diagnostics.AddError("Error Reading QoS Port Queue", fmt.Sprintf("Could not resolve port name '%s' to ID: %s", state.Port.ValueString(), err))
 		return
 	}
 
 	// Query the current QoS queue for the resolved port ID.
 	portQueue, err := r.client.GetQoSPortQueue(ctx, portID)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to fetch QoS Port Queue for port '%s': %s", state.Port.ValueString(), err))
+		resp.Diagnostics.AddError("Error Reading QoS Port Queue", fmt.Sprintf("Unable to fetch QoS Port Queue for port '%s': %s", state.Port.ValueString(), err))
 		return
 	}
 
 	// Update the state with the fetched queue value.
 	state.Queue = types.Int64Value(int64(portQueue.Queue))
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+
+	tflog.Debug(ctx, "QoS port queue read", map[string]any{"port": state.Port.ValueString()})
 }
 
 // Delete resets the QoS Port Queue resource to its default state.
@@ -181,17 +183,19 @@ func (r *qosPortQueueResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
+	tflog.Debug(ctx, "Deleting QoS port queue", map[string]any{"port": state.Port.ValueString()})
+
 	// Map the port name to its numeric ID.
 	portID, err := r.client.GetPortByName(ctx, state.Port.ValueString())
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Could not resolve port name '%s' to ID: %s", state.Port.ValueString(), err))
+		resp.Diagnostics.AddError("Error Deleting QoS Port Queue", fmt.Sprintf("Could not resolve port name '%s' to ID: %s", state.Port.ValueString(), err))
 		return
 	}
 
 	// Reset the QoS queue to its default value (e.g., 1).
 	err = r.client.SetQoSPortQueue(ctx, portID, 1)
 	if err != nil {
-		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to reset QoS Port Queue for port '%s': %s", state.Port.ValueString(), err))
+		resp.Diagnostics.AddError("Error Deleting QoS Port Queue", fmt.Sprintf("Unable to reset QoS Port Queue for port '%s': %s", state.Port.ValueString(), err))
 		return
 	}
 
@@ -201,6 +205,8 @@ func (r *qosPortQueueResource) Delete(ctx context.Context, req resource.DeleteRe
 
 // ImportState imports the resource state.
 func (r *qosPortQueueResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing QoS port queue", map[string]any{"id": req.ID})
+
 	port := req.ID
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("port"), port)...)
 }

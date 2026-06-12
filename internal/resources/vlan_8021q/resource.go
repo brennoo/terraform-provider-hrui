@@ -3,20 +3,25 @@ package vlan_8021q
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 )
 
 var (
-	_ resource.Resource              = &vlan8021qResource{}
-	_ resource.ResourceWithConfigure = &vlan8021qResource{}
+	_ resource.Resource                = &vlan8021qResource{}
+	_ resource.ResourceWithConfigure   = &vlan8021qResource{}
+	_ resource.ResourceWithImportState = &vlan8021qResource{}
 )
 
 // vlan8021qResource defines the VLAN resource using *sdk.HRUIClient.
@@ -68,17 +73,7 @@ func (r *vlan8021qResource) Schema(_ context.Context, _ resource.SchemaRequest, 
 }
 
 func (r *vlan8021qResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-	if !ok {
-		resp.Diagnostics.AddError("Unexpected Resource Configure Type", fmt.Sprintf("Expected *sdk.HRUIClient, got: %T", req.ProviderData))
-		return
-	}
-
-	r.client = client
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 func extractStringList(ctx context.Context, list types.List) ([]string, diag.Diagnostics) {
@@ -101,6 +96,8 @@ func (r *vlan8021qResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
+	tflog.Debug(ctx, "Creating VLAN", map[string]any{"vlan_id": model.VlanID.ValueInt64()})
+
 	// Extract the untagged and tagged ports from the model
 	untaggedPorts, diags := extractStringList(ctx, model.UntaggedPorts)
 	resp.Diagnostics.Append(diags...)
@@ -118,7 +115,7 @@ func (r *vlan8021qResource) Create(ctx context.Context, req resource.CreateReque
 	}
 
 	if err := r.client.AddVLAN(ctx, vlan); err != nil {
-		resp.Diagnostics.AddError("Error creating VLAN", fmt.Sprintf("Failed to create VLAN: %s", err))
+		resp.Diagnostics.AddError("Error Creating VLAN", fmt.Sprintf("Failed to create VLAN: %s", err))
 		return
 	}
 
@@ -127,6 +124,8 @@ func (r *vlan8021qResource) Create(ctx context.Context, req resource.CreateReque
 
 	diags = resp.State.Set(ctx, &model)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "VLAN created", map[string]any{"vlan_id": model.VlanID.ValueInt64()})
 }
 
 func (r *vlan8021qResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -138,9 +137,11 @@ func (r *vlan8021qResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
+	tflog.Debug(ctx, "Reading VLAN", map[string]any{"vlan_id": state.VlanID.ValueInt64()})
+
 	vlan, err := r.client.GetVLAN(ctx, int(state.VlanID.ValueInt64()))
 	if err != nil {
-		resp.Diagnostics.AddError("Error reading VLAN", fmt.Sprintf("Could not read VLAN ID %d: %s", state.VlanID.ValueInt64(), err))
+		resp.Diagnostics.AddError("Error Reading VLAN", fmt.Sprintf("Could not read VLAN ID %d: %s", state.VlanID.ValueInt64(), err))
 		return
 	}
 
@@ -157,6 +158,8 @@ func (r *vlan8021qResource) Read(ctx context.Context, req resource.ReadRequest, 
 	resp.Diagnostics.Append(diags...)
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+
+	tflog.Debug(ctx, "VLAN read", map[string]any{"vlan_id": state.VlanID.ValueInt64()})
 }
 
 func (r *vlan8021qResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -167,6 +170,8 @@ func (r *vlan8021qResource) Update(ctx context.Context, req resource.UpdateReque
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	tflog.Debug(ctx, "Updating VLAN", map[string]any{"vlan_id": plan.VlanID.ValueInt64()})
 
 	// Extract port lists (now using string type instead of int)
 	untaggedPorts, diags := extractStringList(ctx, plan.UntaggedPorts)
@@ -194,14 +199,14 @@ func (r *vlan8021qResource) Update(ctx context.Context, req resource.UpdateReque
 	}
 
 	if err := r.client.AddVLAN(ctx, vlan); err != nil {
-		resp.Diagnostics.AddError("Error updating VLAN", fmt.Sprintf("Failed to update VLAN ID %d: %s", plan.VlanID.ValueInt64(), err))
+		resp.Diagnostics.AddError("Error Updating VLAN", fmt.Sprintf("Failed to update VLAN ID %d: %s", plan.VlanID.ValueInt64(), err))
 		return
 	}
 
 	// Read back from the device to ensure state matches what was actually applied
 	updatedVlan, err := r.client.GetVLAN(ctx, int(plan.VlanID.ValueInt64()))
 	if err != nil {
-		resp.Diagnostics.AddError("Error reading VLAN after update", fmt.Sprintf("Could not read VLAN ID %d after update: %s", plan.VlanID.ValueInt64(), err))
+		resp.Diagnostics.AddError("Error Reading VLAN", fmt.Sprintf("Could not read VLAN ID %d after update: %s", plan.VlanID.ValueInt64(), err))
 		return
 	}
 
@@ -226,6 +231,8 @@ func (r *vlan8021qResource) Update(ctx context.Context, req resource.UpdateReque
 
 	// Update Terraform state with the actual device state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)
+
+	tflog.Debug(ctx, "VLAN updated", map[string]any{"vlan_id": plan.VlanID.ValueInt64()})
 }
 
 func (r *vlan8021qResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -238,6 +245,8 @@ func (r *vlan8021qResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
+	tflog.Debug(ctx, "Deleting VLAN", map[string]any{"vlan_id": state.VlanID.ValueInt64()})
+
 	// Before deleting the VLAN, clear all port memberships to satisfy firmware requirements.
 	clearVLAN := &sdk.Vlan{
 		VlanID:        int(state.VlanID.ValueInt64()),
@@ -248,15 +257,27 @@ func (r *vlan8021qResource) Delete(ctx context.Context, req resource.DeleteReque
 	}
 
 	if err := r.client.AddVLAN(ctx, clearVLAN); err != nil {
-		resp.Diagnostics.AddError("Error clearing VLAN memberships", fmt.Sprintf("Failed to clear members for VLAN ID %d: %s", state.VlanID.ValueInt64(), err))
+		resp.Diagnostics.AddError("Error Deleting VLAN", fmt.Sprintf("Failed to clear members for VLAN ID %d: %s", state.VlanID.ValueInt64(), err))
 		return
 	}
 
 	// Delete the VLAN using the SDK
 	if err := r.client.RemoveVLAN(ctx, int(state.VlanID.ValueInt64())); err != nil {
-		resp.Diagnostics.AddError("Error deleting VLAN", fmt.Sprintf("Failed to delete VLAN ID %d: %s", state.VlanID.ValueInt64(), err))
+		resp.Diagnostics.AddError("Error Deleting VLAN", fmt.Sprintf("Failed to delete VLAN ID %d: %s", state.VlanID.ValueInt64(), err))
 		return
 	}
+}
+
+// ImportState imports an existing VLAN resource by numeric VLAN ID.
+func (r *vlan8021qResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing VLAN", map[string]any{"id": req.ID})
+
+	id, err := strconv.ParseInt(req.ID, 10, 64)
+	if err != nil {
+		resp.Diagnostics.AddError("Error Importing VLAN", fmt.Sprintf("Expected a numeric VLAN ID, got %q: %s", req.ID, err))
+		return
+	}
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("vlan_id"), types.Int64Value(id))...)
 }
 
 func mergeStringPorts(taggedPorts, untaggedPorts []string) []string {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -11,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -61,22 +63,7 @@ func (r *vlanVIDResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 
 // Configure adds the provider configured client to the resource.
 func (r *vlanVIDResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
-	if req.ProviderData == nil {
-		return
-	}
-
-	client, ok := req.ProviderData.(*sdk.HRUIClient)
-
-	if !ok {
-		resp.Diagnostics.AddError(
-			"Unexpected Resource Configure Type",
-			fmt.Sprintf("Expected *sdk.HRUIClient, got: %T. Please report this issue to the provider developers.", req.ProviderData),
-		)
-
-		return
-	}
-
-	r.client = client
+	r.client = providerutil.ConfigureClient(req.ProviderData, &resp.Diagnostics)
 }
 
 // Helper function to resolve PortID from Port Name.
@@ -132,10 +119,12 @@ func (r *vlanVIDResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
+	tflog.Debug(ctx, "Creating VLAN VID", map[string]any{"vlan_id": plan.VlanID.ValueInt64()})
+
 	portID, err := r.resolvePortID(ctx, plan.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error Resolving Port",
+			"Error Creating VLAN VID",
 			err.Error(),
 		)
 		return
@@ -150,7 +139,7 @@ func (r *vlanVIDResource) Create(ctx context.Context, req resource.CreateRequest
 	err = r.client.SetPortVLANConfig(ctx, portConfig)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error Creating VLAN VID Configuration",
+			"Error Creating VLAN VID",
 			"Failed to configure the port. Details: "+err.Error(),
 		)
 		return
@@ -158,6 +147,8 @@ func (r *vlanVIDResource) Create(ctx context.Context, req resource.CreateRequest
 
 	diags = resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "VLAN VID created", map[string]any{"vlan_id": plan.VlanID.ValueInt64()})
 }
 
 // Read refreshes the Terraform state with the latest data.
@@ -170,10 +161,12 @@ func (r *vlanVIDResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
+	tflog.Debug(ctx, "Reading VLAN VID", map[string]any{"vlan_id": state.VlanID.ValueInt64()})
+
 	portID, err := r.resolvePortID(ctx, state.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error Reading Port",
+			"Error Reading VLAN VID",
 			err.Error(),
 		)
 		return
@@ -182,7 +175,7 @@ func (r *vlanVIDResource) Read(ctx context.Context, req resource.ReadRequest, re
 	configs, err := r.client.ListPortVLANConfigs(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error Reading VLAN Configuration",
+			"Error Reading VLAN VID",
 			"Failed to retrieve port VLAN configurations. Details: "+err.Error(),
 		)
 		return
@@ -199,6 +192,8 @@ func (r *vlanVIDResource) Read(ctx context.Context, req resource.ReadRequest, re
 
 	diags = resp.State.Set(ctx, &state)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "VLAN VID read", map[string]any{"vlan_id": state.VlanID.ValueInt64()})
 }
 
 // Update updates the resource and sets the updated Terraform state on success.
@@ -211,10 +206,12 @@ func (r *vlanVIDResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
+	tflog.Debug(ctx, "Updating VLAN VID", map[string]any{"vlan_id": plan.VlanID.ValueInt64()})
+
 	portID, err := r.resolvePortID(ctx, plan.Port.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error Resolving Port",
+			"Error Updating VLAN VID",
 			err.Error(),
 		)
 		return
@@ -229,7 +226,7 @@ func (r *vlanVIDResource) Update(ctx context.Context, req resource.UpdateRequest
 	err = r.client.SetPortVLANConfig(ctx, portConfig)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Error Updating VLAN VID Configuration",
+			"Error Updating VLAN VID",
 			"Failed to update the port. Details: "+err.Error(),
 		)
 		return
@@ -237,6 +234,8 @@ func (r *vlanVIDResource) Update(ctx context.Context, req resource.UpdateRequest
 
 	diags = resp.State.Set(ctx, plan)
 	resp.Diagnostics.Append(diags...)
+
+	tflog.Debug(ctx, "VLAN VID updated", map[string]any{"vlan_id": plan.VlanID.ValueInt64()})
 }
 
 // Delete resets the port configuration to its default state (PVID = 1).
@@ -249,6 +248,8 @@ func (r *vlanVIDResource) Delete(ctx context.Context, req resource.DeleteRequest
 		return
 	}
 
+	tflog.Debug(ctx, "Deleting VLAN VID", map[string]any{"vlan_id": state.VlanID.ValueInt64()})
+
 	portName := state.Port.ValueString()
 
 	// Reset the port configuration to default (PVID = 1, AcceptFrameType = "All")
@@ -260,7 +261,7 @@ func (r *vlanVIDResource) Delete(ctx context.Context, req resource.DeleteRequest
 
 	if err := r.client.SetPortVLANConfig(ctx, portConfig); err != nil {
 		resp.Diagnostics.AddError(
-			"Error resetting VLAN VID configuration",
+			"Error Deleting VLAN VID",
 			"Could not reset VLAN VID configuration, unexpected error: "+err.Error(),
 		)
 	}
@@ -268,5 +269,7 @@ func (r *vlanVIDResource) Delete(ctx context.Context, req resource.DeleteRequest
 
 // ImportState imports an existing resource into Terraform.
 func (r *vlanVIDResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	tflog.Debug(ctx, "Importing VLAN VID", map[string]any{"id": req.ID})
+
 	resource.ImportStatePassthroughID(ctx, path.Root("port"), req, resp)
 }
