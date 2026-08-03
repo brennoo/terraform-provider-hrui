@@ -171,6 +171,11 @@ func (c *HRUIClient) Request(ctx context.Context, method, endpoint string, body 
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
+	// Some firmware revisions reject an authenticated request that carries no
+	// Referer, answering 404 to every CGI. Set before the caller's headers so an
+	// explicit Referer still wins.
+	req.Header.Set("Referer", strings.TrimSuffix(c.URL, "/")+"/")
+
 	// Set headers, if provided
 	for key, value := range headers {
 		req.Header.Set(key, value)
