@@ -25,6 +25,7 @@ This provider is developed using a Horaco (ZX-SWTG124AS) switch. Other brands th
 * Sodola
 * XikeStor
 * AmpCom
+* KeepLink
 
 > [!NOTE]
 > Supports firmware v1.9 and v1.9.1
@@ -38,7 +39,7 @@ This provider is developed using a Horaco (ZX-SWTG124AS) switch. Other brands th
       required_providers {
         hrui = {
           source  = "brennoo/hrui"
-          version = "= 0.1.2"
+          version = "= 0.1.4"
         }
       }
     }
