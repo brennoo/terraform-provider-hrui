@@ -32,7 +32,8 @@ jobs:
         timeout-minutes: 30
         run: go test -v -coverprofile=coverage.out -covermode=atomic -timeout 20m ./...
         continue-on-error: true
-      - name: Upload report to Codacy 
+      - name: Upload report to Codacy
+        if: ${{ secrets.CODACY_PROJECT_TOKEN != '' }}
         uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699 #v1.3.0
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
