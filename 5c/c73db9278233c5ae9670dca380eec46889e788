@@ -1,0 +1,16 @@
+internal/provider/provider_test_helper.go
+  h_c872c6f1ba48bc 84
+internal/sdk/client.go
+  h_c872c6f1ba48bc 83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5cc73db9278233c5ae9670dca380eec46889e788",
+  "prompts": {},
+  "humans": {
+    "h_c872c6f1ba48bc": {
+      "author": "Brenno Oliveira <brenno.oliveira@deliveryhero.com>"
+    }
+  }
+}
