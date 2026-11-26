@@ -80,6 +80,7 @@ func (c *HRUIClient) Login(ctx context.Context) error {
 	cookieValue := hex.EncodeToString(hash[:])
 
 	// Create authentication cookie
+	//#nosec G124 -- HRUI switches use plain HTTP, so Secure cannot be enabled
 	// nosemgrep cookie-missing-secure
 	authCookie := &http.Cookie{
 		Name:     "admin",
