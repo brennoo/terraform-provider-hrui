@@ -1,0 +1,18 @@
+.github/workflows/golangci.yml
+  h_c872c6f1ba48bc 23
+.golangci.yml
+  h_c872c6f1ba48bc 3
+go.mod
+  h_c872c6f1ba48bc 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "55d920b53ca69d5b4694b7891b9e56b84af833ae",
+  "prompts": {},
+  "humans": {
+    "h_c872c6f1ba48bc": {
+      "author": "Brenno Oliveira <brenno.oliveira@deliveryhero.com>"
+    }
+  }
+}
