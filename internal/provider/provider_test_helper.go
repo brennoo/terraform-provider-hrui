@@ -81,6 +81,7 @@ func newVCRClient(t *testing.T, cassetteName string) *http.Client {
 	switch vcrModeEnv {
 	case "record":
 		// Ensure the directory exists before recording
+		//#nosec G703 -- cassetteDir is constructed from test environment variable HRUI_FW_VERSION
 		if err := os.MkdirAll(cassetteDir, 0o750); err != nil {
 			t.Fatalf("Failed to create cassette directory %s: %v", cassetteDir, err)
 		}

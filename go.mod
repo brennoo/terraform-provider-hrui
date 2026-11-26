@@ -1,6 +1,6 @@
 module github.com/brennoo/terraform-provider-hrui
 
-go 1.25.8
+go 1.26.11
 
 require (
 	github.com/PuerkitoBio/goquery v1.13.0
