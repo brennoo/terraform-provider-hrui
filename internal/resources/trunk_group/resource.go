@@ -18,6 +18,29 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
+// getTrunkAfterWrite reads back a just-written trunk group, retrying briefly on
+// "trunk not found" since the device can take a moment to reflect a just-applied change.
+func getTrunkAfterWrite(ctx context.Context, client *sdk.HRUIClient, id int) (*sdk.TrunkConfig, error) {
+	const maxAttempts = 3
+	const retryDelay = 200 * time.Millisecond
+
+	var lastErr error
+	for attempt := 1; attempt <= maxAttempts; attempt++ {
+		trunkGroup, err := client.GetTrunk(ctx, id)
+		if err == nil {
+			return trunkGroup, nil
+		}
+		lastErr = err
+		if !strings.Contains(err.Error(), "trunk not found") {
+			return nil, err
+		}
+		if attempt < maxAttempts {
+			time.Sleep(retryDelay)
+		}
+	}
+	return nil, lastErr
+}
+
 // Ensure implementation satisfies the resource.Resource interface.
 var (
 	_ resource.Resource                = &trunkGroupResource{}
@@ -162,11 +185,8 @@ func (r *trunkGroupResource) Create(ctx context.Context, req resource.CreateRequ
 		return
 	}
 
-	// Wait for the device to reflect the changes
-	time.Sleep(2 * time.Second)
-
 	// Read back from the device to ensure state matches what was actually applied
-	trunkGroup, err := r.client.GetTrunk(ctx, int(data.ID.ValueInt64()))
+	trunkGroup, err := getTrunkAfterWrite(ctx, r.client, int(data.ID.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError("Error Reading Trunk Group", err.Error())
 		return
@@ -210,6 +230,10 @@ func (r *trunkGroupResource) Read(ctx context.Context, req resource.ReadRequest,
 	// Fetch trunk group details from the SDK
 	trunkGroup, err := r.client.GetTrunk(ctx, int(state.ID.ValueInt64()))
 	if err != nil {
+		if strings.Contains(err.Error(), "trunk not found") {
+			resp.State.RemoveResource(ctx)
+			return
+		}
 		resp.Diagnostics.AddError("Error Reading Trunk Group", err.Error())
 		return
 	}
@@ -299,11 +323,8 @@ func (r *trunkGroupResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	// Wait for the device to reflect the changes
-	time.Sleep(2 * time.Second)
-
 	// Read back from the device to ensure state matches what was actually applied
-	trunkGroup, err := r.client.GetTrunk(ctx, int(plan.ID.ValueInt64()))
+	trunkGroup, err := getTrunkAfterWrite(ctx, r.client, int(plan.ID.ValueInt64()))
 	if err != nil {
 		resp.Diagnostics.AddError("Error Reading Trunk Group", err.Error())
 		return

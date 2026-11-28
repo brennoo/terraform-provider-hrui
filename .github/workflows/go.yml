@@ -6,7 +6,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        firmware: [ "v1.9", "v1.9.1" ]
+        firmware:
+          - "SWTG118AS-v2.0.bin"
+          - "SWTG018AS-A-v2.0.1.bin"
+          - "HRRF_V200.2.5_ZX310S-4T2XH_0422.bin"
+          - "S600WP-4GT-2SX-SEV1.9.bin"
 
     steps:
       - uses: actions/checkout@v4
@@ -23,19 +27,16 @@ jobs:
             ${{ runner.os }}-go-
       - name: Install dependencies
         run: go get .
+      - name: Install rtl51 emulator
+        run: go install github.com/brennoo/rtl51/cmd/rtl51@latest
       - name: Build
         run: go build -v ./...
       - name: Test (Unit)
         run: go test ./...
       - name: Test (Acceptance)
         env:
-          # VCR configuration
-          VCR_MODE: replay
-          HRUI_FW_VERSION: ${{ matrix.firmware }}
-          # Provider configuration (required even in replay mode, values don't matter)
-          HRUI_URL: http://localhost
-          HRUI_USERNAME: testuser
-          HRUI_PASSWORD: testpass
+          TF_ACC: "1"
+          HRUI_FW_IMAGE: ${{ matrix.firmware }}
           HRUI_AUTOSAVE: "false"
         timeout-minutes: 30
-        run: go test -v -timeout 10m ./... -run TestAcc
+        run: go test -v -timeout 15m ./... -run TestAcc

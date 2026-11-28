@@ -38,41 +38,53 @@ func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 	password, passwordOk := os.LookupEnv("HRUI_PASSWORD")
 	autosaveEnv, autosaveEnvOk := os.LookupEnv("HRUI_AUTOSAVE")
 
-	// Determine the correct URL, either from the config or environment variable.
+	// Determine the correct URL, either from the config, environment variable, or test harness.
 	if !config.URL.IsNull() {
 		url = config.URL.ValueString()
 	} else if !urlOk {
-		resp.Diagnostics.AddError(
-			"Missing URL Configuration",
-			"'url' must be provided either in the configuration or via the 'HRUI_URL' environment variable.",
-		)
-		return
+		if p.testURL != "" {
+			url = p.testURL
+		} else {
+			resp.Diagnostics.AddError(
+				"Missing URL Configuration",
+				"'url' must be provided either in the configuration or via the 'HRUI_URL' environment variable.",
+			)
+			return
+		}
 	}
 
-	// Determine the correct username, either from the config or environment variable.
+	// Determine the correct username, either from the config, environment variable, or test default.
 	if !config.Username.IsNull() {
 		username = config.Username.ValueString()
 	} else if !usernameOk {
-		resp.Diagnostics.AddError(
-			"Missing Username Configuration",
-			"'username' must be provided either in the configuration or via the 'HRUI_USERNAME' environment variable.",
-		)
-		return
+		if p.testURL != "" {
+			username = "admin"
+		} else {
+			resp.Diagnostics.AddError(
+				"Missing Username Configuration",
+				"'username' must be provided either in the configuration or via the 'HRUI_USERNAME' environment variable.",
+			)
+			return
+		}
 	}
 
-	// Determine the correct password, either from the config or environment variable.
+	// Determine the correct password, either from the config, environment variable, or test default.
 	if !config.Password.IsNull() {
 		password = config.Password.ValueString()
 	} else if !passwordOk {
-		resp.Diagnostics.AddError(
-			"Missing Password Configuration",
-			"'password' must be provided either in the configuration or via the 'HRUI_PASSWORD' environment variable.",
-		)
-		return
+		if p.testURL != "" {
+			password = "admin"
+		} else {
+			resp.Diagnostics.AddError(
+				"Missing Password Configuration",
+				"'password' must be provided either in the configuration or via the 'HRUI_PASSWORD' environment variable.",
+			)
+			return
+		}
 	}
 
-	// Handle Autosave: default to true, support environment variable override.
-	autosave := true
+	// Handle Autosave: default to true (or false in emulator test harness), support environment variable override.
+	autosave := p.testURL == ""
 	if !config.Autosave.IsNull() {
 		autosave = config.Autosave.ValueBool()
 	} else if autosaveEnvOk {
@@ -97,8 +109,9 @@ func (p *hruiProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 		return
 	}
 
-	// Test connectivity with a basic request to validate the client setup.
-	_, err = hruiClient.Request(ctx, "GET", hruiClient.URL, nil, nil)
+	// Test connectivity with an authenticated request to /info.cgi to validate the client session.
+	// Note: requesting GET / or GET /login.cgi after POST /login.cgi resets the active session on some firmwares.
+	_, err = hruiClient.Request(ctx, "GET", hruiClient.URL+"/info.cgi", nil, nil)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Connection Error",

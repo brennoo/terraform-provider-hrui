@@ -3,7 +3,6 @@ package igmp_snooping_static
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
@@ -94,8 +93,6 @@ func (r *igmpSnoopingStaticResource) Create(ctx context.Context, req resource.Cr
 			)
 			return
 		}
-		// Wait a moment for the global setting to take effect
-		time.Sleep(1 * time.Second)
 	}
 
 	// Enable the specified port while preserving other ports
@@ -106,9 +103,6 @@ func (r *igmpSnoopingStaticResource) Create(ctx context.Context, req resource.Cr
 		)
 		return
 	}
-
-	// Wait for the device to reflect the changes
-	time.Sleep(2 * time.Second)
 
 	// Read back the actual state from the device to ensure consistency
 	enabled, err := r.client.GetPortIGMPSnoopingByName(ctx, plan.Port.ValueString())
@@ -196,8 +190,6 @@ func (r *igmpSnoopingStaticResource) Update(ctx context.Context, req resource.Up
 			)
 			return
 		}
-		// Wait a moment for the global setting to take effect
-		time.Sleep(1 * time.Second)
 	}
 
 	// Update the specified port while preserving other ports
@@ -208,9 +200,6 @@ func (r *igmpSnoopingStaticResource) Update(ctx context.Context, req resource.Up
 		)
 		return
 	}
-
-	// Wait for the device to reflect the changes
-	time.Sleep(2 * time.Second)
 
 	// Read back the actual state from the device to ensure consistency
 	enabled, err := r.client.GetPortIGMPSnoopingByName(ctx, plan.Port.ValueString())

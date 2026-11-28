@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
-	"sync"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -15,9 +14,6 @@ type IGMPConfig struct {
 	Enabled bool
 	Ports   map[int]bool
 }
-
-// Global lock to serialize IGMP port updates.
-var igmpUpdateLock sync.Mutex
 
 // ConfigureIGMPSnooping enables or disables IGMP snooping globally.
 func (c *HRUIClient) ConfigureIGMPSnooping(ctx context.Context, enable bool) error {
@@ -50,52 +46,51 @@ func (c *HRUIClient) updateGlobalIGMP(ctx context.Context, enable bool) error {
 
 // ConfigurePortIGMPSnooping enables or disables IGMP snooping for a specific port.
 func (c *HRUIClient) ConfigurePortIGMPSnooping(ctx context.Context, portID int, enable bool) error {
-	igmpUpdateLock.Lock()
-	defer igmpUpdateLock.Unlock()
-
-	currentState, err := c.GetAllPortsIGMPSnooping(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to fetch IGMP configuration: %w", err)
-	}
-
-	// If the port doesn't exist in the configuration yet, treat it as "off".
-	// This allows configuring ports that haven't been set up for IGMP yet.
-	currentPortState, exists := currentState[portID]
-	if !exists {
-		currentPortState = "off"
-	}
-
-	// Skip operation if the port is already in the desired state.
-	isStateMatch := (enable && currentPortState == "on") || (!enable && currentPortState == "off")
-	if isStateMatch {
-		return nil
-	}
-
-	// Modify the state for the target port.
-	if enable {
-		currentState[portID] = "on"
-	} else {
-		// When disabling, we can either delete the entry or set it to "off"
-		// Setting to "off" ensures the port remains in the configuration
-		currentState[portID] = "off"
-	}
-
-	// Construct the payload for all enabled ports.
-	payload := url.Values{}
-	for id, state := range currentState {
-		if state == "on" {
-			payload.Add(fmt.Sprintf("lPort_%d", id), "on")
+	return c.withOpLock(func() error {
+		currentState, err := c.GetAllPortsIGMPSnooping(ctx)
+		if err != nil {
+			return fmt.Errorf("failed to fetch IGMP configuration: %w", err)
 		}
-	}
-	payload.Add("cmd", "set")
 
-	// Send the configuration update to the IGMP settings endpoint.
-	url := fmt.Sprintf("%s/igmp.cgi?page=igmp_static_router", c.URL)
-	if _, err := c.FormRequest(ctx, url, payload); err != nil {
-		return fmt.Errorf("failed to update IGMP snooping for port %d: %w", portID, err)
-	}
+		// If the port doesn't exist in the configuration yet, treat it as "off".
+		// This allows configuring ports that haven't been set up for IGMP yet.
+		currentPortState, exists := currentState[portID]
+		if !exists {
+			currentPortState = "off"
+		}
 
-	return nil
+		// Skip operation if the port is already in the desired state.
+		isStateMatch := (enable && currentPortState == "on") || (!enable && currentPortState == "off")
+		if isStateMatch {
+			return nil
+		}
+
+		// Modify the state for the target port.
+		if enable {
+			currentState[portID] = "on"
+		} else {
+			// When disabling, we can either delete the entry or set it to "off"
+			// Setting to "off" ensures the port remains in the configuration
+			currentState[portID] = "off"
+		}
+
+		// Construct the payload for all enabled ports.
+		payload := url.Values{}
+		for id, state := range currentState {
+			if state == "on" {
+				payload.Add(fmt.Sprintf("lPort_%d", id), "on")
+			}
+		}
+		payload.Add("cmd", "set")
+
+		// Send the configuration update to the IGMP settings endpoint.
+		url := fmt.Sprintf("%s/igmp.cgi?page=igmp_static_router", c.URL)
+		if _, err := c.FormRequest(ctx, url, payload); err != nil {
+			return fmt.Errorf("failed to update IGMP snooping for port %d: %w", portID, err)
+		}
+
+		return nil
+	})
 }
 
 // GetAllPortsIGMPSnooping retrieves the current IGMP snooping configuration for all ports.
@@ -177,9 +172,12 @@ func (c *HRUIClient) FetchIGMPConfig(ctx context.Context) (*IGMPConfig, error) {
 		}
 	})
 
-	// Parse port statuses.
+	// Parse port statuses (skip disabled dynamic router port checkboxes).
 	portStatus := make(map[int]bool)
 	doc.Find("td input").Each(func(_ int, input *goquery.Selection) {
+		if _, isDisabled := input.Attr("disabled"); isDisabled {
+			return
+		}
 		nameAttr, exists := input.Attr("name")
 		if !exists || !strings.HasPrefix(nameAttr, "lPort_") {
 			return
@@ -209,35 +207,25 @@ func parseAllPortsIGMPStatus(respBody []byte) (map[int]string, error) {
 	// Port states to return.
 	portStates := make(map[int]string)
 
-	// Find relevant table rows.
-	doc.Find("fieldset").Each(func(_ int, fieldset *goquery.Selection) {
-		// Locate the specific table for static IGMP ports.
-		fieldset.Find("tr").Each(func(_ int, row *goquery.Selection) {
-			// Identify rows labeled "static."
-			rowHeader := strings.TrimSpace(row.Find("th").Text())
-			if rowHeader != "static" {
-				return // Skip irrelevant rows.
+	// Find all static port IGMP checkboxes across both v1.x (<fieldset>) and v2.x (<div class="tblcfgdiv">) layouts.
+	// Skip the second read-only/dynamic row where inputs have the "disabled" attribute.
+	doc.Find("input[type='checkbox']").Each(func(_ int, input *goquery.Selection) {
+		if _, isDisabled := input.Attr("disabled"); isDisabled {
+			return
+		}
+		nameAttr, exists := input.Attr("name")
+		if !exists || !strings.HasPrefix(nameAttr, "lPort_") {
+			return
+		}
+
+		var portID int
+		if _, err := fmt.Sscanf(nameAttr, "lPort_%d", &portID); err == nil {
+			if _, isChecked := input.Attr("checked"); isChecked {
+				portStates[portID] = "on"
+			} else {
+				portStates[portID] = "off"
 			}
-
-			// Traverse relevant columns.
-			row.Find("td input[type='checkbox']").Each(func(_ int, input *goquery.Selection) {
-				// Port ID is encoded in the `name` attribute (e.g., lPort_0).
-				nameAttr, exists := input.Attr("name")
-				if !exists || !strings.HasPrefix(nameAttr, "lPort_") {
-					return
-				}
-
-				var portID int
-				if _, err := fmt.Sscanf(nameAttr, "lPort_%d", &portID); err == nil {
-					_, isChecked := input.Attr("checked")
-					if isChecked {
-						portStates[portID] = "on"
-					} else {
-						portStates[portID] = "off"
-					}
-				}
-			})
-		})
+		}
 	})
 
 	return portStates, nil

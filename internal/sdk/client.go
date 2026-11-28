@@ -11,19 +11,31 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// Client handles communication with the HRUI device, managing VLANs and other networking functionality.
+// HRUIClient handles communication with the HRUI device, managing VLANs and other networking functionality.
 type HRUIClient struct {
 	URL        string
 	Username   string
 	Password   string
 	Autosave   bool
 	HttpClient *http.Client
+	RetryDelay time.Duration
+	mu         sync.Mutex
+	// opMu serializes multi-request read-modify-write sequences, distinct from mu
+	// which only guards a single Request() call.
+	opMu sync.Mutex
+}
+
+func (c *HRUIClient) withOpLock(fn func() error) error {
+	c.opMu.Lock()
+	defer c.opMu.Unlock()
+	return fn()
 }
 
 // NewClient initializes and authenticates a new HRUIClient.
@@ -37,25 +49,28 @@ func NewClient(ctx context.Context, url, username, password string, autosave boo
 	// Determine which HTTP client to use
 	var clientHttpClient *http.Client
 	if httpClient == nil {
-		// Production: create a new HTTP client
+		// Production: create a new HTTP client with keep-alives disabled for 8051 uIP httpd compatibility
+		transport := http.DefaultTransport.(*http.Transport).Clone()
+		transport.DisableKeepAlives = true
 		clientHttpClient = &http.Client{
-			Jar:     jar,
-			Timeout: 30 * time.Second,
+			Jar:       jar,
+			Timeout:   30 * time.Second,
+			Transport: transport,
 		}
 	} else {
 		// Testing: use the provided HTTP client but ensure it has the cookie jar
-		// Always set the jar to the newly created one to ensure proper cookie handling
 		clientHttpClient = httpClient
 		clientHttpClient.Jar = jar
 	}
 
 	// Initialize the client
 	client := &HRUIClient{
-		URL:        url,
+		URL:        strings.TrimSuffix(url, "/"),
 		Username:   username,
 		Password:   password,
 		Autosave:   autosave,
 		HttpClient: clientHttpClient,
+		RetryDelay: 200 * time.Millisecond,
 	}
 
 	// Authenticate the client using the provided context
@@ -101,14 +116,16 @@ func (c *HRUIClient) Login(ctx context.Context) error {
 	// Construct the login.cgi URL
 	loginURL := fmt.Sprintf("%s/login.cgi", strings.TrimSuffix(c.URL, "/"))
 
-	// Prepare POST form data
-	formData := url.Values{}
-	formData.Set("username", c.Username)
-	formData.Set("Response", cookieValue)
-	formData.Set("language", "EN")
+	// Prepare POST form data in browser DOM field order: username, password, language, Response
+	formEncoded := fmt.Sprintf(
+		"username=%s&password=%s&language=EN&Response=%s",
+		url.QueryEscape(c.Username),
+		url.QueryEscape(c.Password),
+		url.QueryEscape(cookieValue),
+	)
 
 	// Create a POST request to login.cgi
-	req, err := http.NewRequestWithContext(ctx, "POST", loginURL, strings.NewReader(formData.Encode()))
+	req, err := http.NewRequestWithContext(ctx, "POST", loginURL, strings.NewReader(formEncoded))
 	if err != nil {
 		return fmt.Errorf("error creating POST request for login.cgi: %w", err)
 	}
@@ -127,13 +144,25 @@ func (c *HRUIClient) Login(ctx context.Context) error {
 			fmt.Printf("Warning: error closing response body: %v\n", cerr)
 		}
 	}()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read response body from login.cgi: %w", err)
+	}
+
 	// Check for HTTP errors in the response
 	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body) // for debugging
 		return fmt.Errorf("unexpected status code %d from login.cgi: %s", resp.StatusCode, string(body))
 	}
 
-	return c.ValidateAuthCookie(ctx)
+	if strings.Contains(string(body), `window.top.location.replace("/login.cgi")`) {
+		return fmt.Errorf("authentication failed: redirected to login page\n\n%s", string(body))
+	}
+
+	if err := c.ValidateAuthCookie(ctx); err != nil {
+		return fmt.Errorf("authentication failed: %w", err)
+	}
+
+	return nil
 }
 
 // ValidateAuthCookie checks whether the authentication was successful.
@@ -167,6 +196,9 @@ func (c *HRUIClient) ValidateAuthCookie(ctx context.Context) error {
 
 // Request handles all HTTP methods and returns the response body as a byte slice.
 func (c *HRUIClient) Request(ctx context.Context, method, endpoint string, body io.Reader, headers map[string]string) ([]byte, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	req, err := http.NewRequestWithContext(ctx, method, endpoint, body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
@@ -249,7 +281,7 @@ func (c *HRUIClient) FormRequest(ctx context.Context, endpoint string, formData 
 	return respBody, nil
 }
 
-// CommitChanges saves the configuration by making a POST request to `/save.cgi`.
+// CommitChanges saves the configuration by making a POST request to `/save.cgi` (or `/savecfg.cgi` on v200.x).
 func (c *HRUIClient) CommitChanges(ctx context.Context) error {
 	if c == nil {
 		return fmt.Errorf("HRUIClient is nil")
@@ -259,20 +291,27 @@ func (c *HRUIClient) CommitChanges(ctx context.Context) error {
 		return fmt.Errorf("HttpClient is nil in HRUIClient")
 	}
 
-	url := fmt.Sprintf("%s/save.cgi", c.URL)
+	saveURL := fmt.Sprintf("%s/save.cgi", c.URL)
 	headers := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
 
 	const maxRetries = 3
-	const retryDelay = 2 * time.Second
+	retryDelay := c.RetryDelay
+	if retryDelay <= 0 {
+		retryDelay = 200 * time.Millisecond
+	}
 
 	var lastError error
 	for attempt := 1; attempt <= maxRetries; attempt++ {
 		tflog.Debug(ctx, "Saving configuration", map[string]any{"attempt": attempt})
 
 		// Execute the POST request using Request
-		respBody, err := c.Request(ctx, "POST", url, strings.NewReader("cmd=save"), headers)
+		respBody, err := c.Request(ctx, "POST", saveURL, strings.NewReader("cmd=save"), headers)
+		if err != nil && strings.Contains(err.Error(), "status 404") {
+			// Fall back to /savecfg.cgi used by V200.2.5 firmware
+			respBody, err = c.Request(ctx, "POST", fmt.Sprintf("%s/savecfg.cgi", c.URL), strings.NewReader("cmd=save"), headers)
+		}
 		if err == nil {
 			// Check if the body contains an error message (e.g., for a 500 status code)
 			if strings.Contains(string(respBody), "Error saving configuration") {

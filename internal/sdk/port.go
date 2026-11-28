@@ -109,8 +109,13 @@ func (c *HRUIClient) GetPortByName(ctx context.Context, portName string) (int, e
 		return true
 	})
 
-	// If portIDStr is still empty, the portName was not found
+	// If portIDStr is still empty, fall back to v2.x checkbox layout (input[name='port0'], etc.)
 	if portIDStr == "" {
+		if idx, convErr := resolveZeroBasedPortIndex(portName); convErr == nil {
+			if doc.Find(fmt.Sprintf("input[name='port%d']", idx)).Length() > 0 {
+				return idx, nil
+			}
+		}
 		return 0, fmt.Errorf("port name '%s' not found in port.cgi", portName)
 	}
 
@@ -139,13 +144,51 @@ func (c *HRUIClient) ListPorts(ctx context.Context) ([]*Port, error) {
 	}
 
 	var ports []*Port
-	doc.Find("body center fieldset table").Eq(2).Find("tr").Each(func(i int, tr *goquery.Selection) {
+	statusTable := doc.Find("body center fieldset table").Eq(2)
+	if statusTable.Length() == 0 {
+		statusTable = doc.Find("table").Last()
+	}
+	statusTable.Find("tr").Each(func(i int, tr *goquery.Selection) {
 		if i < 2 { // Skip header rows
 			return
 		}
 
 		port := &Port{}
-		tr.Find("td").Each(func(k int, td *goquery.Selection) {
+		tds := tr.Find("td")
+		if tds.Length() >= 8 {
+			portIDText := strings.TrimSpace(tds.Eq(0).Text())
+			switch {
+			case strings.HasPrefix(portIDText, "Port"):
+				port.ID = portIDText
+			case strings.HasPrefix(portIDText, "Trunk"):
+				port.ID = portIDText
+				port.IsTrunk = true
+			default:
+				return
+			}
+			if strings.TrimSpace(tds.Eq(1).Text()) == "Enable" {
+				port.State = 1
+			}
+			duplexCfg := strings.TrimSpace(tds.Eq(2).Text())
+			duplexAct := strings.TrimSpace(tds.Eq(3).Text())
+			speedCfg := strings.TrimSpace(tds.Eq(4).Text())
+			speedAct := strings.TrimSpace(tds.Eq(5).Text())
+			if speedCfg == "Auto" || duplexCfg == "Auto" {
+				port.SpeedDuplexConfig = "Auto"
+			} else {
+				port.SpeedDuplexConfig = fmt.Sprintf("%s/%s", speedCfg, duplexCfg)
+			}
+			if speedAct == "Link Down" || duplexAct == "Link Down" {
+				port.SpeedDuplexActual = "Link Down"
+			} else {
+				port.SpeedDuplexActual = speedAct + duplexAct
+			}
+			port.FlowControlConfig = strings.TrimSpace(tds.Eq(6).Text())
+			port.FlowControlActual = strings.TrimSpace(tds.Eq(7).Text())
+			ports = append(ports, port)
+			return
+		}
+		tds.Each(func(k int, td *goquery.Selection) {
 			text := strings.TrimSpace(td.Text())
 			switch k {
 			case 0: // Port ID
@@ -213,9 +256,14 @@ func (c *HRUIClient) ConfigurePort(ctx context.Context, port *Port) (*Port, erro
 	form := url.Values{}
 	form.Set("cmd", "port")
 	form.Set("portid", strconv.Itoa(portID))
+	form.Set(fmt.Sprintf("port%d", portID), "on")
 	form.Set("state", strconv.Itoa(port.State))
 	form.Set("speed_duplex", speedDuplexNumeric)
 	form.Set("flow", flowControlNumeric)
+	form.Set("flowctrl", flowControlNumeric)
+	speedV2, duplexV2 := mapSpeedDuplexV2(port.SpeedDuplexConfig)
+	form.Set("speed", speedV2)
+	form.Set("duplex", duplexV2)
 
 	portsURL := fmt.Sprintf("%s/port.cgi", c.URL)
 	_, err = c.FormRequest(ctx, portsURL, form)
@@ -229,6 +277,27 @@ func (c *HRUIClient) ConfigurePort(ctx context.Context, port *Port) (*Port, erro
 	}
 
 	return updatedPort, nil
+}
+
+func mapSpeedDuplexV2(speedDuplex string) (speed, duplex string) {
+	switch speedDuplex {
+	case "10M/Half":
+		return "0", "0"
+	case "10M/Full":
+		return "0", "1"
+	case "100M/Half":
+		return "1", "0"
+	case "100M/Full":
+		return "1", "1"
+	case "1000M/Full":
+		return "2", "1"
+	case "2500M/Full":
+		return "5", "1"
+	case "10G/Full":
+		return "4", "1"
+	default:
+		return "10", "2" // Auto
+	}
 }
 
 // GetValidPorts fetches and returns the list of IDs of all ports available on the system.
@@ -278,11 +347,14 @@ func (c *HRUIClient) GetTotalPorts(ctx context.Context) (int, error) {
 		return 0, fmt.Errorf("failed to parse trunk group HTML output: %w", err)
 	}
 
-	// Find the <select> element with ID "portsel" and count the number of <option> elements
-	totalPorts := 0
-	doc.Find("select#portsel option").Each(func(i int, s *goquery.Selection) {
-		totalPorts++
-	})
+	// Find the <select> element with ID "portsel" (or name="ports" / input[name^='port'] on v2.x)
+	totalPorts := doc.Find("select#portsel option").Length()
+	if totalPorts == 0 {
+		totalPorts = doc.Find("select[name='ports'] option").Length()
+	}
+	if totalPorts == 0 {
+		totalPorts = doc.Find("form[action='/trunk.cgi?page=group'] input[type='checkbox'][name^='port']").Length()
+	}
 
 	if totalPorts == 0 {
 		return 0, fmt.Errorf("no ports found in trunk group page")
@@ -359,10 +431,29 @@ func (c *HRUIClient) GetPortMirror(ctx context.Context) (*PortMirror, error) {
 			return true
 		}
 
-		// Extract and clean the table row values
-		direction := strings.TrimSpace(s.Find("td").Eq(0).Text())
-		rawMirroringPort := strings.TrimSpace(s.Find("td").Eq(1).Text())
-		rawMirroredPort := strings.TrimSpace(s.Find("td").Eq(2).Text())
+		tds := s.Find("td")
+		if tds.Length() < 3 {
+			return true
+		}
+
+		var direction, rawMirroringPort, rawMirroredPort string
+		if tds.Length() >= 4 {
+			// v2.x layout: td[0]=Mirror Group, td[1]=Source (Mirrored) Port, td[2]=Mirror Direction, td[3]=Destination (Mirroring) Port
+			rawMirroredPort = strings.TrimSpace(tds.Eq(1).Text())
+			direction = strings.TrimSpace(tds.Eq(2).Text())
+			if strings.EqualFold(direction, "Both") {
+				direction = "BOTH"
+			}
+			rawMirroringPort = strings.TrimSpace(tds.Eq(3).Text())
+		} else {
+			// v1.x layout: td[0]=Direction, td[1]=Mirroring Port, td[2]=Mirrored Port
+			direction = strings.TrimSpace(tds.Eq(0).Text())
+			rawMirroringPort = strings.TrimSpace(tds.Eq(1).Text())
+			rawMirroredPort = strings.TrimSpace(tds.Eq(2).Text())
+		}
+		if direction == "" || direction == "-" || rawMirroringPort == "" || rawMirroringPort == "-" {
+			return true
+		}
 
 		// Format the values as needed
 		mirroringPort := formatPortValue(rawMirroringPort)
@@ -427,7 +518,11 @@ func (c *HRUIClient) ConfigurePortMirror(ctx context.Context, p *PortMirror) err
 	if p.MirroredPort == "" {
 		return fmt.Errorf("mirrored port cannot be empty")
 	}
+	form.Set("mirror_group", "1")
 	form.Set("mirrored_port", p.MirroredPort)
+	if idx, convErr := resolveZeroBasedPortIndex(p.MirroredPort); convErr == nil {
+		form.Set(fmt.Sprintf("port%d", idx), "on")
+	}
 
 	// Make the request to update port mirroring configuration
 	_, err = c.FormRequest(ctx, urlMirror, form)
@@ -471,8 +566,8 @@ func (c *HRUIClient) GetPortIsolation(ctx context.Context) ([]PortIsolation, err
 
 	var isolations []PortIsolation
 
-	// Traverse each row in the isolation table
-	doc.Find("fieldset table").Last().Find("tr").Each(func(i int, row *goquery.Selection) {
+	// Traverse each row in the isolation table (supports both <fieldset> in v1.x and <div class="showdiv"> in v2.x)
+	doc.Find("table").Last().Find("tr").Each(func(i int, row *goquery.Selection) {
 		if i == 0 { // Skip header row
 			return
 		}

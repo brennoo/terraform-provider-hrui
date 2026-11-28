@@ -96,10 +96,11 @@ func (c *HRUIClient) GetQoSPortQueue(ctx context.Context, portID int) (*QoSPortQ
 
 // SetQoSPortQueue updates the QoS port queue for the given port.
 func (c *HRUIClient) SetQoSPortQueue(ctx context.Context, portID, queue int) error {
-	// Prepare form values for the HTTP request
+	// Prepare form values for the HTTP request (supports both v1.x 'portid' and v2.x 'port%d')
 	data := url.Values{}
 	data.Set("cmd", "portprio")                      // API command for modifying port priority
-	data.Set("portid", strconv.Itoa(portID))         // Port ID
+	data.Set("portid", strconv.Itoa(portID))         // Port ID (v1.x)
+	data.Set(fmt.Sprintf("port%d", portID), "on")    // Port checkbox (v2.x)
 	data.Set("port_priority", strconv.Itoa(queue-1)) // The new QoS queue value to set (0-based)
 
 	// Prepare the endpoint to send the update request to
@@ -116,13 +117,28 @@ func (c *HRUIClient) SetQoSPortQueue(ctx context.Context, portID, queue int) err
 
 // ListQoSQueueWeights fetches the current queues and weights from the HTML page.
 func (c *HRUIClient) ListQoSQueueWeights(ctx context.Context) ([]QoSQueueWeight, error) {
-	// Use Request to fetch the HTML page with QoS queue weights
+	// v1.x uses /qos.cgi?page=pkt_sch; v2.x uses /qos.cgi?page=queue_weight
 	respBody, err := c.Request(ctx, "GET", c.URL+"/qos.cgi?page=pkt_sch", nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to request queue weights page: %w", err)
 	}
 
-	// Parse the HTML document using goquery
+	queueWeights, err := parseQoSQueueWeightsHTML(respBody)
+	if err != nil {
+		return nil, err
+	}
+	if len(queueWeights) == 0 {
+		if v2Body, v2Err := c.Request(ctx, "GET", c.URL+"/qos.cgi?page=queue_weight", nil, nil); v2Err == nil && len(v2Body) > 0 {
+			if v2Weights, parseErr := parseQoSQueueWeightsHTML(v2Body); parseErr == nil && len(v2Weights) > 0 {
+				return v2Weights, nil
+			}
+		}
+	}
+
+	return queueWeights, nil
+}
+
+func parseQoSQueueWeightsHTML(respBody []byte) ([]QoSQueueWeight, error) {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(string(respBody)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse HTML for queue weights: %w", err)
@@ -131,8 +147,8 @@ func (c *HRUIClient) ListQoSQueueWeights(ctx context.Context) ([]QoSQueueWeight,
 	var queueWeights []QoSQueueWeight
 
 	doc.Find("table").Last().Find("tr").Each(func(i int, row *goquery.Selection) {
-		queueText := row.Find("td:first-child").Text()
-		weightText := row.Find("td:nth-child(2)").Text()
+		queueText := strings.TrimSpace(row.Find("td:first-child").Text())
+		weightText := strings.TrimSpace(row.Find("td:nth-child(2)").Text())
 
 		if queueText == "" || weightText == "" || queueText == "Queue" {
 			return
@@ -140,11 +156,9 @@ func (c *HRUIClient) ListQoSQueueWeights(ctx context.Context) ([]QoSQueueWeight,
 
 		queueID, err := strconv.Atoi(queueText)
 		if err != nil {
-			// If the queueText is not a valid integer, skip it.
 			return
 		}
 
-		// Add the queue and its corresponding weight
 		queueWeights = append(queueWeights, QoSQueueWeight{
 			Queue:  queueID,
 			Weight: weightText,
@@ -163,10 +177,17 @@ func (c *HRUIClient) SetQoSQueueWeight(ctx context.Context, queue, weight int) e
 
 	updateURL := c.URL + "/qos.cgi?page=que_weight"
 
-	// Send the POST request to update the queue weight using FormRequest
-	_, err := c.FormRequest(ctx, updateURL, data)
-	if err != nil {
-		return fmt.Errorf("failed to update QoS Queue Weight: %w", err)
+	respBody, err := c.FormRequest(ctx, updateURL, data)
+	if err != nil || len(strings.TrimSpace(string(respBody))) == 0 {
+		// v2.x uses /qos.cgi?page=queue_weight
+		_, v2Err := c.FormRequest(ctx, c.URL+"/qos.cgi?page=queue_weight", data)
+		if v2Err == nil {
+			return nil
+		}
+		if err != nil {
+			return fmt.Errorf("failed to update QoS Queue Weight: %w", err)
+		}
+		return fmt.Errorf("failed to update QoS Queue Weight (v2 fallback): %w", v2Err)
 	}
 
 	return nil

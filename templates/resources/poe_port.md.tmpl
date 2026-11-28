@@ -1,0 +1,33 @@
+---
+page_title: "{{.Name}} ({{.Type}})"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Introduction
+
+This resource manages Power over Ethernet (PoE) administrative settings on an individual switch port. You can enable or disable PoE power delivery with `enabled`, select the IEEE 802.3 PSE protocol profile (`BT`, `HiPoE`, `AT`, or `AF`) via `pse_type`, and toggle the PoE watchdog (`PoEDog`) via `watchdog_enabled`. The resource also exposes live per-port PSE telemetry including `operation`, `pd_class`, `power_watts`, `voltage_volts`, and `current_ma`.
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{codefile "shell" .ImportFile }}
+
+{{- end }}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -57,12 +58,31 @@ func (c *HRUIClient) GetIPAddressSettings(ctx context.Context) (*IPAddressSettin
 		settings.Gateway = gatewayValue
 	})
 
+	// On v2.x firmwares, the ip/netmask/gateway inputs are injected via JS innerHTML inside <script>.
+	rawHTML := string(respBody)
+	if settings.IPAddress == "" {
+		if m := regexp.MustCompile(`name=['"]ip['"][^>]*value=['"]([^'"]+)['"]`).FindStringSubmatch(rawHTML); len(m) > 1 {
+			settings.IPAddress = m[1]
+		}
+	}
+	if settings.Netmask == "" {
+		if m := regexp.MustCompile(`name=['"]netmask['"][^>]*value=['"]([^'"]+)['"]`).FindStringSubmatch(rawHTML); len(m) > 1 {
+			settings.Netmask = m[1]
+		}
+	}
+	if settings.Gateway == "" {
+		if m := regexp.MustCompile(`name=['"]gateway['"][^>]*value=['"]([^'"]+)['"]`).FindStringSubmatch(rawHTML); len(m) > 1 {
+			settings.Gateway = m[1]
+		}
+	}
+
 	return settings, nil
 }
 
 // SetIPAddressSettings updates the IP address settings on the HRUI server.
 func (c *HRUIClient) SetIPAddressSettings(ctx context.Context, settings *IPAddressSettings) error {
 	form := url.Values{}
+	form.Set("cmd", "ip")
 	form.Set("dhcp_state", "0")
 	if settings.DHCPEnabled {
 		form.Set("dhcp_state", "1")

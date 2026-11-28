@@ -63,6 +63,10 @@ func extractJumboFrameOptions(doc *goquery.Document) ([]jumboOption, error) {
 				size = parsedSize
 			}
 		}
+		// V200.2.5 uses 10000 as its 5th (maximum) jumbo frame option instead of 16383.
+		if size == 10000 {
+			size = 16383
+		}
 		if size == 0 && i < len(jumboFrameSizeOrder) {
 			size = jumboFrameSizeOrder[i]
 		}
@@ -152,8 +156,12 @@ func (c *HRUIClient) GetStormControlStatus(ctx context.Context) (*StormControlCo
 
 	// Find the last table row entries in the Storm Control status table
 	var entries []StormControlEntry
+	lastTable := doc.Find("table").Last()
+	// In v1.x: col 3 is Unknown Unicast, col 4 is Unknown Multicast.
+	// In v2.x: col 3 is Unknown Multicast, col 4 is Unknown Unicast.
+	v2ColOrder := strings.Contains(lastTable.Find("tr").First().Find("th").Eq(3).Text(), "Unknown Multicast")
 
-	doc.Find("table").Last().Find("tr").Each(func(i int, row *goquery.Selection) {
+	lastTable.Find("tr").Each(func(i int, row *goquery.Selection) {
 		// Skip the header row
 		if i == 0 {
 			return
@@ -172,8 +180,12 @@ func (c *HRUIClient) GetStormControlStatus(ctx context.Context) (*StormControlCo
 
 		broadcast := parseInt(strings.TrimSpace(cols.Eq(1).Text()), parseRateOptions()...)
 		knownMulticast := parseInt(strings.TrimSpace(cols.Eq(2).Text()), parseRateOptions()...)
-		unknownUnicast := parseInt(strings.TrimSpace(cols.Eq(3).Text()), parseRateOptions()...)
-		unknownMulticast := parseInt(strings.TrimSpace(cols.Eq(4).Text()), parseRateOptions()...)
+		col3 := parseInt(strings.TrimSpace(cols.Eq(3).Text()), parseRateOptions()...)
+		col4 := parseInt(strings.TrimSpace(cols.Eq(4).Text()), parseRateOptions()...)
+		unknownUnicast, unknownMulticast := col3, col4
+		if v2ColOrder {
+			unknownMulticast, unknownUnicast = col3, col4
+		}
 
 		entry := StormControlEntry{
 			Port:                     port,
@@ -210,16 +222,61 @@ func (c *HRUIClient) SetStormControlConfig(
 	formData.Set("action", stateValue)
 	formData.Set("cmd", "storm")
 
-	// Add each port as a separate "portid" key in the form data.
+	// Add each port as a separate "portid" key in the form data (v1.x) and "port%d=on" (v2.x).
 	for _, portName := range ports {
-		// Replace spaces with "+" to make it URL-safe.
 		encodedPortName := strings.ReplaceAll(portName, " ", "+")
 		formData.Add("portid", encodedPortName)
+		if idx, convErr := resolveZeroBasedPortIndex(portName); convErr == nil {
+			formData.Set(fmt.Sprintf("port%d", idx), "on")
+		}
 	}
 
 	// Set rate only if the state is enabled
+	rateStr := ""
 	if state && rate != nil {
-		formData.Set("rate", strconv.FormatInt(*rate, 10))
+		rateStr = strconv.FormatInt(*rate, 10)
+		formData.Set("rate", rateStr)
+	}
+
+	// On v2.x, /fwd.cgi?page=storm_ctrl updates bc_rate, mc_rate, uuc_rate, umc_rate simultaneously.
+	if len(ports) > 0 {
+		if curStatus, statusErr := c.GetStormControlStatus(ctx); statusErr == nil {
+			for _, entry := range curStatus.Entries {
+				if entry.Port == ports[0] {
+					bc, mc, uuc, umc := "", "", "", ""
+					if entry.BroadcastRateKbps != nil {
+						bc = strconv.Itoa(*entry.BroadcastRateKbps)
+					}
+					if entry.KnownMulticastRateKbps != nil {
+						mc = strconv.Itoa(*entry.KnownMulticastRateKbps)
+					}
+					if entry.UnknownUnicastRateKbps != nil {
+						uuc = strconv.Itoa(*entry.UnknownUnicastRateKbps)
+					}
+					if entry.UnknownMulticastRateKbps != nil {
+						umc = strconv.Itoa(*entry.UnknownMulticastRateKbps)
+					}
+					switch strings.ToLower(stormType) {
+					case "broadcast":
+						bc = rateStr
+					case "known multicast":
+						mc = rateStr
+					case "unknown unicast":
+						uuc = rateStr
+					case "unknown multicast":
+						umc = rateStr
+					}
+					formData.Set("bc_rate", bc)
+					formData.Set("mc_rate", mc)
+					formData.Set("uuc_rate", uuc)
+					formData.Set("umc_rate", umc)
+					if !state && bc == "" && mc == "" && uuc == "" && umc == "" {
+						formData.Set("cmd", "storm_dft")
+					}
+					break
+				}
+			}
+		}
 	}
 
 	respBody, err := c.FormRequest(ctx, c.URL+"/fwd.cgi?page=storm_ctrl", formData)
@@ -300,7 +357,19 @@ func findRateText(doc *goquery.Document, portName string) (string, error) {
 		return true // Continue searching rows.
 	})
 
-	// If the rate text was not found, return an error.
+	// If the rate text was not found in v1.x table rows, check v2.x <label> range (e.g. "16-2500000").
+	if !found {
+		reLabel := regexp.MustCompile(`^\d+-\d+$`)
+		doc.Find("label").EachWithBreak(func(_ int, lbl *goquery.Selection) bool {
+			t := strings.TrimSpace(lbl.Text())
+			if reLabel.MatchString(t) {
+				rateText = t
+				found = true
+				return false
+			}
+			return true
+		})
+	}
 	if !found {
 		return "", fmt.Errorf("rate information not found for port '%s'", portName)
 	}
@@ -309,13 +378,13 @@ func findRateText(doc *goquery.Document, portName string) (string, error) {
 }
 
 // extractMaxRate parses and extracts the maximum rate value (e.g., 2500000)
-// from a rate string like "(1-2500000)(kbps)".
+// from a rate string like "(1-2500000)(kbps)" or "16-2500000".
 func extractMaxRate(rateText string) (int64, error) {
 	// Normalize the input to remove unexpected spaces.
 	rateText = strings.TrimSpace(rateText)
 
-	// Update the regex to match "(1-XXXXXX)(kbps)"
-	re := regexp.MustCompile(`\(?1-(\d+)\)?\(kbps\)`)
+	// Match both v1.x "(1-XXXXXX)(kbps)" and v2.x "16-XXXXXX"
+	re := regexp.MustCompile(`\(?16?-(\d+)\)?(?:\(kbps\))?`)
 
 	matches := re.FindStringSubmatch(rateText)
 

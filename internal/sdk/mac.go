@@ -110,15 +110,26 @@ func (c *HRUIClient) GetStaticMACAddressTable(ctx context.Context) ([]StaticMACE
 			return
 		}
 
-		// Extract content from each column
+		// Extract content from each column (v1.x has 5 columns; v2.x has 4 columns with checkbox in td[0])
 		columns := row.Find("td")
-		if columns.Length() == 5 { // Ensure the row has 5 columns
+		switch columns.Length() {
+		case 5:
 			id, _ := strconv.Atoi(strings.TrimSpace(columns.Eq(0).Text()))
 			mac := strings.TrimSpace(columns.Eq(1).Text())
 			vlan, _ := strconv.Atoi(strings.TrimSpace(columns.Eq(2).Text()))
 			port := formatPort(strings.TrimSpace(columns.Eq(3).Text()))
-
-			// Append to the entries slice
+			entries = append(entries, StaticMACEntry{
+				ID:         id,
+				MACAddress: mac,
+				VLANID:     vlan,
+				Port:       port,
+			})
+		case 4:
+			delVal := strings.TrimSpace(columns.Eq(0).Find("input[name='del']").AttrOr("value", "0"))
+			id, _ := strconv.Atoi(delVal)
+			mac := strings.TrimSpace(columns.Eq(1).Text())
+			vlan, _ := strconv.Atoi(strings.TrimSpace(columns.Eq(2).Text()))
+			port := formatPort(strings.TrimSpace(columns.Eq(3).Text()))
 			entries = append(entries, StaticMACEntry{
 				ID:         id,
 				MACAddress: mac,
@@ -162,6 +173,25 @@ func (c *HRUIClient) RemoveStaticMACEntries(ctx context.Context, macEntries []St
 
 	for _, entry := range macEntries {
 		checkboxValue := entry.MACAddress + "_" + strconv.Itoa(entry.VLANID)
+		if respBody, getErr := c.Request(ctx, "GET", c.URL+"/mac.cgi?page=static", nil, nil); getErr == nil {
+			if doc, parseErr := goquery.NewDocumentFromReader(strings.NewReader(string(respBody))); parseErr == nil {
+				doc.Find("form[action='/mac.cgi?page=staticdel'] table tr").Each(func(i int, row *goquery.Selection) {
+					if i == 0 {
+						return
+					}
+					cols := row.Find("td")
+					if cols.Length() == 4 {
+						mac := strings.TrimSpace(cols.Eq(1).Text())
+						vlan, _ := strconv.Atoi(strings.TrimSpace(cols.Eq(2).Text()))
+						if strings.EqualFold(mac, entry.MACAddress) && vlan == entry.VLANID {
+							if v := strings.TrimSpace(cols.Eq(0).Find("input[name='del']").AttrOr("value", "")); v != "" {
+								checkboxValue = v
+							}
+						}
+					}
+				})
+			}
+		}
 		formData.Add("del", checkboxValue)
 	}
 
