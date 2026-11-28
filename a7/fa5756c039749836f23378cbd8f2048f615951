@@ -1,0 +1,128 @@
+.github/workflows/go.yml
+  s_72f3f17faefce2::t_fe2489b765232f 30-31
+internal/sdk/client.go
+  s_72f3f17faefce2::t_b9914a3203ae1c 28-29
+  s_72f3f17faefce2::t_fb43cc836e9576 32-38
+  s_72f3f17faefce2::t_9c3ac0cc02e1bd 150,159,161-164,303
+  s_72f3f17faefce2::t_856bcce3af4835 147-149
+  s_72f3f17faefce2::t_8e735bf10ae27e 157-158
+  s_72f3f17faefce2::t_f25b1ea61c8cb1 160
+  s_72f3f17faefce2::t_0687bd8e900ee4 151
+  s_72f3f17faefce2::t_da3840f3b8e6e3 300-302
+  s_72f3f17faefce2::t_f20b35f542de08 165
+  s_72f3f17faefce2::t_a60ea1fb1d4974 30-31
+internal/sdk/port.go
+  s_72f3f17faefce2::t_4a92ec24fd9d70 285-299
+  s_72f3f17faefce2::t_f6e9b5584a2df3 150,300-302,354,357,525
+  s_72f3f17faefce2::t_acd060214cd5ef 282-284
+  s_72f3f17faefce2::t_21f09948878356 147-149
+  s_72f3f17faefce2::t_ad1bf9d0736409 151
+  s_72f3f17faefce2::t_2e58ad7d291dbb 351-353
+  s_72f3f17faefce2::t_4b233afcbe3ba4 355-356
+  s_72f3f17faefce2::t_38aafbcfdf54fd 523-524
+.github/workflows/coverage.yml
+  s_72f3f17faefce2::t_01c5cf40990f91 23-24
+internal/sdk/qos_test.go
+  s_72f3f17faefce2::t_5534f36fb19a0f 337-363
+internal/provider/provider_test_helper.go
+  s_72f3f17faefce2::t_fae9d3a8763fe5 126
+  s_72f3f17faefce2::t_8ca9dd706c1e66 156-158
+  s_72f3f17faefce2::t_6939d24be5b6cd 131-132
+  s_72f3f17faefce2::t_690df680288187 160-162
+  s_72f3f17faefce2::t_99babd4b000c05 134
+  s_72f3f17faefce2::t_4e195251368511 155
+  s_72f3f17faefce2::t_d5f48ce27f186a 120-122
+  s_72f3f17faefce2::t_0d7344de4c64db 40-62,66,72-119,127-128,130,133,142,149,152,163,167-168,170-172,175-211
+  s_72f3f17faefce2::t_7b39155ef3c86d 146-148
+  s_72f3f17faefce2::t_d8b02ed3fe5313 150-151
+  s_72f3f17faefce2::t_3ca55ad0b3c9ed 123-125
+  s_72f3f17faefce2::t_2b470cc6653541 212
+  s_72f3f17faefce2::t_28e5b4974f92b2 129
+  s_72f3f17faefce2::t_c6f02c24a91692 154
+  s_72f3f17faefce2::t_cbc6c9e7002ebf 140-141
+  s_72f3f17faefce2::t_bd5816085a1674 145
+internal/sdk/bwctrl_test.go
+  s_72f3f17faefce2::t_0f72df11480ba5 77-79
+  s_72f3f17faefce2::t_c3da6ee52eba2d 120-139
+  s_72f3f17faefce2::t_a26366f1f293f1 46-59
+internal/resources/vlan_vid/resource.go
+  s_72f3f17faefce2::t_1eea9c4082f567 187-191
+internal/resources/trunk_group/resource.go
+  s_72f3f17faefce2::t_d64c0c4dbc84ba 21-42,236
+  s_72f3f17faefce2::t_c8750ffe22b11b 189
+  s_72f3f17faefce2::t_5e6246ee9a67da 327
+  s_72f3f17faefce2::t_7ca47a0b9910e1 43
+  s_72f3f17faefce2::t_ccb7a79fd1413f 233-235
+internal/sdk/qos.go
+  s_72f3f17faefce2::t_fa48d148731177 132-134
+  s_72f3f17faefce2::t_be210f0a6ce834 180-182
+  s_72f3f17faefce2::t_459d57ee2aa88b 135,183-190
+  s_72f3f17faefce2::t_cdd4fde15c73ed 129,136-138
+  s_72f3f17faefce2::t_e6a7d4f3dbf3df 126-128
+  s_72f3f17faefce2::t_7716a4b0950361 130-131
+  s_72f3f17faefce2::t_cb0ffb537e04d8 139-141
+internal/sdk/igmp.go
+  s_72f3f17faefce2::t_b8d1f6f2b44ca4 178-179
+  s_72f3f17faefce2::t_61e31681c3dad0 224-226
+  s_72f3f17faefce2::t_b4105ac5548045 49-53,55-60,62-66,68-75,77-82,84,86-90,92-93,180,215,219,227-228
+  s_72f3f17faefce2::t_b4a37c6bddbd8e 216-218
+  s_72f3f17faefce2::t_623df67650bc9c 210-211
+  s_72f3f17faefce2::t_3f4186a079ca81 212-214
+  s_72f3f17faefce2::t_6c4bdda12f85b1 221-223
+internal/sdk/bwctrl.go
+  s_72f3f17faefce2::t_3d9d7e4f21a723 84-88,90-93,95-98,100-104,106-128,130-145,147-148
+internal/sdk/vlan.go
+  s_72f3f17faefce2::t_5847c35f60c662 81-82
+  s_72f3f17faefce2::t_df186e98750f0d 210-277
+  s_72f3f17faefce2::t_62250431df642c 107
+  s_72f3f17faefce2::t_98ddd7d70d2485 84-101
+  s_72f3f17faefce2::t_ad554d9177d892 383-385
+  s_72f3f17faefce2::t_4f0ed281397ee4 392-393
+  s_72f3f17faefce2::t_3b8c8a73c89820 374-375
+  s_72f3f17faefce2::t_67dde9239898fa 478
+  s_72f3f17faefce2::t_522d7b3b48892a 485,494-496
+  s_72f3f17faefce2::t_a56a8b37266f7c 482-484
+  s_72f3f17faefce2::t_3c391175fd8ead 379-382
+  s_72f3f17faefce2::t_0376d84a1d01a6 301-305
+  s_72f3f17faefce2::t_73c53677e7e7a4 190-192
+  s_72f3f17faefce2::t_a38ccc3dcbe23e 193-194,197-198,201-202,209,373,376-378,394
+  s_72f3f17faefce2::t_70ae49846b2314 386-390
+  s_72f3f17faefce2::t_5ea0b408bdefbc 106,281,309,464-475,477,497
+  s_72f3f17faefce2::t_515a21adafb002 80,83,102,300,306-308,391
+  s_72f3f17faefce2::t_376a116c252d58 203-208
+  s_72f3f17faefce2::t_f4f28af9e9546b 103-105
+  s_72f3f17faefce2::t_4abcd0a8f12c08 370-372
+  s_72f3f17faefce2::t_cc2fd7b19ebda6 64-66
+  s_72f3f17faefce2::t_6d41231e3da984 195-196
+  s_72f3f17faefce2::t_ce919f9fac5d96 282
+  s_72f3f17faefce2::t_aac0cf82611a45 486-493
+  s_72f3f17faefce2::t_c200fb606cb91f 399
+  s_72f3f17faefce2::t_e0dee53d5023db 297-299
+  s_72f3f17faefce2::t_ad9eb0925b3805 310
+  s_72f3f17faefce2::t_d8f9cc81ec7c60 395-397
+  s_72f3f17faefce2::t_1656f674f25ec9 463
+  s_72f3f17faefce2::t_850a9ad3682dbb 68-79
+  s_72f3f17faefce2::t_5473ab6124e2e7 67,398,476
+  s_72f3f17faefce2::t_43040aa0d0138b 278-280
+  s_72f3f17faefce2::t_7025cab15e1cd2 199-200
+  s_72f3f17faefce2::t_f42a1293a10bcb 61-63
+  s_72f3f17faefce2::t_05ee588bf67ec2 188-189
+  s_72f3f17faefce2::t_24f598aae96e5b 294-296
+  s_72f3f17faefce2::t_b79461d87faa8e 367-369
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "a7fa5756c039749836f23378cbd8f2048f615951",
+  "prompts": {},
+  "sessions": {
+    "s_72f3f17faefce2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a58bd817-90bd-4861-a845-a2364a49fe37",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": null
+    }
+  }
+}
