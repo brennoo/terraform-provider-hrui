@@ -87,3 +87,39 @@ func TestListConfiguredTrunks(t *testing.T) {
 	// Assert that the actual parsed data matches the expected data
 	assert.Equal(t, expected, trunks)
 }
+
+func TestListConfiguredTrunks_V2Layout(t *testing.T) {
+	const v2MockHTML = `
+<form method="post" action="/trunk.cgi?page=group_remove">
+<table>
+	<tr>
+		<th>Select</th>
+		<th>Group ID</th>
+		<th>Type</th>
+		<th>Member port</th>
+	</tr>
+	<tr>
+		<td><input type="checkbox" name="remove_0" id="trunk_0"></td>
+		<td>Trunk1</td>
+		<td>LACP</td>
+		<td>1-3</td>
+	</tr>
+</table>
+</form>
+`
+	mockServer := mockServerMock(v2MockHTML, http.StatusOK)
+	defer mockServer.Close()
+
+	client := &HRUIClient{
+		URL:        mockServer.URL,
+		HttpClient: &http.Client{},
+	}
+
+	trunk, err := client.GetTrunk(t.Context(), 1)
+	assert.NoError(t, err)
+	assert.Equal(t, &TrunkConfig{
+		ID:    1,
+		Type:  "LACP",
+		Ports: []int{1, 2, 3},
+	}, trunk)
+}

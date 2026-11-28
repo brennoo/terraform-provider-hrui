@@ -43,6 +43,20 @@ func TestConfigureBandwidthControl(t *testing.T) {
         </body>
     </html>`
 
+	// Mock HTML response for `/port.cgi?page=bw_ctrl` (v2.x current-state probe)
+	mockBwCtrlHTML := `
+    <html>
+        <body>
+            <table>
+                <tr><td>Port</td><td>Ingress Rate</td><td>Egress Rate</td></tr>
+                <tr><td>Port 1</td><td>Unlimited</td><td>Unlimited</td></tr>
+                <tr><td>Port 2</td><td>Unlimited</td><td>Unlimited</td></tr>
+                <tr><td>Port 3</td><td>Unlimited</td><td>Unlimited</td></tr>
+                <tr><td>Port 4</td><td>Unlimited</td><td>Unlimited</td></tr>
+            </table>
+        </body>
+    </html>`
+
 	// Mock HTML response for `/fwd.cgi?page=storm_ctrl`
 	mockStormCtrlHTML := `
                 <table border="1">
@@ -60,6 +74,9 @@ func TestConfigureBandwidthControl(t *testing.T) {
 		} else if r.URL.Path == "/port.cgi" && r.URL.Query().Get("page") == "bwctrl" {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(mockBandwidthHTML))
+		} else if r.URL.Path == "/port.cgi" && r.URL.Query().Get("page") == "bw_ctrl" {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(mockBwCtrlHTML))
 		} else if r.URL.Path == "/fwd.cgi" && r.URL.Query().Get("page") == "storm_ctrl" {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(mockStormCtrlHTML))
@@ -98,5 +115,25 @@ func TestConfigureBandwidthControl(t *testing.T) {
 				t.Fatalf("unexpected error: %v", err)
 			}
 		})
+	}
+}
+
+// TestConfigureBandwidthControl_ProbeFails ensures that when the current-state
+// probe (GetBandwidthControl) fails, the function returns an error instead of
+// silently posting Unlimited for the untouched direction.
+func TestConfigureBandwidthControl_ProbeFails(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Not Found", http.StatusNotFound)
+	}))
+	defer server.Close()
+
+	client := &HRUIClient{
+		URL:        server.URL,
+		HttpClient: server.Client(),
+	}
+
+	err := client.configureBandwidthByID(context.Background(), 0, true, true, "1000")
+	if err == nil {
+		t.Fatal("expected an error when the bandwidth control probe fails, but got nil")
 	}
 }

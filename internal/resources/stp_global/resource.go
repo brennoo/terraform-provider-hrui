@@ -3,7 +3,6 @@ package stp_global
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/providerutil"
 	"github.com/brennoo/terraform-provider-hrui/internal/sdk"
@@ -116,9 +115,6 @@ func (r *stpGlobalResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	// Wait for the backend to reflect the changes
-	time.Sleep(5 * time.Second)
-
 	// Fetch the updated state from the backend
 	stpFromBackend, err := r.client.GetSTPSettings(ctx)
 	if err != nil {
@@ -223,9 +219,6 @@ func (r *stpGlobalResource) Update(ctx context.Context, req resource.UpdateReque
 		)
 		return
 	}
-
-	// Wait for the backend to reflect the changes (optional delay)
-	time.Sleep(5 * time.Second)
 
 	// Fetch the updated state from the backend
 	stpFromBackend, err := r.client.GetSTPSettings(ctx)

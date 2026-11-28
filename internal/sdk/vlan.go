@@ -53,9 +53,56 @@ func (c *HRUIClient) AddVLAN(ctx context.Context, vlan *Vlan) error {
 	}
 
 	vlanURL := fmt.Sprintf("%s/vlan.cgi?page=static", c.URL)
-	_, err = c.FormRequest(ctx, vlanURL, form)
+	respBody, err := c.FormRequest(ctx, vlanURL, form)
 	if err != nil {
 		return fmt.Errorf("failed to create/update VLAN: %w", err)
+	}
+
+	// On v2.x firmwares (where /vlan.cgi?page=static only creates the VLAN ID/Name and renders formVlanDelStatic),
+	// configure per-port Untagged/Tagged membership on /vlan.cgi?page=port_based.
+	if strings.Contains(string(respBody), "formVlanDelStatic") {
+		hasHybrid := false
+		if pbBody, pbErr := c.Request(ctx, "GET", fmt.Sprintf("%s/vlan.cgi?page=port_based", c.URL), nil, nil); pbErr == nil {
+			hasHybrid = strings.Contains(string(pbBody), "vlanboxHybrid")
+		}
+		for _, portConfig := range portConfigs {
+			isUntag := containsString(vlan.UntaggedPorts, portConfig.PortName)
+			isTag := containsString(vlan.TaggedPorts, portConfig.PortName)
+			pbForm := url.Values{}
+			pbForm.Set(fmt.Sprintf("port%d", portConfig.PortID), "on")
+			if hasHybrid {
+				pbForm.Set("vlan_type", "2") // Hybrid mode (V200.2.5)
+				pbForm.Set("accept_type", "0")
+				pbForm.Set("vlan_native", "1")
+				pbForm.Set("VLAN1_untag", "on")
+				if isUntag {
+					pbForm.Set(fmt.Sprintf("VLAN%d_untag", vlan.VlanID), "on")
+				}
+				if isTag {
+					pbForm.Set(fmt.Sprintf("VLAN%d_tag", vlan.VlanID), "on")
+				}
+			} else {
+				// v2.0.1 only supports Access (0) and Trunk (1)
+				switch {
+				case isUntag && !isTag:
+					pbForm.Set("vlan_type", "0")
+					pbForm.Set("vlan_access", strconv.Itoa(vlan.VlanID))
+				case isTag:
+					nativeVID := "1"
+					if isUntag {
+						nativeVID = strconv.Itoa(vlan.VlanID)
+					}
+					pbForm.Set("vlan_type", "1")
+					pbForm.Set("vlan_trunk", nativeVID)
+					pbForm.Set("VLAN1", "on")
+					pbForm.Set(fmt.Sprintf("VLAN%d", vlan.VlanID), "on")
+				default:
+					pbForm.Set("vlan_type", "0")
+					pbForm.Set("vlan_access", "1")
+				}
+			}
+			_, _ = c.FormRequest(ctx, fmt.Sprintf("%s/vlan.cgi?page=port_based", c.URL), pbForm)
+		}
 	}
 
 	return nil
@@ -138,6 +185,101 @@ func (c *HRUIClient) ListVLANs(ctx context.Context) ([]*Vlan, error) {
 		vlans = append(vlans, vlan)
 	})
 
+	// On v2.x firmwares, the static VLAN table is inside form#formVlanDelStatic and port membership is on /vlan.cgi?page=port_based.
+	if len(vlans) == 0 {
+		vlanByID := make(map[int]*Vlan)
+		doc.Find("form#formVlanDelStatic table tr").Each(func(i int, s *goquery.Selection) {
+			if i == 0 {
+				return
+			}
+			tds := s.Find("td")
+			if tds.Length() < 4 {
+				return
+			}
+			vlanID, convErr := strconv.Atoi(strings.TrimSpace(tds.Eq(2).Text()))
+			if convErr != nil {
+				return
+			}
+			v := &Vlan{
+				VlanID:        vlanID,
+				Name:          strings.TrimSpace(tds.Eq(3).Text()),
+				UntaggedPorts: []string{},
+				TaggedPorts:   []string{},
+				MemberPorts:   []string{},
+			}
+			vlans = append(vlans, v)
+			vlanByID[vlanID] = v
+		})
+
+		if len(vlans) > 0 {
+			if pbBody, pbErr := c.Request(ctx, "GET", fmt.Sprintf("%s/vlan.cgi?page=port_based", c.URL), nil, nil); pbErr == nil {
+				if pbDoc, parseErr := goquery.NewDocumentFromReader(strings.NewReader(string(pbBody))); parseErr == nil {
+					pbDoc.Find("table").Last().Find("tr").Slice(1, goquery.ToEnd).Each(func(_ int, row *goquery.Selection) {
+						tds := row.Find("td")
+						if tds.Length() < 5 {
+							return
+						}
+						portName := strings.TrimSpace(tds.Eq(0).Text())
+						mode := strings.TrimSpace(tds.Eq(1).Text())
+						if mode == "Access" {
+							if vid, convErr := strconv.Atoi(strings.TrimSpace(tds.Eq(2).Text())); convErr == nil {
+								if v, ok := vlanByID[vid]; ok {
+									v.UntaggedPorts = append(v.UntaggedPorts, portName)
+									v.MemberPorts = append(v.MemberPorts, portName)
+								}
+							}
+							return
+						}
+						if mode == "Trunk" {
+							nativeVID, _ := strconv.Atoi(strings.TrimSpace(tds.Eq(3).Text()))
+							if v, ok := vlanByID[nativeVID]; ok {
+								v.UntaggedPorts = append(v.UntaggedPorts, portName)
+								v.MemberPorts = append(v.MemberPorts, portName)
+							}
+							for part := range strings.SplitSeq(strings.TrimSpace(tds.Eq(4).Text()), ",") {
+								if vid, convErr := strconv.Atoi(strings.TrimSpace(part)); convErr == nil && vid != nativeVID {
+									if v, found := vlanByID[vid]; found {
+										v.TaggedPorts = append(v.TaggedPorts, portName)
+										if !containsString(v.MemberPorts, portName) {
+											v.MemberPorts = append(v.MemberPorts, portName)
+										}
+									}
+								}
+							}
+							return
+						}
+						tds.Eq(4).Find("div.vlancontent").Each(func(_ int, div *goquery.Selection) {
+							txt := strings.TrimSpace(div.Text())
+							if _, after, ok := strings.Cut(txt, "Tagged VLAN:"); ok {
+								for part := range strings.SplitSeq(after, ",") {
+									if vid, convErr := strconv.Atoi(strings.TrimSpace(part)); convErr == nil {
+										if v, found := vlanByID[vid]; found {
+											v.TaggedPorts = append(v.TaggedPorts, portName)
+											if !containsString(v.MemberPorts, portName) {
+												v.MemberPorts = append(v.MemberPorts, portName)
+											}
+										}
+									}
+								}
+							} else if _, after, ok := strings.Cut(txt, "Untagged VLAN:"); ok {
+								for part := range strings.SplitSeq(after, ",") {
+									if vid, convErr := strconv.Atoi(strings.TrimSpace(part)); convErr == nil {
+										if v, found := vlanByID[vid]; found {
+											v.UntaggedPorts = append(v.UntaggedPorts, portName)
+											if !containsString(v.MemberPorts, portName) {
+												v.MemberPorts = append(v.MemberPorts, portName)
+											}
+										}
+									}
+								}
+							}
+						})
+					})
+				}
+			}
+		}
+	}
+
 	return vlans, nil
 }
 
@@ -148,7 +290,24 @@ func (c *HRUIClient) RemoveVLAN(ctx context.Context, vlanID int) error {
 	}
 
 	form := url.Values{}
-	form.Set(fmt.Sprintf("remove_%d", vlanID), "on")
+	removeKey := fmt.Sprintf("remove_%d", vlanID)
+	// On v2.x firmwares, the remove checkbox in form#formVlanDelStatic is indexed by row number (e.g. remove_2 for VLAN 100).
+	if respBody, getErr := c.Request(ctx, "GET", fmt.Sprintf("%s/vlan.cgi?page=static", c.URL), nil, nil); getErr == nil {
+		if doc, parseErr := goquery.NewDocumentFromReader(strings.NewReader(string(respBody))); parseErr == nil {
+			doc.Find("form#formVlanDelStatic table tr").Each(func(i int, s *goquery.Selection) {
+				if i == 0 {
+					return
+				}
+				tds := s.Find("td")
+				if tds.Length() >= 3 && strings.TrimSpace(tds.Eq(2).Text()) == strconv.Itoa(vlanID) {
+					if chkName := strings.TrimSpace(tds.Eq(0).Find("input[type='checkbox']").AttrOr("name", "")); chkName != "" {
+						removeKey = chkName
+					}
+				}
+			})
+		}
+	}
+	form.Set(removeKey, "on")
 
 	deleteURL := fmt.Sprintf("%s/vlan.cgi?page=getRmvVlanEntry", c.URL)
 
@@ -203,6 +362,40 @@ func (c *HRUIClient) ListPortVLANConfigs(ctx context.Context) ([]*PortVLANConfig
 			return
 		}
 		config.PortID = portID
+
+		tds := s.Find("td")
+		if tds.Length() >= 5 {
+			// v2.x layout: td[0]=Port, td[1]=Port vlan type ("Access", "Trunk", "Hybrid:All", "Hybrid:Tag Only", "Hybrid:Untag Only"), td[2]=Access VLAN, td[3]=Native VLAN
+			modeText := strings.TrimSpace(tds.Eq(1).Text())
+			pvidStr := strings.TrimSpace(tds.Eq(2).Text())
+			if pvidStr == "-" || pvidStr == "" {
+				pvidStr = strings.TrimSpace(tds.Eq(3).Text())
+			}
+			pvid, convErr := strconv.Atoi(pvidStr)
+			if convErr != nil {
+				return
+			}
+			config.PVID = pvid
+			// Access mode doesn't expose an accept-frame-type setting on this page; leave
+			// AcceptFrameType empty so callers can tell "not reported by device" apart from
+			// an actual value, instead of guessing one.
+			frameType := ""
+			if _, after, ok := strings.Cut(modeText, ":"); ok {
+				switch strings.TrimSpace(after) {
+				case "Tag Only":
+					frameType = "Tag-only"
+				case "Untag Only":
+					frameType = "Untag-only"
+				default:
+					frameType = strings.TrimSpace(after)
+				}
+			} else if modeText == "Trunk" {
+				frameType = "Tag-only"
+			}
+			config.AcceptFrameType = frameType
+			configs = append(configs, config)
+			return
+		}
 
 		pvidText := strings.TrimSpace(s.Find("td:nth-child(2)").Text())
 		var pvid int
@@ -267,10 +460,41 @@ func (c *HRUIClient) SetPortVLANConfig(ctx context.Context, config *PortVLANConf
 		return fmt.Errorf("invalid PortID after resolution: %d", config.PortID)
 	}
 
-	// Prepare form data
+	// Prepare form data (supports v1.x, v2.0.1 Access/Trunk, and V200.2.5 Hybrid /vlan.cgi?page=port_based)
+	pbBody, pbErr := c.Request(ctx, "GET", fmt.Sprintf("%s/vlan.cgi?page=port_based", c.URL), nil, nil)
+	if pbErr != nil {
+		return fmt.Errorf("failed to detect VLAN port mode for port %d: %w", config.PortID, pbErr)
+	}
+	hasHybrid := !(strings.Contains(string(pbBody), "vlanState") && !strings.Contains(string(pbBody), "vlanboxHybrid"))
+	if !hasHybrid {
+		// Ensure the target PVID VLAN exists in /vlan.cgi?page=static on v2.0.1 so Access/Trunk accepts it.
+		if config.PVID > 1 {
+			stForm := url.Values{}
+			stForm.Set("vid", strconv.Itoa(config.PVID))
+			stForm.Set("name", fmt.Sprintf("VLAN%d", config.PVID))
+			_, _ = c.FormRequest(ctx, fmt.Sprintf("%s/vlan.cgi?page=static", c.URL), stForm)
+		}
+	}
+
 	form := url.Values{}
 	form.Set("ports", strconv.Itoa(config.PortID))
 	form.Set("pvid", strconv.Itoa(config.PVID))
+	form.Set(fmt.Sprintf("port%d", config.PortID), "on")
+	if hasHybrid {
+		form.Set("vlan_type", "2")
+		form.Set("vlan_access", strconv.Itoa(config.PVID))
+		form.Set("vlan_native", strconv.Itoa(config.PVID))
+		form.Set("VLAN1_untag", "on")
+		form.Set(fmt.Sprintf("VLAN%d_untag", config.PVID), "on")
+	} else if config.AcceptFrameType == "Tag-only" {
+		form.Set("vlan_type", "1")
+		form.Set("vlan_trunk", strconv.Itoa(config.PVID))
+		form.Set("VLAN1", "on")
+		form.Set(fmt.Sprintf("VLAN%d", config.PVID), "on")
+	} else {
+		form.Set("vlan_type", "0")
+		form.Set("vlan_access", strconv.Itoa(config.PVID))
+	}
 
 	// Map Accepted Frame Types to their respective values
 	acceptFrameTypeMap := map[string]string{
@@ -284,6 +508,7 @@ func (c *HRUIClient) SetPortVLANConfig(ctx context.Context, config *PortVLANConf
 		return fmt.Errorf("invalid Accepted Frame Type: %s", config.AcceptFrameType)
 	}
 	form.Set("vlan_accept_frame_type", frameTypeValue)
+	form.Set("accept_type", frameTypeValue)
 
 	// Submit the form
 	portVLANURL := fmt.Sprintf("%s/vlan.cgi?page=port_based", c.URL)

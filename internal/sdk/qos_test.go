@@ -334,3 +334,30 @@ func TestSetQoSQueueWeight_Failure(t *testing.T) {
 		t.Fatalf("expected an error with status code 500, but got %v", err)
 	}
 }
+
+// TestSetQoSQueueWeight_V1EmptyBodyV2Fails ensures that when the v1 endpoint
+// "succeeds" with an empty body (ambiguous) and the v2 fallback also fails,
+// the function returns an error instead of silently reporting success.
+func TestSetQoSQueueWeight_V1EmptyBodyV2Fails(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Query().Get("page") {
+		case "que_weight":
+			w.WriteHeader(http.StatusOK) // empty body
+		case "queue_weight":
+			w.WriteHeader(http.StatusInternalServerError)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	client := &HRUIClient{
+		HttpClient: server.Client(),
+		URL:        server.URL,
+	}
+
+	err := client.SetQoSQueueWeight(context.Background(), 1, 10)
+	if err == nil {
+		t.Fatal("expected an error when both v1 and v2 endpoints fail, but got nil")
+	}
+}

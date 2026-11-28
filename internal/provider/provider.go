@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/bandwidth_control"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/dhcp_snooping"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/eee"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/igmp_snooping"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/igmp_snooping_static"
@@ -14,6 +15,8 @@ import (
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/mac_limit"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/mac_static"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/mac_table"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/poe_port"
+	"github.com/brennoo/terraform-provider-hrui/internal/resources/poe_system"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_isolation"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_mirroring"
 	"github.com/brennoo/terraform-provider-hrui/internal/resources/port_settings"
@@ -41,8 +44,10 @@ type hruiProvider struct {
 	// version is set to the provider version on release, "dev" when the
 	// provider is built and ran locally.
 	version string
-	// testHttpClient is used for injecting a custom HTTP client during testing (e.g., go-vcr).
+	// testHttpClient is used for injecting a custom HTTP client during testing.
 	testHttpClient *http.Client
+	// testURL is the default switch URL injected by the emulator test harness when unset in HCL/env.
+	testURL string
 }
 
 // New is a helper function to simplify provider server and testing logic.
@@ -54,12 +59,16 @@ func New(version string) func() provider.Provider {
 	}
 }
 
-// NewForTest creates a provider instance with a custom HTTP client for testing.
-// This allows injection of go-vcr clients for acceptance testing.
-func NewForTest(version string, client *http.Client) provider.Provider {
+// NewForTest creates a provider instance with a custom HTTP client and optional default URL for testing.
+func NewForTest(version string, client *http.Client, defaultURL ...string) provider.Provider {
+	var u string
+	if len(defaultURL) > 0 {
+		u = defaultURL[0]
+	}
 	return &hruiProvider{
 		version:        version,
 		testHttpClient: client,
+		testURL:        u,
 	}
 }
 
@@ -76,6 +85,10 @@ func (p *hruiProvider) DataSources(ctx context.Context) []func() datasource.Data
 		mac_table.NewDataSource,
 		mac_static.NewDataSource,
 		port_statistics.NewDataSource,
+		trunk_group.NewDataSource,
+		poe_system.NewDataSource,
+		poe_port.NewDataSource,
+		dhcp_snooping.NewDataSource,
 	}
 }
 
@@ -103,5 +116,8 @@ func (p *hruiProvider) Resources(ctx context.Context) []func() resource.Resource
 		jumbo_frame.NewResource,
 		eee.NewResource,
 		mac_limit.NewResource,
+		poe_system.NewResource,
+		poe_port.NewResource,
+		dhcp_snooping.NewResource,
 	}
 }

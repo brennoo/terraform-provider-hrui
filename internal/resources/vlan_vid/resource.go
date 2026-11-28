@@ -184,8 +184,11 @@ func (r *vlanVIDResource) Read(ctx context.Context, req resource.ReadRequest, re
 	for _, config := range configs {
 		if config.PortID == portID {
 			state.VlanID = types.Int64Value(int64(config.PVID))
-			// Normalize AcceptFrameType from device format to user-friendly format
-			state.AcceptFrameType = types.StringValue(denormalizeAcceptFrameType(config.AcceptFrameType))
+			// Access-mode ports on some firmwares don't report an accept-frame-type back;
+			// keep the existing state rather than overwrite it with a guess.
+			if config.AcceptFrameType != "" {
+				state.AcceptFrameType = types.StringValue(denormalizeAcceptFrameType(config.AcceptFrameType))
+			}
 			break
 		}
 	}

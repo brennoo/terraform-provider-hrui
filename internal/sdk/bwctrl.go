@@ -81,41 +81,69 @@ func (c *HRUIClient) ConfigureBandwidthControl(ctx context.Context, portName str
 
 // configureBandwidthByID sets bandwidth control for a port using its numeric ID.
 func (c *HRUIClient) configureBandwidthByID(ctx context.Context, portID int, isIngress, enable bool, rate string) error {
-	// Determine whether the configuration is for ingress or egress
-	bandwidthType := "1" // Default to Egress
-	if isIngress {
-		bandwidthType = "0" // Ingress
-	}
+	return c.withOpLock(func() error {
+		bandwidthType := "1"
+		if isIngress {
+			bandwidthType = "0"
+		}
 
-	// Determine the state (enabled or disabled)
-	state := "0" // Default to Disable
-	if enable {
-		state = "1" // Enable
-	}
+		state := "0"
+		if enable {
+			state = "1"
+		}
 
-	// Determine the rate value
-	rateValue := "Unlimited" // Default to Unlimited
-	if enable && strings.ToLower(rate) != "unlimited" {
-		rateValue = rate
-	}
+		rateValue := "Unlimited"
+		if enable && strings.ToLower(rate) != "unlimited" {
+			rateValue = rate
+		}
 
-	// Construct the POST form data
-	form := url.Values{}
-	form.Set("cmd", "bandwidthcontrol")
-	form.Set("portid", strconv.Itoa(portID)) // Port ID as string
-	form.Set("type", bandwidthType)          // Ingress (0) or Egress (1)
-	form.Set("state", state)                 // Enable (1) or Disable (0)
-	form.Set("rate", rateValue)              // Bandwidth rate value
-	form.Set("submit", "+++Apply+++")        // Form submission button value
+		// On v2.x firmwares, /port.cgi?page=bwctrl updates both in_rate and out_rate at once using port%d checkboxes.
+		controls, err := c.GetBandwidthControl(ctx)
+		if err != nil {
+			return fmt.Errorf("failed to read current bandwidth control state for port %d: %w", portID, err)
+		}
 
-	// Construct the POST request endpoint
-	endpoint := fmt.Sprintf("%s/port.cgi?page=bwctrl", c.URL)
+		inRateV2 := ""
+		outRateV2 := ""
+		if portID >= 0 && portID < len(controls) {
+			if !strings.EqualFold(controls[portID].IngressRate, "Unlimited") {
+				inRateV2 = controls[portID].IngressRate
+			}
+			if !strings.EqualFold(controls[portID].EgressRate, "Unlimited") {
+				outRateV2 = controls[portID].EgressRate
+			}
+		}
+		if isIngress {
+			if rateValue == "Unlimited" {
+				inRateV2 = ""
+			} else {
+				inRateV2 = rateValue
+			}
+		} else {
+			if rateValue == "Unlimited" {
+				outRateV2 = ""
+			} else {
+				outRateV2 = rateValue
+			}
+		}
 
-	// Send the POST request
-	_, err := c.FormRequest(ctx, endpoint, form)
-	if err != nil {
-		return fmt.Errorf("failed to configure bandwidth control for port ID '%d': %w", portID, err)
-	}
+		form := url.Values{}
+		form.Set("cmd", "bandwidthcontrol")
+		form.Set("portid", strconv.Itoa(portID))
+		form.Set(fmt.Sprintf("port%d", portID), "on")
+		form.Set("type", bandwidthType)
+		form.Set("state", state)
+		form.Set("rate", rateValue)
+		form.Set("in_rate", inRateV2)
+		form.Set("out_rate", outRateV2)
+		form.Set("submit", "+++Apply+++")
 
-	return nil
+		endpoint := fmt.Sprintf("%s/port.cgi?page=bwctrl", c.URL)
+
+		if _, err := c.FormRequest(ctx, endpoint, form); err != nil {
+			return fmt.Errorf("failed to configure bandwidth control for port ID '%d': %w", portID, err)
+		}
+
+		return nil
+	})
 }

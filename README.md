@@ -22,13 +22,18 @@ This provider is developed using a Horaco (ZX-SWTG124AS) switch. Other brands th
 
 * HRUI
 * Horaco
+* Hasivo
 * Sodola
 * XikeStor
 * AmpCom
 * KeepLink
 
-> [!NOTE]
-> Supports firmware v1.9 and v1.9.1
+### Firmware Support
+
+This provider supports both `v1.x` and `v2.x` HRUI firmware dialects and is continuously tested against real firmware images emulated with [`rtl51`](https://github.com/brennoo/rtl51):
+
+* **v1.x dialect**: `v1.9`, `v1.9.1`, `v2.0` (e.g., `SWTG118AS-v2.0`, `SWTG115AS-v2.0`, `S600WP-4GT-2SX-SE V1.9` with PoE)
+* **v2.x dialect**: `v2.0.1`, `V200.2.5` (e.g., `SWTG018AS-A-v2.0.1`, `HRRF_V200.2.5_ZX310S-4T2XH`)
 
 ## Getting Started
 
@@ -39,7 +44,7 @@ This provider is developed using a Horaco (ZX-SWTG124AS) switch. Other brands th
       required_providers {
         hrui = {
           source  = "brennoo/hrui"
-          version = "= 0.1.4"
+          version = "= 0.2.0"
         }
       }
     }

@@ -1,0 +1,33 @@
+---
+page_title: "{{.Name}} ({{.Type}})"
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Introduction
+
+This resource manages global DHCP Snooping and per-port DHCP trust settings on the switch. DHCP Snooping protects the network against rogue DHCP servers by filtering untrusted DHCP server messages (such as `DHCPOFFER` and `DHCPACK`). Use `enabled` to toggle DHCP Snooping globally and `trusted_ports` to specify which uplink or server-facing ports are allowed to forward DHCP server responses.
+
+{{ if .HasExample -}}
+
+## Example Usage
+
+{{codefile "terraform" .ExampleFile}}
+
+{{- end }}
+
+{{ .SchemaMarkdown | trimspace }}
+
+{{ if .HasImport -}}
+
+## Import
+
+Import is supported using the following syntax:
+
+{{codefile "shell" .ImportFile }}
+
+{{- end }}

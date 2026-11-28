@@ -187,7 +187,13 @@ func (r *stormControlResource) Read(ctx context.Context, req resource.ReadReques
 		state.Rate = types.Int64Null()
 	} else {
 		state.State = types.BoolValue(true)
-		state.Rate = types.Int64Value(int64(*matchingRate))
+		actualRate := int64(*matchingRate)
+		// RTL837x hardware rate registers quantize rates in 16 Kbps steps (e.g. 1000 -> 992).
+		// Preserve the configured rate when the hardware value matches its 16-Kbps quantized step.
+		if !state.Rate.IsNull() && !state.Rate.IsUnknown() && (state.Rate.ValueInt64()&^15) == actualRate {
+			actualRate = state.Rate.ValueInt64()
+		}
+		state.Rate = types.Int64Value(actualRate)
 	}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &state)...)

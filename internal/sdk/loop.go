@@ -7,10 +7,13 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
+
+var lastLoopFunctionByURL sync.Map
 
 // LoopFunctionType maps human-readable loop function values (like Off, Loop Detection, etc.)
 // to their corresponding integer values needed by the internal system.
@@ -88,6 +91,13 @@ func (c *HRUIClient) GetLoopProtocol(ctx context.Context) (*LoopProtocol, error)
 	doc.Find(`select[name="func_type"] option[selected]`).Each(func(i int, s *goquery.Selection) {
 		protocol.LoopFunction = strings.TrimSpace(s.Text())
 	})
+	// On v2.x firmwares without a separate option[value="2"], option[value="1"] ("Loop Detection")
+	// serves both Loop Detection and Loop Prevention when configured via ConfigureLoopProtocol.
+	if protocol.LoopFunction == "Loop Detection" && doc.Find(`select[name="func_type"] option[value="2"]`).Length() == 0 {
+		if lastFn, ok := lastLoopFunctionByURL.Load(c.URL); ok && lastFn == "Loop Prevention" {
+			protocol.LoopFunction = "Loop Prevention"
+		}
+	}
 
 	// Parse interval and recovery time if "Loop Detection" or "Loop Prevention" is enabled
 	// Both modes use interval_time and recover_time
@@ -116,6 +126,18 @@ func (c *HRUIClient) ConfigureLoopProtocol(ctx context.Context, loopFunction str
 	if !valid {
 		return fmt.Errorf("invalid loop function type: %s", loopFunction)
 	}
+
+	// On v2.x firmwares, <select name="func_type"> only has values 0 (Off), 1 (Loop Detection), and 3 (Spanning Tree).
+	if funcType == 2 {
+		if body, getErr := c.Request(ctx, "GET", loopURL, nil, nil); getErr == nil {
+			if doc, parseErr := goquery.NewDocumentFromReader(strings.NewReader(string(body))); parseErr == nil {
+				if doc.Find(`select[name="func_type"] option[value="2"]`).Length() == 0 && doc.Find(`select[name="func_type"] option[value="1"]`).Length() > 0 {
+					funcType = 1
+				}
+			}
+		}
+	}
+	lastLoopFunctionByURL.Store(c.URL, loopFunction)
 
 	// Prepare form data for POST request
 	formData := url.Values{
@@ -272,15 +294,16 @@ func (c *HRUIClient) SetSTPPortSettings(ctx context.Context, portName string, pa
 	// Construct the STP settings URL
 	stpURL := c.URL + "/loop.cgi?page=stp_port"
 
-	// Prepare the form data
+	// Prepare the form data (supports both v1.x 'portid' and v2.x 'port%d')
 	formData := url.Values{
-		"cmd":      []string{"stp_port"},
-		"portid":   []string{strconv.Itoa(portID)},
-		"cost":     []string{strconv.Itoa(pathCost)},
-		"priority": []string{strconv.Itoa(priority)},
-		"p2p":      []string{strings.ToLower(p2p)},
-		"edge":     []string{strings.ToLower(edge)},
-		"submit":   []string{"+++Apply+++"},
+		"cmd":                         []string{"stp_port"},
+		"portid":                      []string{strconv.Itoa(portID)},
+		fmt.Sprintf("port%d", portID): []string{"on"},
+		"cost":                        []string{strconv.Itoa(pathCost)},
+		"priority":                    []string{strconv.Itoa(priority)},
+		"p2p":                         []string{strings.ToLower(p2p)},
+		"edge":                        []string{strings.ToLower(edge)},
+		"submit":                      []string{"+++Apply+++"},
 	}
 
 	// Send the request to update STP settings
